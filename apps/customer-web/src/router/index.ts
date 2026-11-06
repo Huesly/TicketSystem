@@ -1,0 +1,25 @@
+import { createRouter, createWebHistory } from 'vue-router';
+import HomeView from '../views/HomeView.vue';
+
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes: [
+    {
+      path: '/',
+      name: 'home',
+      component: HomeView
+    },
+    {
+      path: '/mi-tarjeta',
+      name: 'card',
+      component: () => import('../views/CardView.vue')
+    },
+    {
+      path: '/recompensas',
+      name: 'rewards',
+      component: () => import('../views/RewardsView.vue')
+    }
+  ]
+});
+
+export default router;

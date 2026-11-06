@@ -5,6 +5,7 @@
 from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
+from app.api.v1.router import api_router
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -23,6 +24,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Montar enrutador v1
+app.include_router(api_router, prefix=settings.API_V1_STR)
 
 @app.get("/health", tags=["Salud"], status_code=status.HTTP_200_OK)
 async def health_check():
