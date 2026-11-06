@@ -1,0 +1,25 @@
+{
+  "name": "confytickets-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Monorepo Plataforma de Fidelización para Cafeterías ConfyTickets",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:mobile": "npm --workspace=apps/customer-mobile run dev",
+    "dev:web": "npm --workspace=apps/customer-web run dev",
+    "dev:admin": "npm --workspace=apps/admin-web run dev",
+    "build:all": "npm run --workspaces build"
+  },
+  "keywords": [
+    "loyalty",
+    "vue3",
+    "ionic",
+    "capacitor",
+    "fastapi",
+    "postgresql"
+  ],
+  "author": "ConfyTickets Engineering Team",
+  "license": "UNLICENSED"
+}

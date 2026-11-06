@@ -1,0 +1,90 @@
+# =============================================================================
+# GITIGNORE - PLATAFORMA CONFYTICKETS (FULL-STACK MONOREPO)
+# =============================================================================
+
+# Entornos y Secretos
+.env
+.env.local
+.env.*.local
+*.env
+!.env.example
+
+# Node / Frontend
+node_modules/
+dist/
+dist-ssr/
+build/
+coverage/
+*.local
+.npm
+.eslintcache
+.stylelintcache
+.vite/
+
+# Python / Backend
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+
+# Mobile (Capacitor / Android / iOS)
+apps/customer-mobile/android/app/build/
+apps/customer-mobile/android/.gradle/
+apps/customer-mobile/android/local.properties
+apps/customer-mobile/android/.idea/
+apps/customer-mobile/ios/App/build/
+apps/customer-mobile/ios/App/Pods/
+apps/customer-mobile/ios/App/Podfile.lock
+*.orig.*
+
+# Logs y Debugging
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editores y Sistema Operativo
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Bases de datos y storage local
+*.sqlite3
+*.db
+pgdata/
+redisdata/
