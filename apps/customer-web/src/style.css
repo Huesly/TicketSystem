@@ -3,7 +3,37 @@
 @tailwind utilities;
 
 @layer utilities {
-  .bg-coffee-gradient {
-    background: linear-gradient(135deg, #3d2b1f 0%, #5c4033 100%);
+  .min-h-dvh-safe {
+    min-height: 100vh;
+    min-height: 100dvh;
   }
+
+  .fluid-container {
+    container-type: inline-size;
+  }
+
+  .fluid-title {
+    font-size: clamp(1.125rem, 0.9rem + 1.5vw, 1.5rem);
+    line-height: 1.25;
+  }
+
+  .fluid-pad {
+    padding: clamp(1rem, 3vw, 1.5rem);
+  }
+
+  @supports (font-size: 1cqi) {
+    .fluid-title {
+      font-size: clamp(1.125rem, 4.5cqi, 1.5rem);
+    }
+    .fluid-pad {
+      padding: clamp(1rem, 4cqi, 1.5rem);
+    }
+  }
+}
+
+details > summary {
+  list-style: none;
+}
+details > summary::-webkit-details-marker {
+  display: none;
 }

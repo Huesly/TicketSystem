@@ -1,3 +1,48 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  .min-h-dvh-safe {
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  .fluid-container {
+    container-type: inline-size;
+  }
+
+  .fluid-title {
+    font-size: clamp(1.125rem, 0.9rem + 1.5vw, 1.65rem);
+    line-height: 1.2;
+  }
+
+  .fluid-kpi {
+    font-size: clamp(1.35rem, 1rem + 2.5vw, 2.15rem);
+    line-height: 1.1;
+  }
+
+  .fluid-pad {
+    padding: clamp(1rem, 2.5vw, 1.75rem);
+  }
+
+  @supports (font-size: 1cqi) {
+    .fluid-title {
+      font-size: clamp(1.125rem, 3.5cqi, 1.65rem);
+    }
+    .fluid-kpi {
+      font-size: clamp(1.35rem, 6.5cqi, 2.15rem);
+    }
+    .fluid-pad {
+      padding: clamp(1rem, 3.5cqi, 1.75rem);
+    }
+  }
+}
+
+/* Estilizado minimalista para details/summary nativo */
+details > summary {
+  list-style: none;
+}
+details > summary::-webkit-details-marker {
+  display: none;
+}
