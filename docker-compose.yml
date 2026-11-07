@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # Base de Datos Relacional Principal
+  # Base de Datos Relacional Principal (Puerto 5439 para evitar conflictos)
   postgres:
     image: postgres:15-alpine
     container_name: confytickets-postgres
@@ -11,7 +11,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-confy_secure_password_2026}
       POSTGRES_DB: ${POSTGRES_DB:-confytickets_db}
     ports:
-      - "5432:5432"
+      - "5439:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./documentation/03_base_de_datos/esquema_ddl_postgresql.sql:/docker-entrypoint-initdb.d/init.sql:ro
@@ -21,13 +21,13 @@ services:
       timeout: 5s
       retries: 5
 
-  # Servidor Redis para Cache y Broker de Celery
+  # Servidor Redis para Cache y Broker de Celery (Puerto 6389)
   redis:
     image: redis:7-alpine
     container_name: confytickets-redis
     restart: unless-stopped
     ports:
-      - "6379:6379"
+      - "6389:6379"
     volumes:
       - redisdata:/data
     healthcheck:
@@ -36,13 +36,13 @@ services:
       timeout: 5s
       retries: 5
 
-  # Interfaz gráfica web para administración de PostgreSQL (Adminer)
+  # Interfaz gráfica web para administración de PostgreSQL (Adminer en puerto 8085)
   adminer:
     image: adminer:latest
     container_name: confytickets-adminer
     restart: unless-stopped
     ports:
-      - "8080:8080"
+      - "8085:8080"
     depends_on:
       - postgres
 
