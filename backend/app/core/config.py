@@ -14,6 +14,12 @@ class Settings(BaseSettings):
     
     # Orígenes CORS permitidos
     BACKEND_CORS_ORIGINS: List[str] = [
+        "http://localhost:3010",
+        "http://localhost:3020",
+        "http://localhost:3030",
+        "http://127.0.0.1:3010",
+        "http://127.0.0.1:3020",
+        "http://127.0.0.1:3030",
         "http://localhost:5173",
         "http://localhost:5174",
         "http://localhost:5175",

@@ -50,6 +50,17 @@ docker compose up -d
 - **Adminer (Visor BD):** `http://localhost:8080` (Sistema: PostgreSQL, Servidor: `postgres`, Usuario: `confy_admin`, BD: `confytickets_db`).
 - **Redis:** `localhost:6379`.
 
+### 3. Ejecución de Aplicaciones en Desarrollo
+
+Cada aplicación cuenta con un puerto dedicado no conflictivo:
+
+| Aplicación | Puerto Local | Comando |
+|---|:---:|---|
+| **Web de Clientes** | `http://localhost:3010` | `npm run dev:web` |
+| **Terminal de Caja POS & Admin** | `http://localhost:3020` | `npm run dev:admin` |
+| **App Móvil (Web Preview)** | `http://localhost:3030` | `npm run dev:mobile` |
+| **Backend FastAPI** | `http://localhost:8088` | `python -m uvicorn app.main:app --port 8088 --reload` |
+
 ---
 
 ## 📚 Documentación Técnica Completa
