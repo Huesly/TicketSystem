@@ -2,7 +2,7 @@
   <div class="space-y-6">
     <!-- Saludo Personalizado -->
     <div class="space-y-1">
-      <h2 class="text-xl font-extrabold text-coffee-900 tracking-tight">¡Hola, Camila! ☕</h2>
+      <h2 class="text-xl font-extrabold text-coffee-900 tracking-tight">¡Hola, {{ customerName }}! ☕</h2>
       <p class="text-xs text-stone-500 font-medium">Cada café tiene una historia. ¡Nos alegra verte de nuevo!</p>
     </div>
 
@@ -24,7 +24,7 @@
           <h3 class="font-bold text-sm text-stone-900">Tarjeta Activa</h3>
         </div>
         <span class="text-xs font-bold text-coffee-900 font-mono bg-coffee-50 px-2.5 py-1 rounded-full border border-coffee-100">
-          Ciclo #2
+          Ciclo #{{ activeCard ? activeCard.cycle_number : 1 }}
         </span>
       </div>
 
@@ -54,12 +54,12 @@
       <div class="space-y-2 pt-1">
         <div class="flex justify-between text-xs font-semibold">
           <span class="text-stone-600">{{ currentStamps }} de 8 sellos</span>
-          <span class="text-caramel font-bold">{{ 8 - currentStamps }} restantes</span>
+          <span class="text-caramel font-bold">{{ Math.max(0, 8 - currentStamps) }} restantes</span>
         </div>
         <div class="w-full bg-stone-100 rounded-full h-2.5 overflow-hidden">
           <div 
             class="bg-gradient-to-r from-amber-500 to-caramel h-full rounded-full transition-all duration-500" 
-            :style="{ width: `${(currentStamps / 8) * 100}%` }"
+            :style="{ width: `${Math.min(100, (currentStamps / 8) * 100)}%` }"
           ></div>
         </div>
         <p class="text-xs text-center text-stone-500 font-medium">
@@ -68,27 +68,28 @@
       </div>
     </div>
 
-    <!-- Vitrina de 5 Productos Destacados -->
+    <!-- Vitrina de Productos Destacados desde API -->
     <div class="space-y-3">
       <div class="flex items-center justify-between">
         <h3 class="font-bold text-sm text-stone-900">Nuestros 5 Destacados</h3>
         <span class="text-[11px] font-semibold text-caramel">Recomendados del barista</span>
       </div>
 
-      <div class="space-y-2.5">
+      <div v-if="loadingProducts" class="text-center text-xs text-stone-400 py-4 animate-pulse">
+        Cargando menú de la cafetería...
+      </div>
+
+      <div v-else class="space-y-2.5">
         <div 
-          v-for="prod in featuredProducts" 
+          v-for="prod in products" 
           :key="prod.id"
-          class="bg-white rounded-2xl p-3 flex items-center gap-3.5 border border-stone-200/50 shadow-xs hover:border-amber-200 transition"
+          class="bg-white rounded-2xl p-3.5 border border-stone-200/60 shadow-xs flex items-center justify-between hover:border-amber-200 transition"
         >
-          <div class="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center text-2xl shrink-0">
-            {{ prod.icon }}
+          <div class="space-y-0.5">
+            <h4 class="font-bold text-xs text-stone-900">{{ prod.name }}</h4>
+            <p class="text-[11px] text-stone-400 line-clamp-1">{{ prod.description }}</p>
           </div>
-          <div class="flex-1 min-w-0">
-            <h4 class="font-bold text-xs text-stone-900 truncate">{{ prod.name }}</h4>
-            <p class="text-[11px] text-stone-500 line-clamp-1">{{ prod.description }}</p>
-          </div>
-          <span class="text-xs font-extrabold text-coffee-900 font-mono shrink-0">
+          <span class="text-xs font-black font-mono text-coffee-900 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200 shrink-0 ml-3">
             ${{ prod.price.toLocaleString('es-CO') }}
           </span>
         </div>
@@ -98,15 +99,41 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { api, type CardSummary, type ProductItem } from '../api';
 
-const currentStamps = ref(5);
+const customerName = ref('Camila');
+const activeCard = ref<CardSummary | null>(null);
+const products = ref<ProductItem[]>([]);
+const loadingProducts = ref(true);
 
-const featuredProducts = ref([
-  { id: 1, name: 'Cappuccino Vainilla Francesa', description: 'Espresso doble con leche texturizada y jarabe artesanal.', price: 12500, icon: '☕' },
-  { id: 2, name: 'Cold Brew Caramelo Salado', description: 'Extracción en frío durante 18 horas con notas dulces.', price: 14000, icon: '🧊' },
-  { id: 3, name: 'Mocha Chocolate Belga', description: 'Café de especialidad con cacao al 70% y crema batida.', price: 13500, icon: '🍫' },
-  { id: 4, name: 'Croissant Almendras', description: 'Hojaldre francés relleno de crema frangipane tostada.', price: 9500, icon: '🥐' },
-  { id: 5, name: 'Cheesecake de Frutos Rojos', description: 'Base crocante con coulis de mora silvestre y arándanos.', price: 11000, icon: '🍰' },
-]);
+const currentStamps = computed(() => activeCard.value?.stamps_count || 0);
+
+const loadData = async () => {
+  try {
+    const [cardRes, profileRes, prodRes] = await Promise.all([
+      api.getLoyaltyCards().catch(() => null),
+      api.getProfile().catch(() => null),
+      api.getProducts().catch(() => [])
+    ]);
+
+    if (cardRes && cardRes.active_card) {
+      activeCard.value = cardRes.active_card;
+    }
+    if (profileRes && profileRes.full_name) {
+      customerName.value = profileRes.full_name.split(' ')[0];
+    }
+    if (prodRes && prodRes.length > 0) {
+      products.value = prodRes;
+    }
+  } catch (err) {
+    console.error('Error cargando datos de inicio:', err);
+  } finally {
+    loadingProducts.value = false;
+  }
+};
+
+onMounted(() => {
+  loadData();
+});
 </script>
