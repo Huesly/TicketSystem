@@ -3,114 +3,138 @@
     <!-- ======================================================================= -->
     <!-- PANTALLA 1: ASIGNACIÓN DE SEDE Y APERTURA DE TURNO POS                  -->
     <!-- ======================================================================= -->
-    <div v-if="!activeStore || isSelectingStore" class="max-w-4xl mx-auto space-y-6 animate-in fade-in zoom-in-98 duration-200">
-      <!-- Encabezado con Paso y Guía Clara -->
-      <div class="bg-gradient-to-r from-coffee-900 to-coffee-800 text-white p-6 sm:p-8 rounded-3xl shadow-xl relative overflow-hidden space-y-3">
-        <div class="relative z-10 flex items-center justify-between">
-          <div class="space-y-1">
-            <div class="inline-flex items-center gap-2 bg-amber-400/20 text-amber-300 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
-              <span>📍</span> Paso 1 de 2: Punto de Venta
-            </div>
-            <h2 class="text-2xl sm:text-3xl font-black tracking-tight">Apertura de Terminal y Asignación de Sede</h2>
-            <p class="text-xs sm:text-sm text-amber-100/80 max-w-xl">
-              Selecciona el establecimiento físico en el que estás operando esta caja registradora.
+    <div v-if="!activeStore || isSelectingStore" class="max-w-5xl mx-auto space-y-6">
+      
+      <!-- Banner Superior de Alto Contraste -->
+      <div class="bg-stone-900 text-white p-6 sm:p-8 rounded-2xl border-2 border-stone-950 shadow-lg space-y-4">
+        <div class="flex items-start justify-between gap-4">
+          <div class="space-y-2">
+            <span class="inline-flex items-center gap-1.5 bg-amber-500 text-stone-950 px-3 py-1 rounded-lg text-xs font-black uppercase tracking-wider border border-amber-400">
+              📍 Paso 1 de 2: Punto de Venta
+            </span>
+            <h2 class="text-2xl sm:text-3xl font-black tracking-tight text-white">
+              Apertura de Terminal y Asignación de Sede
+            </h2>
+            <p class="text-sm text-stone-300 font-medium max-w-2xl">
+              Selecciona el establecimiento físico en el que estás operando esta caja registradora para habilitar la facturación y lectura de códigos QR.
             </p>
           </div>
-          <div class="text-5xl opacity-20 hidden md:block">🏪</div>
+          <div class="w-14 h-14 rounded-2xl bg-stone-800 border-2 border-stone-700 flex items-center justify-center text-3xl shrink-0 hidden sm:flex">
+            🏪
+          </div>
         </div>
 
-        <!-- Nota de Ayuda Dinámica -->
-        <div class="relative z-10 bg-black/30 backdrop-blur-xs p-3.5 rounded-2xl border border-white/10 flex items-start gap-2.5 text-xs text-amber-200/90">
-          <span class="text-base shrink-0">💡</span>
+        <!-- Nota de Ayuda Claramente Delimitada -->
+        <div class="bg-stone-800 p-4 rounded-xl border-2 border-stone-600 flex items-start gap-3 text-xs text-stone-100">
+          <span class="text-lg shrink-0">💡</span>
           <p class="leading-relaxed">
-            <strong>¿Por qué es necesario este paso?</strong> Todas las transacciones, sellos emitidos y canjes de premios quedan auditados y vinculados a la sede seleccionada. Puedes cambiar de sede en cualquier momento con un solo clic.
+            <strong class="text-amber-400">¿Por qué es necesario este paso?</strong> Todas las ventas, sellos emitidos y canjes de recompensas quedan auditados y vinculados a la sede física seleccionada. Puedes cambiar de sede en cualquier momento desde la barra superior.
           </p>
         </div>
       </div>
 
-      <!-- Tarjeta Informativa del Operador y Turno Futuro -->
+      <!-- Fila Informativa: Cajero en Turno y Nota de Arquitectura Futura -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-xs flex items-center gap-3">
-          <div class="w-11 h-11 rounded-2xl bg-coffee-900 text-amber-100 font-bold text-sm flex items-center justify-center shrink-0 shadow-inner">
+        <!-- Tarjeta Operador -->
+        <div class="bg-white p-4 rounded-2xl border-2 border-stone-400 shadow-sm flex items-center gap-3.5">
+          <div class="w-12 h-12 rounded-xl bg-stone-900 text-amber-400 font-black text-base flex items-center justify-center shrink-0 border-2 border-stone-950">
             JP
           </div>
           <div>
-            <span class="text-[10px] uppercase font-bold text-stone-400 tracking-wider">Cajero en Turno</span>
-            <h4 class="font-extrabold text-xs text-stone-900">Juan Pérez</h4>
-            <span class="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full inline-block mt-0.5">Sesión Activa</span>
+            <span class="text-[11px] uppercase font-extrabold text-stone-500 tracking-wider block">Cajero en Turno</span>
+            <h4 class="font-black text-sm text-stone-900">Juan Pérez</h4>
+            <span class="text-[11px] text-emerald-900 font-extrabold bg-emerald-100 border border-emerald-400 px-2.5 py-0.5 rounded-md inline-block mt-1">
+              ● Sesión Activa
+            </span>
           </div>
         </div>
 
-        <div class="md:col-span-2 bg-amber-50/70 p-4 rounded-2xl border border-amber-200/80 flex items-start gap-2.5 text-xs text-amber-900">
-          <span class="text-lg shrink-0">🕒</span>
-          <div class="space-y-0.5">
-            <span class="font-extrabold text-[11px] uppercase tracking-wide text-amber-950">Próxima Fase: Turnos Automáticos</span>
-            <p class="text-[11px] text-amber-800/90 leading-relaxed">
-              En la siguiente integración, la terminal detectará automáticamente tu sede según el cuadrante laboral programado en la app de gestión de personal.
+        <!-- Tarjeta Próxima Fase Turnos -->
+        <div class="md:col-span-2 bg-amber-50 p-4 rounded-2xl border-2 border-amber-400 shadow-sm flex items-start gap-3 text-xs text-stone-900">
+          <span class="text-xl shrink-0">🕒</span>
+          <div class="space-y-1">
+            <span class="font-black text-xs uppercase tracking-wide text-amber-950 block">
+              Próxima Fase: Asignación Automática por Horario de Turnos
+            </span>
+            <p class="text-xs text-stone-700 font-medium leading-relaxed">
+              En la siguiente integración, el sistema detectará y asignará automáticamente tu sede al iniciar sesión según el cuadrante laboral programado en la aplicación de turnos del personal.
             </p>
           </div>
         </div>
       </div>
 
-      <!-- Grid de Sedes Físicas con Acción Directa en Cada Tarjeta -->
-      <div class="space-y-3">
-        <div class="flex items-center justify-between">
-          <h3 class="font-bold text-xs uppercase tracking-wider text-stone-500">
-            Haz clic en la sede para iniciar tu turno inmediatamente:
-          </h3>
-          <span class="text-xs font-semibold text-stone-400">{{ stores.length }} sedes disponibles</span>
+      <!-- Contenedor Principal de Sedes Físicas -->
+      <div class="bg-white p-6 rounded-2xl border-2 border-stone-400 shadow-md space-y-4">
+        <div class="flex items-center justify-between border-b-2 border-stone-200 pb-3">
+          <div>
+            <h3 class="font-black text-sm uppercase tracking-wider text-stone-900">
+              Selecciona tu Sede de Atención para Entrar a la Caja:
+            </h3>
+            <p class="text-xs text-stone-600 font-medium mt-0.5">
+              Haz clic en cualquiera de las tarjetas inferiores para abrir inmediatamente la terminal POS.
+            </p>
+          </div>
+          <span class="text-xs font-extrabold text-stone-800 bg-stone-200 border border-stone-400 px-3 py-1 rounded-lg">
+            {{ stores.length }} sedes activas
+          </span>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
           <div 
             v-for="store in stores" 
             :key="store.id"
             @click="selectAndOpenStore(store)"
-            class="group bg-white rounded-3xl p-5 border-2 transition-all duration-200 cursor-pointer flex flex-col justify-between space-y-4 shadow-sm hover:shadow-lg relative overflow-hidden"
-            :class="pendingStoreSelection?.id === store.id ? 'border-emerald-600 bg-emerald-50/20 ring-4 ring-emerald-500/20 scale-[1.01]' : 'border-stone-200 hover:border-coffee-900'"
+            class="group rounded-2xl p-5 border-2 transition-all duration-150 cursor-pointer flex flex-col justify-between space-y-5 shadow-sm hover:shadow-lg"
+            :class="pendingStoreSelection?.id === store.id 
+              ? 'bg-emerald-50/70 border-emerald-700 ring-2 ring-emerald-500/30' 
+              : 'bg-stone-50 border-stone-400 hover:bg-white hover:border-stone-900'"
           >
-            <!-- Header de Tarjeta -->
-            <div class="space-y-2">
+            <!-- Datos de la Sede -->
+            <div class="space-y-3">
               <div class="flex items-center justify-between">
-                <span class="text-xs font-mono font-bold px-2.5 py-1 rounded-lg bg-stone-100 text-stone-700 group-hover:bg-coffee-900 group-hover:text-white transition">
+                <span class="text-xs font-mono font-black px-2.5 py-1 rounded-md bg-stone-900 text-white border border-stone-950">
                   {{ store.code }}
                 </span>
-                <span class="inline-flex items-center gap-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
-                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="inline-flex items-center gap-1.5 text-xs font-extrabold px-2.5 py-1 rounded-md bg-emerald-100 text-emerald-900 border border-emerald-400">
+                  <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
                   Operativa
                 </span>
               </div>
 
-              <div>
-                <h4 class="font-black text-stone-900 text-base group-hover:text-coffee-900 transition">{{ store.name }}</h4>
-                <p class="text-xs text-stone-500 mt-0.5">{{ store.address || 'Sede comercial principal' }}</p>
-                <p class="text-[11px] font-bold text-amber-800 mt-1">📍 {{ store.city }}, Santander</p>
+              <div class="pt-1">
+                <h4 class="font-black text-stone-950 text-lg">{{ store.name }}</h4>
+                <p class="text-xs text-stone-700 font-semibold mt-1">{{ store.address || 'Sede comercial principal' }}</p>
+                <p class="text-xs font-extrabold text-amber-900 bg-amber-100 border border-amber-300 inline-block px-2.5 py-0.5 rounded-md mt-2">
+                  📍 {{ store.city }}, Santander
+                </p>
               </div>
             </div>
 
-            <!-- Botón de Entrada Inmediata dentro de la Tarjeta -->
+            <!-- Botón de Acción Claramente Visible -->
             <button 
               type="button"
               @click.stop="selectAndOpenStore(store)"
-              class="w-full font-extrabold text-xs py-3 px-4 rounded-2xl shadow-sm transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer"
+              class="w-full font-black text-xs py-3.5 px-4 rounded-xl border-2 shadow-sm transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer"
               :class="pendingStoreSelection?.id === store.id 
-                ? 'bg-emerald-600 hover:bg-emerald-700 text-white ring-2 ring-emerald-400' 
-                : 'bg-stone-900 hover:bg-coffee-900 text-white group-hover:bg-coffee-900'"
+                ? 'bg-emerald-700 hover:bg-emerald-800 text-white border-emerald-900' 
+                : 'bg-stone-900 hover:bg-black text-white border-stone-950'"
             >
               <span>Abrir Caja en {{ store.name }}</span>
-              <span>→</span>
+              <span class="text-base leading-none">→</span>
             </button>
           </div>
         </div>
       </div>
 
-      <!-- Botón Cancelar si ya tenía sede activa -->
-      <div v-if="activeStore" class="flex justify-center pt-2">
+      <!-- Botón Volver (solo si ya había una sede abierta antes) -->
+      <div v-if="activeStore" class="flex justify-center">
         <button 
+          type="button"
           @click="isSelectingStore = false"
-          class="px-5 py-2.5 rounded-xl border border-stone-300 text-stone-700 font-bold text-xs hover:bg-stone-100 transition cursor-pointer flex items-center gap-2"
+          class="px-6 py-3 rounded-xl bg-white border-2 border-stone-500 text-stone-900 font-black text-xs hover:bg-stone-100 shadow-sm transition cursor-pointer flex items-center gap-2"
         >
-          <span>✕</span> Cancelar y mantener turno en {{ activeStore.name }}
+          <span>✕</span>
+          <span>Cancelar y mantener turno actual en {{ activeStore.name }}</span>
         </button>
       </div>
     </div>
@@ -119,73 +143,70 @@
     <!-- PANTALLA 2: TERMINAL POS PRINCIPAL (Turno Abierto)                     -->
     <!-- ======================================================================= -->
     <template v-else>
-      <!-- Barra Superior de Sede Activa con Botón de Cambio Rápido -->
-      <div class="bg-white border border-stone-200/90 rounded-3xl p-4 sm:p-5 shadow-xs flex flex-wrap items-center justify-between gap-4">
-        <div class="flex items-center gap-3.5">
-          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-coffee-900 to-coffee-800 text-amber-200 flex items-center justify-center text-2xl shrink-0 shadow-inner">
-            ☕
+      <!-- Barra Superior de Estado de Sede Activa -->
+      <div class="bg-white border-2 border-stone-400 rounded-2xl p-4 sm:p-5 shadow-md flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-stone-900 border-2 border-stone-950 text-amber-400 flex items-center justify-center text-2xl shrink-0 shadow-sm">
+            🏪
           </div>
           <div>
             <div class="flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span class="text-[10px] font-extrabold uppercase tracking-widest text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">
+              <span class="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-emerald-900 bg-emerald-100 border border-emerald-400 px-2.5 py-0.5 rounded-md">
+                <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
                 Turno de Caja Activo
               </span>
-            </div>
-            <h3 class="font-black text-base sm:text-lg text-stone-900 flex items-center gap-2 mt-0.5">
-              <span>{{ activeStore.name }}</span>
-              <span class="text-xs font-mono font-bold text-stone-500 bg-stone-100 px-2.5 py-0.5 rounded-lg border border-stone-200">
+              <span class="text-xs font-mono font-bold text-stone-700 bg-stone-200 border border-stone-400 px-2.5 py-0.5 rounded-md">
                 {{ activeStore.code }} • {{ activeStore.city }}
               </span>
+            </div>
+            <h3 class="font-black text-lg text-stone-950 mt-1">
+              {{ activeStore.name }} — <span class="text-sm font-bold text-stone-600">{{ activeStore.address }}</span>
             </h3>
           </div>
         </div>
 
         <div class="flex items-center gap-3">
-          <div class="text-right hidden sm:block">
-            <span class="text-[10px] text-stone-400 font-bold uppercase tracking-wider block">Cajero Asignado</span>
-            <span class="text-xs font-extrabold text-stone-800 font-mono">Juan Pérez</span>
-          </div>
-
           <button 
+            type="button"
             @click="openStoreSelector"
-            class="text-xs font-bold bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-200 px-3.5 py-2.5 rounded-2xl transition flex items-center gap-2 cursor-pointer shadow-xs active:scale-95"
-            title="Cambiar a otra sede física si rotaste de puesto"
+            class="text-xs font-black bg-amber-100 hover:bg-amber-200 text-stone-950 border-2 border-amber-500 px-4 py-2.5 rounded-xl transition flex items-center gap-2 cursor-pointer shadow-sm active:scale-95"
           >
             <span>🔄</span>
-            <span>Cambiar Sede</span>
+            <span>Cambiar de Sede</span>
           </button>
         </div>
       </div>
 
-      <!-- Selector de Modo con Pestañas Muy Claras e Iconos -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-stone-100/80 p-2 rounded-2xl border border-stone-200/60">
-        <div class="px-3 py-1">
-          <h2 class="text-sm font-black text-stone-900">Operación de Mostrador</h2>
-          <p class="text-[11px] text-stone-500">Selecciona el tipo de transacción que vas a realizar:</p>
+      <!-- Barra de Selección de Operación (Pestañas con Bordes Fuertes) -->
+      <div class="bg-white p-4 rounded-2xl border-2 border-stone-400 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-base font-black text-stone-950">Modo de Operación en Mostrador</h2>
+          <p class="text-xs text-stone-600 font-medium">Elige si vas a registrar una venta para dar sellos o a entregar un premio gratuito:</p>
         </div>
 
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-3">
           <button 
+            type="button"
             @click="switchMode('purchase')" 
-            class="flex-1 sm:flex-none px-4 py-2.5 text-xs font-bold rounded-xl transition flex items-center justify-center gap-2 cursor-pointer"
+            class="flex-1 sm:flex-none px-5 py-3 text-xs font-black rounded-xl border-2 transition flex items-center justify-center gap-2 cursor-pointer shadow-sm"
             :class="mode === 'purchase' 
-              ? 'bg-coffee-900 text-white shadow-md' 
-              : 'bg-white text-stone-600 hover:bg-stone-50 border border-stone-200/80'"
+              ? 'bg-stone-900 text-white border-stone-950 ring-2 ring-amber-500/40' 
+              : 'bg-stone-100 text-stone-800 border-stone-400 hover:bg-stone-200'"
           >
             <span>💳</span>
-            <span>Registrar Compra (Sellos)</span>
+            <span>1. Registrar Compra (Dar Sellos)</span>
           </button>
 
           <button 
+            type="button"
             @click="switchMode('redemption')" 
-            class="flex-1 sm:flex-none px-4 py-2.5 text-xs font-bold rounded-xl transition flex items-center justify-center gap-2 cursor-pointer"
+            class="flex-1 sm:flex-none px-5 py-3 text-xs font-black rounded-xl border-2 transition flex items-center justify-center gap-2 cursor-pointer shadow-sm"
             :class="mode === 'redemption' 
-              ? 'bg-amber-700 text-white shadow-md' 
-              : 'bg-white text-stone-600 hover:bg-stone-50 border border-stone-200/80'"
+              ? 'bg-amber-600 text-white border-amber-800 ring-2 ring-amber-400/40' 
+              : 'bg-stone-100 text-stone-800 border-stone-400 hover:bg-stone-200'"
           >
             <span>🎁</span>
-            <span>Canjear Premio (Cortesía)</span>
+            <span>2. Canjear Premio (Cortesía)</span>
           </button>
         </div>
       </div>
@@ -195,267 +216,313 @@
       <!-- =================================================================== -->
       <div v-if="mode === 'purchase'" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        <!-- COLUMNA IZQUIERDA: LECTOR QR (5 Columnas) -->
-        <div class="lg:col-span-5 bg-white rounded-3xl p-6 border border-stone-200/90 shadow-sm space-y-4">
-          <div class="flex items-center justify-between border-b border-stone-100 pb-3">
+        <!-- COLUMNA IZQUIERDA: PASO 1 - ESCÁNER QR (5 Columnas) -->
+        <div class="lg:col-span-5 bg-white rounded-2xl border-2 border-stone-400 shadow-md overflow-hidden flex flex-col">
+          <!-- Cabecera de Tarjeta -->
+          <div class="bg-stone-100 border-b-2 border-stone-300 px-6 py-4 flex items-center justify-between">
             <div>
-              <span class="text-[10px] uppercase font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full">Paso 1</span>
-              <h3 class="font-extrabold text-sm text-stone-900 mt-1">Identificar Cliente</h3>
+              <span class="text-[11px] uppercase font-black text-stone-900 bg-amber-300 border border-amber-500 px-2.5 py-0.5 rounded-md">
+                Paso 1
+              </span>
+              <h3 class="font-black text-base text-stone-950 mt-1">Identificar Cliente (Código QR)</h3>
             </div>
             
-            <span class="text-[11px] font-mono font-bold px-2.5 py-1 rounded-full flex items-center gap-1.5" :class="isCameraActive ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-stone-100 text-stone-500'">
-              <span class="w-2 h-2 rounded-full" :class="isCameraActive ? 'bg-emerald-500 animate-pulse' : 'bg-stone-400'"></span>
+            <span 
+              class="text-xs font-mono font-extrabold px-3 py-1 rounded-lg border-2 flex items-center gap-1.5" 
+              :class="isCameraActive 
+                ? 'bg-emerald-100 text-emerald-900 border-emerald-500' 
+                : 'bg-stone-200 text-stone-700 border-stone-400'"
+            >
+              <span class="w-2.5 h-2.5 rounded-full" :class="isCameraActive ? 'bg-emerald-600 animate-pulse' : 'bg-stone-500'"></span>
               {{ isCameraActive ? 'Cámara Activa' : 'Cámara Apagada' }}
             </span>
           </div>
 
-          <!-- Visor de Video / Escáner Óptico -->
-          <div class="aspect-4/3 bg-stone-950 rounded-2xl relative overflow-hidden flex flex-col items-center justify-center text-center shadow-inner border border-stone-800">
-            <!-- Video en vivo para ZXing -->
-            <video 
-              ref="videoRef" 
-              class="w-full h-full object-cover" 
-              :class="{ 'hidden': !isCameraActive }"
-              autoplay 
-              muted 
-              playsinline
-            ></video>
+          <!-- Cuerpo de la Tarjeta -->
+          <div class="p-6 space-y-5 flex-1 flex flex-col justify-between">
+            <!-- Visor de Video / Escáner Óptico -->
+            <div class="aspect-4/3 bg-stone-900 rounded-xl relative overflow-hidden flex flex-col items-center justify-center text-center border-2 border-stone-800 shadow-inner">
+              <video 
+                ref="videoRef" 
+                class="w-full h-full object-cover" 
+                :class="{ 'hidden': !isCameraActive }"
+                autoplay 
+                muted 
+                playsinline
+              ></video>
 
-            <!-- Guía de Escaneo en Vivo -->
-            <div v-if="isCameraActive" class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center p-6">
-              <div class="w-48 h-48 border-2 border-emerald-400 rounded-2xl relative shadow-[0_0_20px_rgba(52,211,153,0.35)]">
-                <div class="absolute inset-x-0 h-0.5 bg-emerald-400 shadow-[0_0_12px_#34d399] animate-bounce"></div>
-                <div class="absolute -top-1 -left-1 w-4 h-4 border-t-3 border-l-3 border-emerald-400"></div>
-                <div class="absolute -top-1 -right-1 w-4 h-4 border-t-3 border-r-3 border-emerald-400"></div>
-                <div class="absolute -bottom-1 -left-1 w-4 h-4 border-b-3 border-l-3 border-emerald-400"></div>
-                <div class="absolute -bottom-1 -right-1 w-4 h-4 border-b-3 border-r-3 border-emerald-400"></div>
+              <!-- Mira Láser cuando la cámara está activa -->
+              <div v-if="isCameraActive" class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center p-6">
+                <div class="w-48 h-48 border-2 border-emerald-400 rounded-xl relative">
+                  <div class="absolute inset-x-0 h-1 bg-emerald-400 shadow-[0_0_12px_#34d399] animate-bounce"></div>
+                </div>
+                <span class="text-xs text-white font-bold bg-black/80 px-3 py-1 rounded-lg mt-3 border border-stone-600">
+                  Muestra el QR del cliente frente a la cámara
+                </span>
               </div>
-              <span class="text-[10px] text-white font-bold bg-black/70 px-3 py-1 rounded-full mt-3 backdrop-blur-xs">
-                Apunta al QR del cliente
+
+              <!-- Estado de Cámara Inactiva -->
+              <div v-if="!isCameraActive" class="p-6 space-y-4 flex flex-col items-center justify-center text-center">
+                <div class="w-16 h-16 rounded-2xl bg-stone-800 border-2 border-stone-600 text-white flex items-center justify-center text-3xl shadow-md">
+                  📷
+                </div>
+                <div class="space-y-1 max-w-[260px]">
+                  <p class="text-sm font-black text-white">Lector Óptico de Cámara Web</p>
+                  <p class="text-xs text-stone-300 leading-relaxed">
+                    Presiona el botón inferior para activar la cámara y escanear el QR del móvil del cliente.
+                  </p>
+                </div>
+
+                <button 
+                  type="button"
+                  @click="startCamera" 
+                  class="bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs px-6 py-3 rounded-xl border-2 border-emerald-400 shadow-lg transition flex items-center gap-2 cursor-pointer active:scale-95"
+                >
+                  <span>🎥</span>
+                  <span>Encender Cámara Web</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Controles de Cámara Activa -->
+            <div v-if="isCameraActive" class="flex items-center justify-between text-xs bg-stone-100 p-3 rounded-xl border-2 border-stone-300">
+              <span class="text-stone-800 font-bold flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-ping"></span>
+                Escaneando video en vivo...
               </span>
-            </div>
-
-            <!-- Estado de Cámara Inactiva: Botón Muy Prominente -->
-            <div v-if="!isCameraActive" class="p-6 space-y-3 flex flex-col items-center justify-center text-center">
-              <div class="w-16 h-16 rounded-2xl bg-stone-900 border border-stone-800 text-white flex items-center justify-center text-3xl shadow-inner">
-                📷
-              </div>
-              <div class="space-y-1 max-w-[240px]">
-                <p class="text-xs font-black text-stone-200">Escáner Óptico de Cámara</p>
-                <p class="text-[11px] text-stone-400 leading-snug">
-                  Activa la cámara web para leer el código QR que el cliente tiene en su móvil.
-                </p>
-              </div>
-
               <button 
                 type="button"
-                @click="startCamera" 
-                class="bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs px-5 py-3 rounded-xl shadow-lg shadow-emerald-950/40 transition flex items-center gap-2 cursor-pointer active:scale-95"
+                @click="stopCamera"
+                class="text-xs font-black text-white bg-red-600 hover:bg-red-700 border border-red-800 px-3.5 py-1.5 rounded-lg transition cursor-pointer"
               >
-                <span>🎥</span>
-                <span>Encender Cámara Web</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Controles de Cámara Activa -->
-          <div v-if="isCameraActive" class="flex items-center justify-between text-xs bg-stone-50 p-2.5 rounded-xl border border-stone-200">
-            <span class="text-stone-600 font-semibold text-[11px] flex items-center gap-1.5">
-              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-              Buscando código QR en pantalla...
-            </span>
-            <button 
-              type="button"
-              @click="stopCamera"
-              class="text-xs font-bold text-red-700 bg-red-100 hover:bg-red-200 px-3 py-1.5 rounded-lg transition cursor-pointer"
-            >
-              🛑 Apagar Cámara
-            </button>
-          </div>
-
-          <!-- Alerta de Error de Cámara -->
-          <div v-if="cameraError" class="p-3 bg-red-50 border border-red-200 rounded-xl text-red-900 text-xs font-semibold space-y-1">
-            <p>⚠️ <strong>Fallo de Cámara:</strong> {{ cameraError }}</p>
-            <p class="text-[11px] text-red-700">Puedes usar la opción alternativa de simulación rápida o pegar el token manual.</p>
-          </div>
-
-          <!-- Feedback de Éxito al Escanear -->
-          <div v-if="lastScannedSuccess" class="p-3.5 bg-emerald-50 border border-emerald-300 rounded-2xl text-emerald-950 text-xs font-bold flex items-center gap-2 animate-in fade-in">
-            <span class="text-xl">✅</span>
-            <div>
-              <p>¡Código QR leído con éxito!</p>
-              <p class="text-[10px] text-emerald-800 font-normal">Token registrado en la terminal.</p>
-            </div>
-          </div>
-
-          <!-- Alternativa Rápida: Simulación o Token Manual -->
-          <div class="space-y-2 pt-2 border-t border-stone-100">
-            <div class="flex items-center justify-between">
-              <label class="text-xs font-bold text-stone-700 flex items-center gap-1">
-                <span>Token QR del Cliente:</span>
-              </label>
-              <button 
-                type="button"
-                @click="simulateScan"
-                :disabled="simulating"
-                class="text-[11px] font-extrabold text-amber-950 bg-amber-200 hover:bg-amber-300 px-2.5 py-1 rounded-lg transition cursor-pointer shadow-xs active:scale-95 flex items-center gap-1"
-                title="Genera y carga un token temporal de prueba del cliente demo"
-              >
-                <span>⚡ Simular Escaneo Demo</span>
+                🛑 Apagar Cámara
               </button>
             </div>
 
-            <textarea 
-              v-model="tokenInput"
-              rows="2"
-              placeholder="El token aparecerá automáticamente al escanear con la cámara, o haz clic en 'Simular Escaneo Demo'..."
-              class="w-full text-xs font-mono bg-stone-50 border border-stone-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
-            ></textarea>
+            <!-- Alerta de Error de Cámara -->
+            <div v-if="cameraError" class="p-3.5 bg-red-50 border-2 border-red-400 rounded-xl text-red-950 text-xs font-bold space-y-1">
+              <p>⚠️ {{ cameraError }}</p>
+              <p class="text-[11px] text-red-800 font-medium">Usa el botón "Simular Escaneo Demo" o pega el token manualmente abajo.</p>
+            </div>
 
-            <p class="text-[10px] text-stone-400">
-              💡 <strong>Nota de ayuda:</strong> Cada token dura solo 60 segundos por seguridad antifraude.
-            </p>
+            <!-- Alerta de Éxito de Lectura -->
+            <div v-if="lastScannedSuccess" class="p-3.5 bg-emerald-100 border-2 border-emerald-600 rounded-xl text-emerald-950 text-xs font-black flex items-center gap-2.5">
+              <span class="text-lg">✅</span>
+              <div>
+                <p>¡Código QR del cliente detectado!</p>
+                <p class="text-[11px] text-emerald-800 font-semibold">Ahora completa los datos de factura en el Paso 2.</p>
+              </div>
+            </div>
+
+            <!-- Entrada Manual o Simulación -->
+            <div class="space-y-2 pt-3 border-t-2 border-stone-200">
+              <div class="flex items-center justify-between gap-2">
+                <label class="text-xs font-black text-stone-900">
+                  Token QR Escaneado o Manual:
+                </label>
+                <button 
+                  type="button"
+                  @click="simulateScan"
+                  :disabled="simulating"
+                  class="text-xs font-black text-stone-950 bg-amber-300 hover:bg-amber-400 border-2 border-amber-600 px-3 py-1.5 rounded-lg transition cursor-pointer shadow-sm active:scale-95 flex items-center gap-1"
+                >
+                  <span>⚡ Simular Escaneo Demo</span>
+                </button>
+              </div>
+
+              <textarea 
+                v-model="tokenInput"
+                rows="2"
+                placeholder="Aquí aparecerá el código al escanear con cámara, o presiona 'Simular Escaneo Demo'..."
+                class="w-full text-xs font-mono font-bold bg-stone-50 border-2 border-stone-400 rounded-xl p-3 text-stone-900 placeholder:text-stone-400 focus:bg-white focus:border-stone-900 focus:outline-none"
+              ></textarea>
+
+              <p class="text-[11px] text-stone-600 font-medium">
+                💡 <strong>Ayuda:</strong> Si estás probando sin cámara, haz clic en <strong>"⚡ Simular Escaneo Demo"</strong> para generar un QR real del cliente Camila.
+              </p>
+            </div>
           </div>
         </div>
 
-        <!-- COLUMNA DERECHA: FORMULARIO DE FACTURA POS (7 Columnas) -->
-        <div class="lg:col-span-7 bg-white rounded-3xl p-6 border border-stone-200/90 shadow-sm space-y-5">
-          <div class="border-b border-stone-100 pb-3 flex items-center justify-between">
+        <!-- COLUMNA DERECHA: PASO 2 - FACTURA POS (7 Columnas) -->
+        <div class="lg:col-span-7 bg-white rounded-2xl border-2 border-stone-400 shadow-md overflow-hidden flex flex-col justify-between">
+          <!-- Cabecera de Tarjeta -->
+          <div class="bg-stone-100 border-b-2 border-stone-300 px-6 py-4 flex items-center justify-between">
             <div>
-              <span class="text-[10px] uppercase font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full">Paso 2</span>
-              <h3 class="font-extrabold text-sm text-stone-900 mt-1">Registrar Datos de Factura POS</h3>
+              <span class="text-[11px] uppercase font-black text-stone-900 bg-amber-300 border border-amber-500 px-2.5 py-0.5 rounded-md">
+                Paso 2
+              </span>
+              <h3 class="font-black text-base text-stone-950 mt-1">Registrar Datos de Factura POS</h3>
             </div>
-            <span class="text-[11px] text-stone-400 font-medium">Campos obligatorios (*)</span>
+            <span class="text-xs text-stone-700 font-extrabold bg-stone-200 border border-stone-400 px-2.5 py-1 rounded-md">
+              Campos obligatorios (*)
+            </span>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- N° Factura -->
-            <div class="space-y-1.5">
-              <label class="text-xs font-bold text-stone-700 flex items-center justify-between">
-                <span>Número de Factura POS *</span>
-                <span class="text-[10px] text-stone-400 font-normal">Ticket físico</span>
-              </label>
-              <input 
-                v-model="invoiceRef"
-                type="text" 
-                placeholder="Ej: FAC-2026-00124"
-                class="w-full text-xs font-mono font-semibold bg-stone-50 border border-stone-200 rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
-              />
-              <p class="text-[10px] text-stone-400">Consecutivo impreso por tu software POS.</p>
-            </div>
-
-            <!-- Importe Total -->
-            <div class="space-y-1.5">
-              <label class="text-xs font-bold text-stone-700 flex items-center justify-between">
-                <span>Total Facturado (COP) *</span>
-                <span class="text-[10px] text-amber-800 font-bold">$10.000 / sello</span>
-              </label>
-              <input 
-                v-model.number="grossAmount"
-                type="number" 
-                placeholder="0 (Total factura)"
-                class="w-full text-xs font-mono font-bold bg-stone-50 border border-stone-200 rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-amber-500/50 text-stone-900"
-              />
-              <p class="text-[10px] text-stone-400">Monto total pagado por el cliente.</p>
-            </div>
-
-            <!-- Descuentos -->
-            <div class="space-y-1.5">
-              <label class="text-xs font-bold text-stone-700 flex items-center justify-between">
-                <span>Descuentos Comerciales (COP)</span>
-                <span class="text-[10px] text-stone-400 font-normal">Opcional</span>
-              </label>
-              <input 
-                v-model.number="discountAmount"
-                type="number" 
-                placeholder="0 (Si aplica)"
-                class="w-full text-xs font-mono bg-stone-50 border border-stone-200 rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
-              />
-              <p class="text-[10px] text-stone-400">Cupones o rebajas aplicadas.</p>
-            </div>
-
-            <!-- Valor Elegible Calculado -->
-            <div class="space-y-1.5">
-              <label class="text-xs font-bold text-stone-700">Valor Elegible para Sellos</label>
-              <div class="w-full text-xs font-mono font-black bg-stone-100 text-stone-900 rounded-xl px-3.5 py-2.5 border border-stone-200 flex items-center justify-between">
-                <span>${{ (eligibleAmount || 0).toLocaleString('es-CO') }} COP</span>
-                <span class="text-[10px] text-stone-500 font-normal">Base neta</span>
+          <!-- Cuerpo del Formulario -->
+          <div class="p-6 space-y-5 flex-1">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <!-- Campo 1: N° Factura -->
+              <div class="space-y-1.5">
+                <label class="text-xs font-black text-stone-900 flex items-center justify-between">
+                  <span>Número de Factura / Ticket *</span>
+                  <span class="text-[11px] text-stone-600 font-bold">Único por sede</span>
+                </label>
+                <input 
+                  v-model="invoiceRef"
+                  type="text" 
+                  placeholder="Ej: FAC-2026-00124"
+                  class="w-full text-sm font-mono font-bold bg-stone-50 border-2 border-stone-400 rounded-xl px-4 py-3 text-stone-950 placeholder:text-stone-400 focus:bg-white focus:border-stone-900 focus:outline-none"
+                />
+                <p class="text-[11px] text-stone-600 font-medium">
+                  Consecutivo impreso en el recibo entregado al cliente.
+                </p>
               </div>
-              <p class="text-[10px] text-stone-400">Total facturado menos descuentos.</p>
-            </div>
-          </div>
 
-          <!-- Caja de Cálculo Dinámico de Sellos -->
-          <div class="bg-amber-50/60 rounded-2xl p-4 border border-amber-200/80 space-y-2">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <span class="text-2xl">☕</span>
+              <!-- Campo 2: Importe Total -->
+              <div class="space-y-1.5">
+                <label class="text-xs font-black text-stone-900 flex items-center justify-between">
+                  <span>Importe Total Facturado (COP) *</span>
+                  <span class="text-[11px] text-amber-900 font-extrabold bg-amber-100 border border-amber-400 px-1.5 rounded">$10.000 = 1 sello</span>
+                </label>
+                <input 
+                  v-model.number="grossAmount"
+                  type="number" 
+                  placeholder="Ej: 30000"
+                  class="w-full text-sm font-mono font-bold bg-stone-50 border-2 border-stone-400 rounded-xl px-4 py-3 text-stone-950 placeholder:text-stone-400 focus:bg-white focus:border-stone-900 focus:outline-none"
+                />
+                <p class="text-[11px] text-stone-600 font-medium">
+                  Valor bruto en pesos antes de descuentos.
+                </p>
+              </div>
+
+              <!-- Campo 3: Descuentos -->
+              <div class="space-y-1.5">
+                <label class="text-xs font-black text-stone-900 flex items-center justify-between">
+                  <span>Descuentos Comerciales (COP)</span>
+                  <span class="text-[11px] text-stone-500 font-bold">Opcional</span>
+                </label>
+                <input 
+                  v-model.number="discountAmount"
+                  type="number" 
+                  placeholder="0"
+                  class="w-full text-sm font-mono font-bold bg-stone-50 border-2 border-stone-400 rounded-xl px-4 py-3 text-stone-950 placeholder:text-stone-400 focus:bg-white focus:border-stone-900 focus:outline-none"
+                />
+                <p class="text-[11px] text-stone-600 font-medium">
+                  Dejar en blanco o en 0 si no hubo descuento.
+                </p>
+              </div>
+
+              <!-- Campo 4: Valor Neto Calculado -->
+              <div class="space-y-1.5">
+                <label class="text-xs font-black text-stone-900">
+                  Valor Neto Elegible (Automático)
+                </label>
+                <div class="w-full text-sm font-mono font-black bg-stone-200 text-stone-950 rounded-xl px-4 py-3 border-2 border-stone-400 flex items-center justify-between">
+                  <span>${{ (eligibleAmount || 0).toLocaleString('es-CO') }} COP</span>
+                  <span class="text-[11px] text-stone-700 font-bold">Base sellos</span>
+                </div>
+                <p class="text-[11px] text-stone-600 font-medium">
+                  Calculado restando descuentos del total facturado.
+                </p>
+              </div>
+            </div>
+
+            <!-- Recuadro de Previsualización de Sellos -->
+            <div class="bg-amber-50 rounded-xl p-4 border-2 border-amber-400 flex flex-wrap items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-xl bg-stone-900 text-amber-400 flex items-center justify-center text-2xl font-black border border-stone-950">
+                  ☕
+                </div>
                 <div>
-                  <span class="text-base font-black font-mono text-coffee-900">+{{ calculatedStamps }} SELLOS GANADOS</span>
-                  <p class="text-[10px] text-stone-500">Regla activa: 1 sello por cada $10.000 COP netos (Máx. 3)</p>
+                  <span class="text-base font-black font-mono text-stone-950 block">
+                    +{{ calculatedStamps }} SELLOS A OTORGAR
+                  </span>
+                  <p class="text-xs text-stone-700 font-semibold">
+                    Regla vigente: 1 sello por cada $10.000 COP (Máximo 3 sellos por compra)
+                  </p>
                 </div>
               </div>
 
-              <div class="text-right">
-                <span v-if="eligibleAmount < 10000" class="text-[11px] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-md">
-                  Monto mínimo: $10.000 COP
+              <div>
+                <span v-if="eligibleAmount < 10000" class="text-xs font-extrabold text-amber-950 bg-amber-200 border border-amber-500 px-3 py-1 rounded-lg inline-block">
+                  ⚠️ Mínimo $10.000 COP para sumar sellos
                 </span>
-                <span v-else class="text-[11px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-md">
-                  Válido para acumular
+                <span v-else class="text-xs font-extrabold text-emerald-950 bg-emerald-200 border border-emerald-500 px-3 py-1 rounded-lg inline-block">
+                  ✓ Monto válido para acumular
                 </span>
               </div>
             </div>
-          </div>
 
-          <!-- Checklist de Validación Visual del Botón Principal -->
-          <div class="bg-stone-50 rounded-2xl p-3 border border-stone-200 space-y-1.5 text-xs">
-            <span class="font-extrabold text-[11px] text-stone-600 block">Requisitos para confirmar venta:</span>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px]">
-              <span class="flex items-center gap-1.5 font-medium" :class="tokenInput ? 'text-emerald-700 font-bold' : 'text-stone-400'">
-                <span>{{ tokenInput ? '✅' : '⚪' }}</span> Token QR leído
+            <!-- Lista de Verificación de Requisitos (Checklist) -->
+            <div class="bg-stone-100 rounded-xl p-4 border-2 border-stone-300 space-y-2">
+              <span class="font-black text-xs text-stone-800 uppercase tracking-wider block">
+                Estado de requisitos para registrar la compra:
               </span>
-              <span class="flex items-center gap-1.5 font-medium" :class="invoiceRef ? 'text-emerald-700 font-bold' : 'text-stone-400'">
-                <span>{{ invoiceRef ? '✅' : '⚪' }}</span> N° de factura
-              </span>
-              <span class="flex items-center gap-1.5 font-medium" :class="eligibleAmount > 0 ? 'text-emerald-700 font-bold' : 'text-stone-400'">
-                <span>{{ eligibleAmount > 0 ? '✅' : '⚪' }}</span> Importe &gt; $0
-              </span>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
+                <div 
+                  class="p-2 rounded-lg border flex items-center gap-2 font-bold"
+                  :class="tokenInput ? 'bg-emerald-100 border-emerald-500 text-emerald-950' : 'bg-white border-stone-300 text-stone-600'"
+                >
+                  <span>{{ tokenInput ? '✅' : '1️⃣' }}</span>
+                  <span>QR Escaneado</span>
+                </div>
+
+                <div 
+                  class="p-2 rounded-lg border flex items-center gap-2 font-bold"
+                  :class="invoiceRef ? 'bg-emerald-100 border-emerald-500 text-emerald-950' : 'bg-white border-stone-300 text-stone-600'"
+                >
+                  <span>{{ invoiceRef ? '✅' : '2️⃣' }}</span>
+                  <span>N° de Factura</span>
+                </div>
+
+                <div 
+                  class="p-2 rounded-lg border flex items-center gap-2 font-bold"
+                  :class="eligibleAmount > 0 ? 'bg-emerald-100 border-emerald-500 text-emerald-950' : 'bg-white border-stone-300 text-stone-600'"
+                >
+                  <span>{{ eligibleAmount > 0 ? '✅' : '3️⃣' }}</span>
+                  <span>Importe &gt; $0</span>
+                </div>
+              </div>
             </div>
-          </div>
 
-          <!-- Botón de Confirmación Principal (Muy Dinámico y Visible) -->
-          <button 
-            type="button"
-            @click="submitPurchase"
-            :disabled="isSubmitting || !tokenInput || !invoiceRef || eligibleAmount <= 0"
-            class="w-full font-black text-sm py-4 rounded-2xl shadow-md transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer active:scale-98"
-            :class="(!tokenInput || !invoiceRef || eligibleAmount <= 0)
-              ? 'bg-stone-200 text-stone-400 cursor-not-allowed border border-stone-300' 
-              : 'bg-emerald-600 hover:bg-emerald-700 text-white ring-4 ring-emerald-500/20 shadow-emerald-950/20 animate-pulse'"
-          >
-            <span v-if="isSubmitting">Procesando Venta en Base de Datos...</span>
-            <span v-else-if="!tokenInput || !invoiceRef || eligibleAmount <= 0">
-              Completa los 3 requisitos arriba para registrar venta
-            </span>
-            <span v-else>
-              ✅ Confirmar y Registrar Venta en Caja (+{{ calculatedStamps }} Sellos) →
-            </span>
-          </button>
+            <!-- Botón Principal de Confirmación con Alto Contraste -->
+            <button 
+              type="button"
+              @click="submitPurchase"
+              :disabled="isSubmitting || !tokenInput || !invoiceRef || eligibleAmount <= 0"
+              class="w-full font-black text-sm py-4 px-6 rounded-xl border-2 shadow-md transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer"
+              :class="(!tokenInput || !invoiceRef || eligibleAmount <= 0)
+                ? 'bg-stone-300 text-stone-700 border-stone-400 cursor-not-allowed' 
+                : 'bg-emerald-700 hover:bg-emerald-800 text-white border-emerald-950 shadow-lg ring-4 ring-emerald-500/20'"
+            >
+              <span v-if="isSubmitting">⏳ Procesando Transacción en Base de Datos...</span>
+              <span v-else-if="!tokenInput || !invoiceRef || eligibleAmount <= 0">
+                🔒 Completa los 3 pasos superiores para habilitar el registro
+              </span>
+              <span v-else>
+                ✅ Confirmar y Registrar Venta en Caja (+{{ calculatedStamps }} Sellos) →
+              </span>
+            </button>
 
-          <!-- Mensajes de Error y Éxito -->
-          <div v-if="errorMessage" class="p-4 bg-red-50 border border-red-200 rounded-2xl text-red-900 text-xs font-bold flex items-center gap-2 animate-in fade-in">
-            <span>❌</span> {{ errorMessage }}
-          </div>
-
-          <div v-if="successPurchase" class="p-5 bg-emerald-50 border border-emerald-300 rounded-2xl text-emerald-950 text-xs space-y-2 animate-in fade-in">
-            <div class="flex items-center justify-between font-bold">
-              <span class="text-emerald-800 text-sm">🎉 ¡Venta Confirmada Exitosamente!</span>
-              <span class="font-mono text-[11px]">{{ successPurchase.purchase_id }}</span>
+            <!-- Alertas de Resultado -->
+            <div v-if="errorMessage" class="p-4 bg-red-100 border-2 border-red-600 rounded-xl text-red-950 text-xs font-black flex items-center gap-2">
+              <span class="text-base">❌</span>
+              <span>{{ errorMessage }}</span>
             </div>
-            <p>Cliente acreditado: <strong>{{ successPurchase.customer_name }}</strong></p>
-            <p>Sellos sumados: <strong>+{{ successPurchase.stamps_awarded }} sellos</strong></p>
-            <div v-if="successPurchase.rewards_issued.length > 0" class="p-3 bg-amber-100 rounded-xl text-amber-950 font-bold border border-amber-300">
-              🎁 ¡TARJETA COMPLETADA (8/8)! Se generó el premio: {{ successPurchase.rewards_issued[0].name }}
+
+            <div v-if="successPurchase" class="p-5 bg-emerald-100 border-2 border-emerald-700 rounded-xl text-emerald-950 text-xs space-y-2 shadow-md">
+              <div class="flex items-center justify-between font-black text-sm">
+                <span>🎉 ¡Venta Registrada Exitosamente!</span>
+                <span class="font-mono text-xs bg-white px-2 py-0.5 rounded border border-emerald-500">
+                  Factura: {{ successPurchase.receipt_reference }}
+                </span>
+              </div>
+              <p class="font-semibold">Cliente: <strong>{{ successPurchase.customer_name }}</strong></p>
+              <p class="font-semibold">Sellos acreditados en esta compra: <strong>+{{ successPurchase.stamps_awarded }} sellos</strong></p>
+              <div v-if="successPurchase.rewards_issued.length > 0" class="p-3 bg-amber-200 rounded-lg text-stone-950 font-black border-2 border-amber-600 mt-2">
+                🎁 ¡TARJETA COMPLETADA (8/8)! Se emitió el premio: {{ successPurchase.rewards_issued[0].name }}
+              </div>
             </div>
           </div>
         </div>
@@ -464,82 +531,88 @@
       <!-- =================================================================== -->
       <!-- MODO 2: CANJEAR RECOMPENSA DE CORTESÍA                              -->
       <!-- =================================================================== -->
-      <div v-else class="max-w-2xl mx-auto bg-white rounded-3xl p-6 border border-stone-200/90 shadow-sm space-y-5 animate-in fade-in">
-        <div class="flex items-center justify-between border-b border-stone-100 pb-3">
+      <div v-else class="max-w-2xl mx-auto bg-white rounded-2xl border-2 border-stone-400 shadow-md overflow-hidden">
+        <div class="bg-stone-100 border-b-2 border-stone-300 px-6 py-4 flex items-center justify-between">
           <div>
-            <span class="text-[10px] uppercase font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full">Canje de Cortesía</span>
-            <h3 class="font-black text-base text-stone-900 mt-1">Entrega de Premio al Cliente</h3>
+            <span class="text-[11px] uppercase font-black text-stone-950 bg-amber-300 border border-amber-500 px-2.5 py-0.5 rounded-md">
+              Canje de Cortesía
+            </span>
+            <h3 class="font-black text-base text-stone-950 mt-1">Validar y Entregar Premio al Cliente</h3>
           </div>
-          <span class="text-xs font-bold text-amber-800 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full">
+          <span class="text-xs font-black text-stone-900 bg-amber-100 border-2 border-amber-400 px-3 py-1 rounded-lg">
             {{ activeStore.name }}
           </span>
         </div>
 
-        <div class="bg-amber-50/70 p-4 rounded-2xl border border-amber-200 text-xs text-amber-900 space-y-1">
-          <p class="font-bold">💡 Instrucción para el Cajero:</p>
-          <p class="text-[11px] text-amber-800">
-            Pide al cliente abrir su pantalla de <strong>"Premios"</strong> en la web/móvil y presionar <strong>"Redimir en Caja"</strong> para generar su código QR de entrega.
-          </p>
-        </div>
-
-        <!-- Cámara para Redención -->
-        <div class="space-y-2">
-          <div class="flex items-center justify-between">
-            <label class="text-xs font-bold text-stone-700">Token QR de Redención:</label>
-            <button 
-              v-if="!isCameraActive"
-              type="button"
-              @click="startCamera" 
-              class="text-xs font-bold text-emerald-800 bg-emerald-100 hover:bg-emerald-200 px-3 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1"
-            >
-              <span>🎥</span> Encender Cámara
-            </button>
-            <button 
-              v-else
-              type="button"
-              @click="stopCamera" 
-              class="text-xs font-bold text-red-800 bg-red-100 hover:bg-red-200 px-3 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1"
-            >
-              <span>🛑</span> Apagar Cámara
-            </button>
+        <div class="p-6 space-y-5">
+          <div class="bg-amber-50 p-4 rounded-xl border-2 border-amber-400 text-xs text-stone-900 space-y-1">
+            <p class="font-black text-amber-950">💡 Instrucción para el Cajero:</p>
+            <p class="font-medium text-stone-700">
+              Pide al cliente abrir la sección <strong>"Premios"</strong> en su aplicación y pulsar <strong>"Redimir en Caja"</strong>. Escanea ese QR con la cámara o pega el token abajo.
+            </p>
           </div>
 
-          <!-- Visor Cámara en Redención -->
-          <div v-if="isCameraActive" class="aspect-video bg-black rounded-2xl overflow-hidden relative mb-2">
-            <video ref="videoRef" class="w-full h-full object-cover" autoplay muted playsinline></video>
-            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div class="w-40 h-40 border-2 border-amber-400 rounded-2xl animate-pulse"></div>
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-black text-stone-900">Token QR de Redención del Premio:</label>
+              <button 
+                v-if="!isCameraActive"
+                type="button"
+                @click="startCamera" 
+                class="text-xs font-black text-white bg-emerald-700 hover:bg-emerald-800 border-2 border-emerald-900 px-3.5 py-1.5 rounded-lg transition cursor-pointer flex items-center gap-1.5"
+              >
+                <span>🎥</span> Encender Cámara
+              </button>
+              <button 
+                v-else
+                type="button"
+                @click="stopCamera" 
+                class="text-xs font-black text-white bg-red-600 hover:bg-red-700 border-2 border-red-800 px-3.5 py-1.5 rounded-lg transition cursor-pointer flex items-center gap-1.5"
+              >
+                <span>🛑</span> Apagar Cámara
+              </button>
             </div>
+
+            <!-- Visor Cámara en Redención -->
+            <div v-if="isCameraActive" class="aspect-video bg-stone-950 rounded-xl overflow-hidden relative border-2 border-stone-800">
+              <video ref="videoRef" class="w-full h-full object-cover" autoplay muted playsinline></video>
+              <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div class="w-40 h-40 border-2 border-amber-400 rounded-xl animate-pulse"></div>
+              </div>
+            </div>
+
+            <textarea 
+              v-model="tokenInput"
+              rows="3"
+              placeholder="Escanea el QR de redención con la cámara o pega aquí el token (ej: cfy_redemption_...)"
+              class="w-full text-xs font-mono font-bold bg-stone-50 border-2 border-stone-400 rounded-xl p-3.5 text-stone-950 placeholder:text-stone-400 focus:bg-white focus:border-stone-900 focus:outline-none"
+            ></textarea>
           </div>
 
-          <textarea 
-            v-model="tokenInput"
-            rows="3"
-            placeholder="Apunta la cámara al QR de redención o escribe el token aquí (cfy_redemption_...)"
-            class="w-full text-xs font-mono bg-stone-50 border border-stone-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
-          ></textarea>
-        </div>
+          <button 
+            type="button"
+            @click="submitRedemption"
+            :disabled="isSubmitting || !tokenInput"
+            class="w-full font-black text-sm py-4 px-6 rounded-xl border-2 shadow-md transition duration-150 flex items-center justify-center gap-2 cursor-pointer"
+            :class="!tokenInput 
+              ? 'bg-stone-300 text-stone-700 border-stone-400 cursor-not-allowed' 
+              : 'bg-amber-600 hover:bg-amber-700 text-white border-amber-900 shadow-lg'"
+          >
+            <span v-if="isSubmitting">⏳ Validando Canje en Base de Datos...</span>
+            <span v-else-if="!tokenInput">🔒 Escanea o ingresa el token de redención para continuar</span>
+            <span v-else>🎁 Confirmar Entrega de Recompensa al Cliente →</span>
+          </button>
 
-        <button 
-          type="button"
-          @click="submitRedemption"
-          :disabled="isSubmitting || !tokenInput"
-          class="w-full font-black text-sm py-4 rounded-2xl shadow-md transition duration-150 flex items-center justify-center gap-2 cursor-pointer"
-          :class="!tokenInput ? 'bg-stone-200 text-stone-400 cursor-not-allowed' : 'bg-amber-700 hover:bg-amber-800 text-white'"
-        >
-          <span v-if="isSubmitting">Validando Canje en Servidor...</span>
-          <span v-else>🎁 Confirmar Entrega de Recompensa al Cliente</span>
-        </button>
+          <div v-if="errorMessage" class="p-4 bg-red-100 border-2 border-red-600 rounded-xl text-red-950 text-xs font-black flex items-center gap-2">
+            <span>❌</span> {{ errorMessage }}
+          </div>
 
-        <div v-if="errorMessage" class="p-4 bg-red-50 border border-red-200 rounded-2xl text-red-900 text-xs font-bold flex items-center gap-2 animate-in fade-in">
-          <span>❌</span> {{ errorMessage }}
-        </div>
-
-        <div v-if="successRedemption" class="p-5 bg-emerald-50 border border-emerald-300 rounded-2xl text-emerald-950 text-xs space-y-2 animate-in fade-in">
-          <span class="font-black text-sm">🎉 ¡Premio Entregado con Éxito!</span>
-          <p>Producto entregado: <strong>{{ successRedemption.reward_name }}</strong></p>
-          <p>Cliente: <strong>{{ successRedemption.customer_name }}</strong></p>
-          <p class="text-[11px] text-stone-500 font-mono">Redención ID: {{ successRedemption.redemption_id }}</p>
+          <div v-if="successRedemption" class="p-5 bg-emerald-100 border-2 border-emerald-700 rounded-xl text-emerald-950 text-xs space-y-2">
+            <span class="font-black text-sm block">🎉 ¡Premio Validado y Entregado con Éxito!</span>
+            <p class="font-semibold">Bebida / Producto: <strong>{{ successRedemption.reward_name }}</strong></p>
+            <p class="font-semibold">Cliente: <strong>{{ successRedemption.customer_name }}</strong></p>
+            <p class="text-[11px] text-stone-700 font-mono">ID Auditoría: {{ successRedemption.redemption_id }}</p>
+          </div>
         </div>
       </div>
     </template>
@@ -560,7 +633,7 @@ const activeStore = ref<StoreItem | null>(null);
 const pendingStoreSelection = ref<StoreItem | null>(null);
 const isSelectingStore = ref(false);
 
-// Formulario de Factura (Comienza en Blanco con Placeholders)
+// Formulario de Factura (Comienza en Blanco)
 const tokenInput = ref('');
 const invoiceRef = ref('');
 const grossAmount = ref<number | null>(null);
@@ -598,7 +671,7 @@ const playBeep = () => {
       osc.stop(audioCtx.currentTime + 0.15);
     }
   } catch {
-    // Silently ignore if blocked
+    // Ignore audio restriction if any
   }
 };
 
@@ -644,13 +717,13 @@ const startCamera = async () => {
           }
         }
         if (err && !(err.name === 'NotFoundException')) {
-          // cuadros intermedios sin QR se ignoran
+          // Ignore normal non-QR frames
         }
       }
     );
   } catch (err: any) {
     console.error('Error al iniciar cámara:', err);
-    cameraError.value = 'No se pudo acceder a la cámara. Por favor concede permisos de video en tu navegador.';
+    cameraError.value = 'No se pudo acceder a la cámara. Concede permisos de video en tu navegador.';
     isCameraActive.value = false;
   }
 };
