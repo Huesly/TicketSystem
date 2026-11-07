@@ -52,53 +52,69 @@
     <!-- Modal de Código QR Dinámico (60 segundos) -->
     <div v-if="showQrModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-        <div class="flex items-center justify-between mb-4">
-          <span class="text-xs font-bold uppercase tracking-wider text-amber-800 bg-amber-100 px-3 py-1 rounded-full">QR en Vivo (FastAPI)</span>
-          <button @click="showQrModal = false" class="text-stone-400 hover:text-stone-600 p-1">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-amber-800 bg-amber-100 px-3 py-1 rounded-full">QR Dinámico (60s)</span>
+          <button @click="showQrModal = false" class="text-stone-400 hover:text-stone-600 p-1 cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
 
-        <h3 class="font-extrabold text-stone-900 text-lg mb-1">Muestra este código al pagar</h3>
-        <p class="text-xs text-stone-500 mb-4">El cajero lo escaneará en la terminal POS para acreditar sellos.</p>
+        <h3 class="font-extrabold text-stone-900 text-lg mb-1">Muestra este QR al pagar</h3>
+        <p class="text-xs text-stone-500 mb-4">El cajero lo escaneará en la terminal POS para acreditar tus sellos.</p>
 
-        <!-- Contenedor QR y Token -->
-        <div class="bg-white p-4 rounded-2xl border-2 border-stone-100 inline-block shadow-inner mb-4 w-full">
-          <div class="w-full h-44 bg-stone-50 flex flex-col items-center justify-center rounded-xl overflow-hidden relative">
-            <div v-if="loadingQr" class="text-xs text-stone-500 font-semibold animate-pulse">
-              Generando token efímero...
+        <!-- Contenedor del Código QR Real -->
+        <div class="bg-stone-50 p-4 rounded-3xl border-2 border-stone-200/80 inline-block shadow-inner mb-3 w-full relative min-h-[220px] flex items-center justify-center">
+          <!-- Spinner de Carga -->
+          <div v-if="loadingQr" class="text-xs text-stone-500 font-semibold animate-pulse flex flex-col items-center gap-2">
+            <div class="w-8 h-8 border-3 border-caramel border-t-transparent rounded-full animate-spin"></div>
+            Generando QR en servidor...
+          </div>
+
+          <!-- Overlay de Código Expirado -->
+          <div v-else-if="qrExpired" class="absolute inset-0 bg-white/95 backdrop-blur-xs rounded-3xl flex flex-col items-center justify-center p-4 z-10 space-y-3">
+            <span class="text-3xl">⏱️</span>
+            <div>
+              <p class="text-xs font-bold text-red-600">Código Expirado</p>
+              <p class="text-[11px] text-stone-400">Por seguridad, cada QR dura 60 segundos</p>
             </div>
-            <div v-else-if="qrExpired" class="absolute inset-0 bg-white/95 backdrop-blur-xs flex flex-col items-center justify-center p-4">
-              <p class="text-xs font-bold text-red-600 mb-2">Código Expirado (60s)</p>
-              <button @click="fetchQr" class="bg-coffee-900 text-white text-xs font-bold px-3 py-1.5 rounded-lg cursor-pointer">
-                Generar Nuevo
-              </button>
-            </div>
-            <div v-else class="flex flex-col items-center w-full px-2">
-              <span class="text-5xl mb-2">📱</span>
-              <span class="text-[10px] uppercase font-bold text-stone-400 tracking-wider">Token Criptográfico</span>
-              <code class="text-[11px] font-mono font-bold text-coffee-900 bg-amber-50 px-2 py-1 rounded border border-amber-200 mt-1 max-w-full break-all">
-                {{ qrToken }}
-              </code>
-            </div>
+            <button @click="fetchQr" class="bg-coffee-900 hover:bg-black text-white text-xs font-bold px-4 py-2 rounded-xl cursor-pointer shadow-sm">
+              Generar Nuevo QR
+            </button>
+          </div>
+
+          <!-- Componente QR Real Escaneable -->
+          <div v-else class="flex flex-col items-center justify-center bg-white p-3 rounded-2xl shadow-xs border border-stone-100">
+            <qrcode-vue 
+              :value="qrToken" 
+              :size="190" 
+              level="M" 
+              render-as="svg"
+              class="rounded-lg"
+            />
           </div>
         </div>
 
-        <!-- Copiar para POS Test -->
-        <button 
-          v-if="!qrExpired && qrToken"
-          @click="copyToken"
-          class="w-full mb-3 text-xs font-bold bg-amber-100 hover:bg-amber-200 text-amber-900 py-2 rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer"
-        >
-          <span>{{ copied ? '✅ Token Copiado' : '📋 Copiar Token para Pegar en Caja' }}</span>
-        </button>
+        <!-- Token de Texto y Copiar (útil para pruebas y contingencias) -->
+        <div class="mb-3 space-y-1.5">
+          <div class="flex items-center justify-between text-[11px] text-stone-400 font-medium px-1">
+            <span>Token de Contingencia:</span>
+            <span class="font-mono text-stone-500 font-bold">{{ qrToken.substring(0, 18) }}...</span>
+          </div>
+          <button 
+            v-if="!qrExpired && qrToken"
+            @click="copyToken"
+            class="w-full text-xs font-bold bg-amber-100 hover:bg-amber-200 text-amber-900 py-2 rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer"
+          >
+            <span>{{ copied ? '✅ Token Copiado' : '📋 Copiar Token para Pegar en Caja' }}</span>
+          </button>
+        </div>
 
         <!-- Temporizador Regresivo (60 segundos) -->
-        <div class="flex items-center justify-center gap-2 text-xs font-semibold text-stone-600">
-          <div class="w-2 h-2 rounded-full" :class="timeLeft > 15 ? 'bg-emerald-500 animate-pulse' : 'bg-red-500 animate-ping'"></div>
-          <span>Expira en <strong class="text-stone-900 font-mono">{{ timeLeft }}s</strong></span>
+        <div class="flex items-center justify-center gap-2 text-xs font-semibold text-stone-600 bg-stone-100/80 py-2 rounded-xl">
+          <div class="w-2.5 h-2.5 rounded-full" :class="timeLeft > 15 ? 'bg-emerald-500 animate-pulse' : 'bg-red-500 animate-ping'"></div>
+          <span>Válido durante: <strong class="text-stone-900 font-mono text-sm">{{ timeLeft }}s</strong></span>
         </div>
       </div>
     </div>
@@ -107,6 +123,7 @@
 
 <script setup lang="ts">
 import { ref, onUnmounted } from 'vue';
+import QrcodeVue from 'qrcode.vue';
 import { api } from './api';
 
 const showQrModal = ref(false);

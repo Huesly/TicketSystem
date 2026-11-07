@@ -57,7 +57,17 @@
         </div>
 
         <div class="space-y-2">
-          <label class="text-xs font-semibold text-stone-600">Pegar o Escanear Token QR del Cliente:</label>
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-semibold text-stone-600">Pegar o Escanear Token QR del Cliente:</label>
+            <button 
+              type="button"
+              @click="simulateScan"
+              :disabled="simulating"
+              class="text-[11px] font-bold text-amber-900 bg-amber-100 hover:bg-amber-200 px-2.5 py-1 rounded-lg transition cursor-pointer flex items-center gap-1"
+            >
+              <span>⚡ Simular Escaneo</span>
+            </button>
+          </div>
           <textarea 
             v-model="tokenInput"
             rows="3"
@@ -206,9 +216,23 @@ const invoiceRef = ref('FAC-2026-' + Math.floor(10000 + Math.random() * 90000));
 const grossAmount = ref(35000);
 const discountAmount = ref(0);
 const isSubmitting = ref(false);
+const simulating = ref(false);
 const errorMessage = ref('');
 const successPurchase = ref<PurchaseResponse | null>(null);
 const successRedemption = ref<RedemptionResponse | null>(null);
+
+const simulateScan = async () => {
+  simulating.value = true;
+  errorMessage.value = '';
+  try {
+    const res = await adminApi.generateDemoPurchaseQr();
+    tokenInput.value = res.qr_token;
+  } catch (err: any) {
+    errorMessage.value = 'Error al generar token demo del cliente';
+  } finally {
+    simulating.value = false;
+  }
+};
 
 const stores = ref<StoreItem[]>([
   { id: '87c69994-6e69-425b-8cb0-b08be5f97371', code: 'SEDE-01', name: 'Sede Cabecera', city: 'Bucaramanga', status: 'active' },

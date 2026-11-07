@@ -105,5 +105,11 @@ export const adminApi = {
       throw new Error(msg);
     }
     return res.json();
+  },
+
+  async generateDemoPurchaseQr(): Promise<{ qr_token: string }> {
+    const res = await fetch(`${API_BASE}/me/qr/purchase`, { method: 'POST' });
+    if (!res.ok) throw new Error('Fallo al generar QR demo');
+    return res.json();
   }
 };

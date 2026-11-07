@@ -73,25 +73,28 @@
       <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl space-y-4">
         <div class="flex items-center justify-between">
           <span class="text-xs font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full">
-            QR de Canje
+            QR de Redención
           </span>
           <button @click="selectedReward = null" class="text-stone-400 hover:text-stone-600 p-1 cursor-pointer">✕</button>
         </div>
 
         <h3 class="font-extrabold text-stone-900 text-lg">{{ selectedReward.name }}</h3>
-        <p class="text-xs text-stone-500">Muestra este código al cajero para recibir tu premio.</p>
+        <p class="text-xs text-stone-500">Muestra este código al cajero para recibir tu premio en caja.</p>
 
-        <div class="bg-white p-4 rounded-2xl border-2 border-stone-100 inline-block shadow-inner w-full">
-          <div class="w-full h-44 bg-stone-50 flex items-center justify-center rounded-xl font-mono text-xs text-stone-400 flex-col gap-2 p-2">
-            <span class="text-4xl">🎁</span>
-            <div v-if="redemptionToken" class="w-full px-2">
-              <code class="text-[11px] font-mono font-bold text-emerald-900 bg-emerald-50 px-2 py-1 rounded border border-emerald-200 break-all block">
-                {{ redemptionToken }}
-              </code>
-            </div>
-            <div v-else class="text-xs text-stone-400 animate-pulse">
-              Generando código efímero...
-            </div>
+        <!-- Contenedor QR Real -->
+        <div class="bg-stone-50 p-4 rounded-3xl border-2 border-stone-200/80 inline-block shadow-inner w-full min-h-[200px] flex items-center justify-center">
+          <div v-if="!redemptionToken" class="text-xs text-stone-400 animate-pulse flex flex-col items-center gap-2">
+            <div class="w-8 h-8 border-3 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
+            Generando código de redención...
+          </div>
+          <div v-else class="flex flex-col items-center justify-center bg-white p-3 rounded-2xl shadow-xs border border-stone-100">
+            <qrcode-vue 
+              :value="redemptionToken" 
+              :size="180" 
+              level="M" 
+              render-as="svg"
+              class="rounded-lg"
+            />
           </div>
         </div>
 
@@ -113,6 +116,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
+import QrcodeVue from 'qrcode.vue';
 import { api, type CustomerReward } from '../api';
 
 const loading = ref(true);
