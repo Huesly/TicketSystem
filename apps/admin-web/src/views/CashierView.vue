@@ -267,17 +267,34 @@
 
             <!-- Barra de Control cuando la cámara está activa -->
             <div v-if="isCameraActive" class="flex items-center justify-between text-xs bg-stone-50 p-2.5 rounded-xl border border-stone-300">
-              <span class="text-stone-700 font-medium text-[11px]">Capturando señal de video...</span>
-              <button 
-                type="button"
-                @click="stopCamera"
-                class="text-xs font-semibold text-red-700 bg-white hover:bg-red-50 border border-red-300 px-2.5 py-1 rounded-lg transition cursor-pointer flex items-center gap-1"
-              >
-                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <rect width="18" height="18" x="3" y="3" rx="2"/>
-                </svg>
-                <span>Detener</span>
-              </button>
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+                <span class="text-stone-700 font-semibold text-[11px] truncate">{{ activeCameraLabel }}</span>
+              </div>
+              <div class="flex items-center gap-1.5 shrink-0">
+                <button 
+                  v-if="availableCameras.length > 1"
+                  type="button"
+                  @click="toggleCamera"
+                  class="text-xs font-semibold text-stone-800 bg-white hover:bg-stone-100 border border-stone-300 px-2.5 py-1 rounded-lg transition cursor-pointer flex items-center gap-1"
+                  title="Girar entre cámara trasera y frontal"
+                >
+                  <svg class="w-3.5 h-3.5 text-stone-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 19H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h5"/><circle cx="12" cy="13" r="3"/><path d="m18 22 3-3-3-3"/><path d="m6 2-3 3 3 3"/>
+                  </svg>
+                  <span>Girar</span>
+                </button>
+                <button 
+                  type="button"
+                  @click="stopCamera"
+                  class="text-xs font-semibold text-red-700 bg-white hover:bg-red-50 border border-red-300 px-2.5 py-1 rounded-lg transition cursor-pointer flex items-center gap-1"
+                >
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect width="18" height="18" x="3" y="3" rx="2"/>
+                  </svg>
+                  <span>Detener</span>
+                </button>
+              </div>
             </div>
 
             <!-- Mensajes de Estado de Cámara -->
@@ -645,6 +662,23 @@ const playBeep = () => {
   }
 };
 
+const availableCameras = ref<MediaDeviceInfo[]>([]);
+const currentCameraIndex = ref(0);
+
+const activeCameraLabel = computed(() => {
+  if (availableCameras.value.length === 0) return 'Cámara';
+  const dev = availableCameras.value[currentCameraIndex.value];
+  if (!dev) return 'Cámara';
+  const lbl = dev.label.toLowerCase();
+  if (lbl.includes('back') || lbl.includes('rear') || lbl.includes('trasera') || lbl.includes('environment')) {
+    return 'Cámara Trasera';
+  }
+  if (lbl.includes('front') || lbl.includes('delantera') || lbl.includes('user')) {
+    return 'Cámara Frontal';
+  }
+  return dev.label || `Cámara ${currentCameraIndex.value + 1}`;
+});
+
 const startCamera = async () => {
   cameraError.value = '';
   isCameraActive.value = true;
@@ -670,31 +704,54 @@ const startCamera = async () => {
       return;
     }
 
-    const selectedDeviceId = videoInputDevices[0].deviceId;
+    availableCameras.value = videoInputDevices;
 
-    codeReader.decodeFromVideoDevice(
-      selectedDeviceId,
-      videoRef.value,
-      (result, err) => {
-        if (result) {
-          const scannedText = result.getText();
-          if (scannedText && scannedText !== tokenInput.value) {
-            tokenInput.value = scannedText;
-            playBeep();
-            lastScannedSuccess.value = true;
-            setTimeout(() => { lastScannedSuccess.value = false; }, 3500);
-          }
-        }
-        if (err && !(err.name === 'NotFoundException')) {
-          // Ignore non-QR frames
-        }
-      }
-    );
+    // Priorizar lente trasero en celulares
+    const rearIdx = videoInputDevices.findIndex(d => {
+      const l = d.label.toLowerCase();
+      return l.includes('back') || l.includes('rear') || l.includes('trasera') || l.includes('environment');
+    });
+    if (rearIdx !== -1) {
+      currentCameraIndex.value = rearIdx;
+    } else if (currentCameraIndex.value >= videoInputDevices.length) {
+      currentCameraIndex.value = 0;
+    }
+
+    decodeCurrentDevice();
   } catch (err: any) {
     console.error('Error al iniciar cámara:', err);
     cameraError.value = 'Permiso de cámara denegado o dispositivo ocupado.';
     isCameraActive.value = false;
   }
+};
+
+const decodeCurrentDevice = () => {
+  if (!codeReader || !videoRef.value || availableCameras.value.length === 0) return;
+  const device = availableCameras.value[currentCameraIndex.value];
+  if (!device) return;
+
+  codeReader.reset();
+  codeReader.decodeFromVideoDevice(
+    device.deviceId,
+    videoRef.value,
+    (result, _err) => {
+      if (result) {
+        const scannedText = result.getText();
+        if (scannedText && scannedText !== tokenInput.value) {
+          tokenInput.value = scannedText;
+          playBeep();
+          lastScannedSuccess.value = true;
+          setTimeout(() => { lastScannedSuccess.value = false; }, 3500);
+        }
+      }
+    }
+  );
+};
+
+const toggleCamera = () => {
+  if (availableCameras.value.length <= 1) return;
+  currentCameraIndex.value = (currentCameraIndex.value + 1) % availableCameras.value.length;
+  decodeCurrentDevice();
 };
 
 const stopCamera = () => {

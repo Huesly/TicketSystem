@@ -1,5 +1,5 @@
 // =============================================================================
-// CLIENTE API PARA TERMINAL POS Y BACKOFFICE CON AUTENTICACIÓN JWT
+// CLIENTE API PARA TERMINAL POS Y BACKOFFICE CON AUTENTICACIÓN JWT Y CRUD
 // =============================================================================
 
 const API_BASE = import.meta.env.VITE_API_URL || '/api/v1';
@@ -37,6 +37,7 @@ export interface StoreItem {
   code: string;
   name: string;
   city: string;
+  department?: string;
   status: string;
   phone?: string;
   address?: string;
@@ -82,6 +83,33 @@ export interface RedemptionResponse {
   reward_name: string;
   customer_name?: string;
   redeemed_at: string;
+}
+
+export interface AuditTransactionItem {
+  id: string;
+  type: 'PURCHASE' | 'REDEMPTION';
+  reference: string;
+  created_at: string;
+  store_name: string;
+  customer_name: string;
+  customer_email: string;
+  cashier_name: string;
+  amount_cop?: number | null;
+  stamps_awarded?: number | null;
+  reward_name?: string | null;
+  status: string;
+}
+
+export interface ProductAdminItem {
+  id: string;
+  business_id: string;
+  name: string;
+  description: string;
+  price: number;
+  currency: string;
+  available: boolean;
+  featured_order?: number | null;
+  published_at?: string;
 }
 
 function getAuthHeaders(): HeadersInit {
@@ -173,10 +201,88 @@ export const adminApi = {
     return res.json();
   },
 
+  async getTransactions(storeId?: string, limit = 50): Promise<AuditTransactionItem[]> {
+    const url = storeId
+      ? `${API_BASE}/admin/transactions?store_id=${storeId}&limit=${limit}`
+      : `${API_BASE}/admin/transactions?limit=${limit}`;
+    const res = await fetch(url, { headers: getAuthHeaders() });
+    if (!res.ok) throw new Error(`Error ${res.status}: Fallo al consultar auditoría`);
+    return res.json();
+  },
+
   async getStores(): Promise<StoreItem[]> {
     const res = await fetch(`${API_BASE}/admin/stores`, { headers: getAuthHeaders() });
     if (!res.ok) throw new Error(`Error ${res.status}: Fallo al listar sedes`);
     return res.json();
+  },
+
+  async createStore(payload: { code: string; name: string; address: string; city: string; phone?: string }): Promise<StoreItem> {
+    const res = await fetch(`${API_BASE}/admin/stores`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || 'Fallo al registrar sede');
+    }
+    return res.json();
+  },
+
+  async updateStore(storeId: string, payload: { name?: string; address?: string; city?: string; phone?: string; status?: string }): Promise<StoreItem> {
+    const res = await fetch(`${API_BASE}/admin/stores/${storeId}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || 'Fallo al actualizar sede');
+    }
+    return res.json();
+  },
+
+  async getProducts(): Promise<ProductAdminItem[]> {
+    const res = await fetch(`${API_BASE}/admin/products`, { headers: getAuthHeaders() });
+    if (!res.ok) throw new Error(`Error ${res.status}: Fallo al listar productos`);
+    return res.json();
+  },
+
+  async createProduct(payload: { name: string; description: string; price: number; available?: boolean; featured_order?: number | null }): Promise<ProductAdminItem> {
+    const res = await fetch(`${API_BASE}/admin/products`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ ...payload, currency: 'COP' })
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || 'Fallo al crear producto');
+    }
+    return res.json();
+  },
+
+  async updateProduct(productId: string, payload: { name?: string; description?: string; price?: number; available?: boolean; featured_order?: number | null }): Promise<ProductAdminItem> {
+    const res = await fetch(`${API_BASE}/admin/products/${productId}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || 'Fallo al actualizar producto');
+    }
+    return res.json();
+  },
+
+  async deleteProduct(productId: string): Promise<void> {
+    const res = await fetch(`${API_BASE}/admin/products/${productId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || 'Fallo al eliminar producto');
+    }
   },
 
   async createPurchase(payload: PurchasePayload): Promise<PurchaseResponse> {
