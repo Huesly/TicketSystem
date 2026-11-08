@@ -104,7 +104,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { api, type CardSummary } from '../api';
 
 const loading = ref(true);
@@ -126,5 +126,10 @@ const loadCards = async () => {
 
 onMounted(() => {
   loadCards();
+  window.addEventListener('confy-user-changed', loadCards);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('confy-user-changed', loadCards);
 });
 </script>

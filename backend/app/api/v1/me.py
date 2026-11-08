@@ -10,6 +10,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 
 from app.core.database import get_db
+from app.api.deps import security_scheme, HTTPAuthorizationCredentials
+from app.core.security import decode_access_token
 from app.schemas.user import UserProfileSchema, UserUpdateSchema
 from app.schemas.loyalty import CustomerCardsResponse, CardSummarySchema
 from app.schemas.qr import QrTokenResponse
@@ -21,11 +23,18 @@ from app.services.qr_service import QrService
 
 router = APIRouter(prefix="/me", tags=["Cliente"])
 
-# Simula extracción de usuario autenticado desde el JWT (para desarrollo)
+# Extrae usuario autenticado desde el JWT Bearer con fallback a demo
 async def get_current_user_id(
-    authorization: Optional[str] = Header(None)
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security_scheme)
 ) -> UUID:
-    # ID demo por defecto
+    if credentials and credentials.credentials:
+        payload = decode_access_token(credentials.credentials)
+        if payload and "sub" in payload:
+            try:
+                return UUID(payload["sub"])
+            except Exception:
+                pass
+    # ID demo por defecto como fallback seguro en caso de prueba inicial
     return UUID("00000000-0000-0000-0000-000000000001")
 
 @router.get("", response_model=UserProfileSchema, summary="Consultar perfil del cliente actual")

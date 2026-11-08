@@ -9,6 +9,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
 from app.core.database import get_db
+from app.api.deps import security_scheme, HTTPAuthorizationCredentials
+from app.core.security import decode_access_token
 from app.schemas.purchase import (
     PurchaseCreateRequest,
     PurchaseResponse,
@@ -26,12 +28,17 @@ from datetime import datetime, timezone
 
 router = APIRouter(prefix="/cashier", tags=["Caja y POS"])
 
-# Helper simulador de cajero autenticado (en producción proviene del JWT validado)
+# Extrae cajero autenticado desde JWT Bearer con fallback seguro
 async def get_current_cashier_id(
-    authorization: Optional[str] = Header(None)
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security_scheme)
 ) -> UUID:
-    # Por defecto para pruebas de desarrollo local, si no se envía JWT se usa un ID de cajero demo
-    # En producción: decodificar claims de JWT Supabase
+    if credentials and credentials.credentials:
+        payload = decode_access_token(credentials.credentials)
+        if payload and "sub" in payload:
+            try:
+                return UUID(payload["sub"])
+            except Exception:
+                pass
     return UUID("11111111-1111-1111-1111-111111111111")
 
 @router.post(

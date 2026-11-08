@@ -141,7 +141,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import QrcodeVue from 'qrcode.vue';
 import { api, type CustomerReward } from '../api';
 
@@ -191,5 +191,10 @@ const copyRedeemToken = async () => {
 
 onMounted(() => {
   loadRewards();
+  window.addEventListener('confy-user-changed', loadRewards);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('confy-user-changed', loadRewards);
 });
 </script>

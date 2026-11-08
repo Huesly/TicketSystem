@@ -113,7 +113,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { api, type CardSummary, type ProductItem } from '../api';
 
 const customerName = ref('Camila');
@@ -149,5 +149,10 @@ const loadData = async () => {
 
 onMounted(() => {
   loadData();
+  window.addEventListener('confy-user-changed', loadData);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('confy-user-changed', loadData);
 });
 </script>

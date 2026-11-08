@@ -4,7 +4,6 @@
 
 from typing import List
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import AnyHttpUrl
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "ConfyTickets"
@@ -41,6 +40,11 @@ class Settings(BaseSettings):
     REDIS_URL: str = "redis://localhost:6379/0"
     CELERY_BROKER_URL: str = "redis://localhost:6379/1"
     CELERY_RESULT_BACKEND: str = "redis://localhost:6379/2"
+
+    # Seguridad y JWT
+    JWT_SECRET_KEY: str = "confytickets_secure_jwt_secret_key_production_grade_2026_buen_cafe"
+    JWT_ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7 días de sesión
 
     # Supabase Auth
     SUPABASE_URL: str = ""

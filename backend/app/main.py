@@ -16,10 +16,10 @@ app = FastAPI(
     openapi_url="/openapi.json"
 )
 
-# Configuración de CORS
+# Configuración de CORS compatible con local, apps móviles y túneles ngrok
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.BACKEND_CORS_ORIGINS,
+    allow_origin_regex=r"^https?://.*",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

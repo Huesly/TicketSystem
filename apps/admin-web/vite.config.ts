@@ -12,6 +12,13 @@ export default defineConfig({
   server: {
     port: 3020,
     strictPort: true,
-    host: true
+    host: true,
+    allowedHosts: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8088',
+        changeOrigin: true
+      }
+    }
   }
 });
