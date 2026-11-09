@@ -5,7 +5,7 @@
 from uuid import UUID
 from datetime import datetime, timezone
 from typing import List, Optional
-from fastapi import APIRouter, Depends, Header, HTTPException, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 
@@ -17,8 +17,10 @@ from app.schemas.loyalty import CustomerCardsResponse, CardSummarySchema
 from app.schemas.qr import QrTokenResponse
 from app.schemas.reward import CustomerRewardSchema
 from app.models.user import Profile
+from app.models.business import Store
 from app.models.loyalty import LoyaltyCard, StampMovement
-from app.models.reward import CustomerReward, RewardDefinition
+from app.models.purchase import Purchase, QrToken
+from app.models.reward import CustomerReward, RewardRedemption, RewardDefinition
 from app.services.qr_service import QrService
 
 router = APIRouter(prefix="/me", tags=["Cliente"])
@@ -135,6 +137,84 @@ async def generate_purchase_qr(
     )
     await db.commit()
     return qr_res
+
+@router.get("/qr/status", summary="Consultar estado de consumo en vivo de un código QR")
+async def get_qr_status(
+    qr_token: str = Query(..., description="Token QR en texto plano"),
+    user_id: UUID = Depends(get_current_user_id),
+    db: AsyncSession = Depends(get_db)
+):
+    token_hash = QrService.hash_token(qr_token)
+    stmt = select(QrToken).where(QrToken.token_hash == token_hash)
+    res = await db.execute(stmt)
+    qr = res.scalar_one_or_none()
+
+    if not qr:
+        raise HTTPException(status_code=404, detail="Token no encontrado")
+
+    if qr.user_id != user_id:
+        raise HTTPException(status_code=403, detail="Acceso denegado a este token")
+
+    now = datetime.now(timezone.utc)
+
+    if qr.consumed_at is None:
+        if qr.expires_at < now:
+            return {"status": "EXPIRED", "purpose": qr.purpose}
+        remaining = max(0, int((qr.expires_at - now).total_seconds()))
+        return {"status": "PENDING", "purpose": qr.purpose, "expires_in_seconds": remaining}
+
+    # Token ya fue consumido por el cajero
+    result = {
+        "status": "CONSUMED",
+        "purpose": qr.purpose,
+        "consumed_at": qr.consumed_at
+    }
+
+    if qr.purpose == "PURCHASE":
+        # Buscar la compra asociada
+        p_stmt = (
+            select(Purchase, Store.name.label("store_name"))
+            .join(Store, Purchase.store_id == Store.id)
+            .where(
+                Purchase.customer_id == user_id,
+                Purchase.cashier_id == qr.consumed_by,
+                Purchase.created_at >= qr.created_at
+            )
+            .order_by(Purchase.created_at.desc())
+            .limit(1)
+        )
+        p_res = (await db.execute(p_stmt)).first()
+        if p_res:
+            p, store_name = p_res
+            st_stmt = select(func.coalesce(func.sum(StampMovement.quantity), 0)).where(StampMovement.purchase_id == p.id)
+            stamps = (await db.execute(st_stmt)).scalar_one()
+
+            result["purchase"] = {
+                "store_name": store_name,
+                "receipt_reference": p.receipt_reference,
+                "gross_amount": p.gross_amount,
+                "stamps_awarded": stamps
+            }
+
+    elif qr.purpose == "REDEMPTION":
+        r_stmt = (
+            select(RewardRedemption, Store.name.label("store_name"), RewardDefinition.name.label("reward_name"))
+            .join(Store, RewardRedemption.store_id == Store.id)
+            .join(CustomerReward, RewardRedemption.customer_reward_id == CustomerReward.id)
+            .join(RewardDefinition, CustomerReward.definition_id == RewardDefinition.id)
+            .where(CustomerReward.id == qr.resource_id)
+            .order_by(RewardRedemption.created_at.desc())
+            .limit(1)
+        )
+        r_res = (await db.execute(r_stmt)).first()
+        if r_res:
+            _, store_name, reward_name = r_res
+            result["redemption"] = {
+                "store_name": store_name,
+                "reward_name": reward_name
+            }
+
+    return result
 
 @router.get("/rewards", response_model=List[CustomerRewardSchema], summary="Consultar recompensas disponibles y canjeadas")
 async def get_my_rewards(

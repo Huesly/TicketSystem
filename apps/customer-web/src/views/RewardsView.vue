@@ -88,53 +88,77 @@
     <!-- Modal QR de Redención -->
     <div v-if="selectedReward" class="fixed inset-0 bg-stone-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div class="bg-white rounded-2xl border border-stone-300 p-5 w-full max-w-xs text-center shadow-xl space-y-4">
-        <div class="flex items-center justify-between">
-          <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-md">
-            QR de Redención
-          </span>
-          <button @click="selectedReward = null" class="text-stone-400 hover:text-stone-700 p-1 rounded-lg cursor-pointer" aria-label="Cerrar">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+        
+        <!-- ESTADO: REDENCIÓN CONFIRMADA EN CAJA -->
+        <div v-if="redeemedSuccess" class="py-4 space-y-3 animate-in fade-in zoom-in-95 duration-300">
+          <div class="w-14 h-14 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto border-2 border-emerald-300 shadow-sm animate-bounce">
+            <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 6 9 17l-5-5"/>
             </svg>
+          </div>
+          <div class="space-y-1">
+            <span class="text-[10px] uppercase font-bold tracking-wider text-emerald-800 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">
+              ¡Premio Redimido!
+            </span>
+            <h3 class="font-extrabold text-stone-950 text-base leading-tight">
+              {{ selectedReward.name }}
+            </h3>
+            <p class="text-xs text-stone-600 font-medium">
+              ¡Que disfrutes tu café de cortesía!
+            </p>
+          </div>
+        </div>
+
+        <!-- ESTADO: QR ACTIVO -->
+        <template v-else>
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-md">
+              QR de Redención
+            </span>
+            <button @click="closeRedemptionModal" class="text-stone-400 hover:text-stone-700 p-1 rounded-lg cursor-pointer" aria-label="Cerrar">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+              </svg>
+            </button>
+          </div>
+
+          <div class="space-y-0.5">
+            <h3 class="font-extrabold text-stone-900 text-sm">{{ selectedReward.name }}</h3>
+            <p class="text-xs text-stone-500">Presenta este código al cajero para recibir tu cortesía.</p>
+          </div>
+
+          <!-- Contenedor QR con aspect-square para evitar CLS -->
+          <div class="bg-stone-50 p-4 rounded-xl border border-stone-200 aspect-square w-full max-w-[210px] mx-auto flex items-center justify-center">
+            <div v-if="!redemptionToken" class="text-xs text-stone-400 flex flex-col items-center gap-2">
+              <div class="w-6 h-6 border-2 border-stone-800 border-t-transparent rounded-full animate-spin"></div>
+              Generando QR...
+            </div>
+            <div v-else class="bg-white p-2.5 rounded-lg border border-stone-200">
+              <qrcode-vue
+                :value="redemptionToken"
+                :size="165"
+                level="M"
+                render-as="svg"
+              />
+            </div>
+          </div>
+
+          <button
+            v-if="redemptionToken"
+            @click="copyRedeemToken"
+            class="w-full text-xs font-semibold bg-stone-100 hover:bg-stone-200 text-stone-800 py-2 px-3 rounded-lg border border-stone-300 transition cursor-pointer inline-flex items-center justify-center gap-1.5"
+          >
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+              <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+            </svg>
+            {{ copied ? 'Token copiado' : 'Copiar token para prueba' }}
           </button>
-        </div>
 
-        <div class="space-y-0.5">
-          <h3 class="font-extrabold text-stone-900 text-sm">{{ selectedReward.name }}</h3>
-          <p class="text-xs text-stone-500">Presenta este código al cajero para recibir tu cortesía.</p>
-        </div>
-
-        <!-- Contenedor QR con aspect-square para evitar CLS -->
-        <div class="bg-stone-50 p-4 rounded-xl border border-stone-200 aspect-square w-full max-w-[210px] mx-auto flex items-center justify-center">
-          <div v-if="!redemptionToken" class="text-xs text-stone-400 flex flex-col items-center gap-2">
-            <div class="w-6 h-6 border-2 border-stone-800 border-t-transparent rounded-full animate-spin"></div>
-            Generando QR...
-          </div>
-          <div v-else class="bg-white p-2.5 rounded-lg border border-stone-200">
-            <qrcode-vue
-              :value="redemptionToken"
-              :size="165"
-              level="M"
-              render-as="svg"
-            />
-          </div>
-        </div>
-
-        <button
-          v-if="redemptionToken"
-          @click="copyRedeemToken"
-          class="w-full text-xs font-semibold bg-stone-100 hover:bg-stone-200 text-stone-800 py-2 px-3 rounded-lg border border-stone-300 transition cursor-pointer inline-flex items-center justify-center gap-1.5"
-        >
-          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
-            <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
-          </svg>
-          {{ copied ? 'Token copiado' : 'Copiar token para prueba' }}
-        </button>
-
-        <p class="text-[11px] text-stone-500">
-          Código de un solo uso válido por 60 segundos.
-        </p>
+          <p class="text-[11px] text-stone-500">
+            Código de un solo uso válido por 60 segundos.
+          </p>
+        </template>
       </div>
     </div>
   </div>
@@ -150,6 +174,30 @@ const rewards = ref<CustomerReward[]>([]);
 const selectedReward = ref<CustomerReward | null>(null);
 const redemptionToken = ref('');
 const copied = ref(false);
+const redeemedSuccess = ref(false);
+
+let redeemPollTimer: any = null;
+
+const playRedeemChime = () => {
+  try {
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+    if (AudioContextClass) {
+      const audioCtx = new AudioContextClass();
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(523.25, now);
+      osc.frequency.exponentialRampToValueAtTime(1046.50, now + 0.35);
+      gain.gain.setValueAtTime(0.2, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.4);
+    }
+  } catch {}
+};
 
 const availableRewards = computed(() => {
   return rewards.value.filter(r => r.status === 'AVAILABLE');
@@ -170,16 +218,53 @@ const loadRewards = async () => {
   }
 };
 
+const startRedeemPolling = (token: string) => {
+  clearInterval(redeemPollTimer);
+  redeemPollTimer = setInterval(async () => {
+    if (!selectedReward.value || !token) {
+      clearInterval(redeemPollTimer);
+      return;
+    }
+    try {
+      const res = await api.checkQrStatus(token);
+      if (res.status === 'CONSUMED') {
+        clearInterval(redeemPollTimer);
+        playRedeemChime();
+        redeemedSuccess.value = true;
+        await loadRewards();
+        window.dispatchEvent(new CustomEvent('confy-user-changed'));
+
+        setTimeout(() => {
+          closeRedemptionModal();
+        }, 2800);
+      }
+    } catch {
+      // Ignore
+    }
+  }, 1200);
+};
+
 const openRedemptionQr = async (reward: CustomerReward) => {
   selectedReward.value = reward;
   redemptionToken.value = '';
+  redeemedSuccess.value = false;
+  clearInterval(redeemPollTimer);
+
   try {
     const res = await api.generateRewardQr(reward.id);
     redemptionToken.value = res.qr_token;
+    startRedeemPolling(res.qr_token);
   } catch (err: any) {
     alert(err.message || 'Error al generar QR');
     selectedReward.value = null;
   }
+};
+
+const closeRedemptionModal = () => {
+  selectedReward.value = null;
+  redemptionToken.value = '';
+  redeemedSuccess.value = false;
+  clearInterval(redeemPollTimer);
 };
 
 const copyRedeemToken = async () => {
@@ -195,6 +280,7 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
+  clearInterval(redeemPollTimer);
   window.removeEventListener('confy-user-changed', loadRewards);
 });
 </script>

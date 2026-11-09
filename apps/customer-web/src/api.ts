@@ -38,6 +38,23 @@ export interface QrTokenResponse {
   expires_at: string;
 }
 
+export interface QrStatusResponse {
+  status: 'PENDING' | 'CONSUMED' | 'EXPIRED';
+  purpose: 'PURCHASE' | 'REDEMPTION';
+  expires_in_seconds?: number;
+  consumed_at?: string;
+  purchase?: {
+    store_name: string;
+    receipt_reference: string;
+    gross_amount: number;
+    stamps_awarded: number;
+  };
+  redemption?: {
+    store_name: string;
+    reward_name: string;
+  };
+}
+
 export interface CustomerReward {
   id: string;
   name: string;
@@ -160,6 +177,14 @@ export const api = {
       headers: getAuthHeaders()
     });
     if (!res.ok) throw new Error(`Error ${res.status}: Fallo al generar QR de compra`);
+    return res.json();
+  },
+
+  async checkQrStatus(qrToken: string): Promise<QrStatusResponse> {
+    const res = await fetch(`${API_BASE}/me/qr/status?qr_token=${encodeURIComponent(qrToken)}`, {
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) throw new Error(`Error ${res.status}: Fallo al verificar estado de QR`);
     return res.json();
   },
 
