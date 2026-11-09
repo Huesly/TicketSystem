@@ -3,7 +3,7 @@
     <ion-tabs>
       <ion-router-outlet></ion-router-outlet>
       <!-- Barra inferior compacta (< 12% dvh) con iconos SVG estilo Google Fonts -->
-      <ion-tab-bar slot="bottom" class="border-t border-stone-300 h-14">
+      <ion-tab-bar slot="bottom" class="border-t border-crema-border h-14">
         <ion-tab-button tab="home" href="/tabs/home">
           <!-- Google Material Icon: home -->
           <svg class="w-5 h-5 mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

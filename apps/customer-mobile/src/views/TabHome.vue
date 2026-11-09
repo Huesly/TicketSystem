@@ -5,15 +5,15 @@
         <!-- Encabezado Minimalista Mobile -->
         <div class="flex items-center justify-between pt-2">
           <div>
-            <h2 class="fluid-title font-extrabold text-stone-900">Hola, Camila</h2>
-            <p class="text-xs text-stone-500">Cada café suma a tu próxima cortesía.</p>
+            <h2 class="fluid-title font-extrabold text-roast-900">Hola, Camila</h2>
+            <p class="text-xs text-roast-500">Cada café suma a tu próxima cortesía.</p>
           </div>
           <button
             @click="openQr"
-            class="bg-coffee-900 text-white font-bold text-xs px-3.5 py-2 rounded-lg flex items-center gap-1.5 shadow-sm cursor-pointer"
+            class="bg-roast-900 text-white font-bold text-xs px-3.5 py-2 rounded-lg flex items-center gap-1.5 shadow-sm cursor-pointer"
           >
             <!-- Google Material Icon: qr_code_2 -->
-            <svg class="w-4 h-4 text-amber-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <svg class="w-4 h-4 text-golden-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <rect x="3" y="3" width="7" height="7" rx="1"/>
               <rect x="14" y="3" width="7" height="7" rx="1"/>
               <rect x="3" y="14" width="7" height="7" rx="1"/>
@@ -24,13 +24,13 @@
         </div>
 
         <!-- Tarjeta de 8 Sellos (Widget Mobile) -->
-        <div class="bg-white rounded-2xl fluid-pad border border-stone-300 shadow-sm space-y-4">
+        <div class="bg-white rounded-2xl fluid-pad border border-crema-border shadow-sm space-y-4">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-coffee-900"></span>
-              <h3 class="font-bold text-sm text-stone-900">Tarjeta Activa</h3>
+              <span class="w-2 h-2 rounded-full bg-roast-900"></span>
+              <h3 class="font-bold text-sm text-roast-900">Tarjeta Activa</h3>
             </div>
-            <span class="text-[11px] font-bold text-stone-700 font-mono bg-stone-100 px-2.5 py-0.5 rounded-md border border-stone-300">
+            <span class="text-[11px] font-bold text-roast-700 font-mono bg-crema-surface px-2.5 py-0.5 rounded-md border border-crema-border">
               Ciclo #{{ cardInfo ? cardInfo.cycle_number : 1 }}
             </span>
           </div>
@@ -42,10 +42,10 @@
               :key="i"
               class="aspect-square rounded-xl flex flex-col items-center justify-center border"
               :class="i <= currentStamps
-                ? 'bg-coffee-900 border-coffee-900 text-amber-300'
+                ? 'bg-roast-900 border-coffee-900 text-golden-300'
                 : i === 8
-                  ? 'bg-amber-50/70 border-dashed border-amber-400 text-amber-800'
-                  : 'bg-stone-50 border-stone-200 text-stone-400'"
+                  ? 'bg-golden-50/70 border-dashed border-golden-400 text-amber-800'
+                  : 'bg-crema-surface border-crema-surface text-roast-400'"
             >
               <!-- Google Material Icon: local_cafe -->
               <svg v-if="i <= currentStamps" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -60,7 +60,7 @@
               </svg>
               <span v-else class="text-xs font-bold font-mono">{{ i }}</span>
 
-              <span class="text-[9px] font-bold mt-1" :class="i <= currentStamps ? 'text-amber-100' : 'text-stone-400'">
+              <span class="text-[9px] font-bold mt-1" :class="i <= currentStamps ? 'text-amber-100' : 'text-roast-400'">
                 {{ i === 8 ? 'Premio' : `${i}` }}
               </span>
             </div>
@@ -68,12 +68,12 @@
 
           <div class="space-y-1.5 pt-1">
             <div class="flex justify-between text-xs font-semibold">
-              <span class="text-stone-700">{{ currentStamps }} de 8 sellos</span>
-              <span class="text-stone-500">{{ Math.max(0, 8 - currentStamps) }} restantes</span>
+              <span class="text-roast-700">{{ currentStamps }} de 8 sellos</span>
+              <span class="text-roast-500">{{ Math.max(0, 8 - currentStamps) }} restantes</span>
             </div>
-            <div class="w-full bg-stone-100 rounded-full h-2 overflow-hidden border border-stone-200">
+            <div class="w-full bg-crema-surface rounded-full h-2 overflow-hidden border border-crema-surface">
               <div
-                class="bg-coffee-900 h-full rounded-full transition-all duration-500"
+                class="bg-roast-900 h-full rounded-full transition-all duration-500"
                 :style="{ width: `${(currentStamps / 8) * 100}%` }"
               ></div>
             </div>
@@ -82,14 +82,14 @@
 
         <!-- Vitrina de 5 Productos Destacados -->
         <div class="space-y-2.5 pb-6">
-          <h3 class="font-bold text-xs uppercase tracking-wider text-stone-500">Vitrina de Especialidad</h3>
+          <h3 class="font-bold text-xs uppercase tracking-wider text-roast-500">Vitrina de Especialidad</h3>
           <div class="space-y-2">
             <div
               v-for="p in products"
               :key="p.id"
-              class="bg-white rounded-xl p-3 flex items-center gap-3 border border-stone-300"
+              class="bg-white rounded-xl p-3 flex items-center gap-3 border border-crema-border"
             >
-              <div class="w-10 h-10 rounded-lg bg-stone-100 border border-stone-200 flex items-center justify-center text-stone-700 shrink-0">
+              <div class="w-10 h-10 rounded-lg bg-crema-surface border border-crema-surface flex items-center justify-center text-roast-700 shrink-0">
                 <!-- Google Material Icon: local_cafe -->
                 <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <path d="M17 8h1a4 4 0 1 1 0 8h-1"/>
@@ -97,10 +97,10 @@
                 </svg>
               </div>
               <div class="flex-1 min-w-0">
-                <h4 class="font-bold text-xs text-stone-900 truncate">{{ p.name }}</h4>
-                <p class="text-[11px] text-stone-500 line-clamp-1">{{ p.description }}</p>
+                <h4 class="font-bold text-xs text-roast-900 truncate">{{ p.name }}</h4>
+                <p class="text-[11px] text-roast-500 line-clamp-1">{{ p.description }}</p>
               </div>
-              <span class="text-xs font-extrabold text-stone-900 font-mono bg-stone-100 px-2.5 py-1 rounded-md border border-stone-300 shrink-0">
+              <span class="text-xs font-extrabold text-roast-900 font-mono bg-crema-surface px-2.5 py-1 rounded-md border border-crema-border shrink-0">
                 ${{ (p.price || 0).toLocaleString('es-CO') }}
               </span>
             </div>
@@ -110,31 +110,31 @@
 
       <!-- Modal QR Real Mobile con aspect-square -->
       <div v-if="showModal" class="fixed inset-0 bg-stone-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl border border-stone-300 p-5 w-full max-w-xs text-center space-y-4 shadow-xl">
+        <div class="bg-white rounded-2xl border border-crema-border p-5 w-full max-w-xs text-center space-y-4 shadow-xl">
           <div class="flex items-center justify-between">
-            <span class="text-[10px] uppercase font-bold text-stone-700 bg-stone-100 border border-stone-300 px-2.5 py-0.5 rounded">
+            <span class="text-[10px] uppercase font-bold text-roast-700 bg-crema-surface border border-crema-border px-2.5 py-0.5 rounded">
               QR Dinámico
             </span>
-            <button @click="showModal = false" class="text-stone-400 hover:text-stone-700 p-1 rounded-lg" aria-label="Cerrar">
+            <button @click="showModal = false" class="text-roast-400 hover:text-roast-700 p-1 rounded-lg" aria-label="Cerrar">
               <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
               </svg>
             </button>
           </div>
 
-          <h3 class="font-bold text-sm text-stone-900">Muestra este código al pagar</h3>
+          <h3 class="font-bold text-sm text-roast-900">Muestra este código al pagar</h3>
 
-          <div class="bg-stone-50 p-4 rounded-xl border border-stone-200 aspect-square w-full max-w-[200px] mx-auto flex flex-col items-center justify-center">
-            <div v-if="loadingQr" class="text-xs text-stone-400">
+          <div class="bg-crema-surface p-4 rounded-xl border border-crema-surface aspect-square w-full max-w-[200px] mx-auto flex flex-col items-center justify-center">
+            <div v-if="loadingQr" class="text-xs text-roast-400">
               Generando QR...
             </div>
             <div v-else-if="qrExpired" class="space-y-2">
               <p class="text-xs font-bold text-red-600">Código expirado</p>
-              <button @click="fetchQr" class="bg-stone-900 text-white text-xs font-bold px-3 py-1.5 rounded-lg">
+              <button @click="fetchQr" class="bg-roast-900 text-white text-xs font-bold px-3 py-1.5 rounded-lg">
                 Generar nuevo
               </button>
             </div>
-            <div v-else class="bg-white p-2 rounded-lg border border-stone-200">
+            <div v-else class="bg-white p-2 rounded-lg border border-crema-surface">
               <qrcode-vue
                 :value="qrToken"
                 :size="155"
@@ -144,8 +144,8 @@
             </div>
           </div>
 
-          <div class="text-[11px] font-semibold text-stone-500">
-            Expira en <strong class="text-stone-900 font-mono">{{ timeLeft }}s</strong>
+          <div class="text-[11px] font-semibold text-roast-500">
+            Expira en <strong class="text-roast-900 font-mono">{{ timeLeft }}s</strong>
           </div>
         </div>
       </div>

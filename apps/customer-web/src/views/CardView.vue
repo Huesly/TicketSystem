@@ -1,8 +1,8 @@
 <template>
   <div class="space-y-5 fluid-container">
     <div class="space-y-0.5">
-      <h2 class="fluid-title font-extrabold text-stone-900">Mi Tarjeta Digital</h2>
-      <p class="text-xs text-stone-500">Tus sellos son válidos en cualquiera de nuestras sedes.</p>
+      <h2 class="fluid-title font-extrabold text-roast-950">Mi Tarjeta Digital</h2>
+      <p class="text-xs text-roast-600">Tus sellos son válidos en cualquiera de nuestras sedes.</p>
     </div>
 
     <!-- ======================================================================= -->
@@ -10,7 +10,7 @@
     <!-- ======================================================================= -->
     <div v-if="loading" class="space-y-5" aria-hidden="true">
       <!-- Skeleton Tarjeta Principal de 8 Sellos -->
-      <div class="bg-coffee-900/90 rounded-2xl fluid-pad border border-stone-900/50 space-y-5 shadow-sm">
+      <div class="bg-roast-900/90 rounded-2xl fluid-pad border border-roast-800 space-y-5 shadow-sm">
         <div class="flex items-center justify-between">
           <div class="space-y-2">
             <div class="h-3 w-28 rounded skeleton-shimmer-dark"></div>
@@ -28,7 +28,7 @@
       </div>
 
       <!-- Skeleton Código QR para Caja -->
-      <div class="bg-white rounded-2xl p-5 border border-stone-200 shadow-sm space-y-4">
+      <div class="bg-white rounded-2xl p-5 border border-crema-border shadow-sm space-y-4">
         <div class="flex items-center gap-3">
           <div class="w-9 h-9 rounded-xl skeleton-shimmer"></div>
           <div class="space-y-2">
@@ -38,12 +38,12 @@
         </div>
 
         <div class="flex flex-col items-center justify-center py-2">
-          <div class="w-48 h-48 rounded-2xl skeleton-shimmer border border-stone-200"></div>
+          <div class="w-48 h-48 rounded-2xl skeleton-shimmer border border-crema-border"></div>
         </div>
       </div>
 
       <!-- Skeleton Acordeón de Información -->
-      <div class="h-12 bg-white rounded-xl border border-stone-200 skeleton-shimmer"></div>
+      <div class="h-12 bg-white rounded-xl border border-crema-border skeleton-shimmer"></div>
     </div>
 
     <!-- ======================================================================= -->
@@ -51,15 +51,15 @@
     <!-- ======================================================================= -->
     <div v-else class="space-y-5 fade-enter-soft">
       <!-- Tarjeta Principal de Fidelidad (8 Sellos) -->
-      <div class="bg-coffee-900 text-amber-50 rounded-2xl fluid-pad border border-stone-900 shadow-sm space-y-5">
+      <div class="bg-roast-900 text-amber-50 rounded-2xl fluid-pad border border-roast-800 shadow-md space-y-5">
         <div class="flex items-center justify-between">
           <div>
-            <span class="text-[10px] uppercase font-bold tracking-widest text-amber-300">Programa Multisede</span>
-            <h3 class="font-extrabold text-base text-white">Ciclo Activo #{{ activeCard ? activeCard.cycle_number : 1 }}</h3>
+            <span class="text-xs text-golden-400 font-semibold tracking-wide">Programa de fidelidad</span>
+            <h3 class="font-extrabold text-base text-white">Ciclo activo #{{ activeCard ? activeCard.cycle_number : 1 }}</h3>
           </div>
           <div class="text-right">
-            <span class="text-xl font-black font-mono text-amber-300">{{ activeCard ? activeCard.stamps_count : 0 }} / {{ activeCard ? activeCard.stamps_required : 8 }}</span>
-            <p class="text-[10px] text-stone-300 uppercase">Sellos</p>
+            <span class="text-2xl font-black font-mono text-golden-400">{{ activeCard ? activeCard.stamps_count : 0 }} / {{ activeCard ? activeCard.stamps_required : 8 }}</span>
+            <p class="text-[10px] text-roast-300 uppercase tracking-wider">Sellos</p>
           </div>
         </div>
 
@@ -70,10 +70,10 @@
             :key="i"
             class="aspect-square rounded-xl flex flex-col items-center justify-center border transition-all duration-300"
             :class="i <= (activeCard ? activeCard.stamps_count : 0)
-              ? 'bg-amber-400/20 border-amber-300 text-amber-200 scale-100 shadow-xs'
+              ? 'bg-golden-400/25 border-golden-400 text-golden-300 scale-100 shadow-xs'
               : i === (activeCard ? activeCard.stamps_required : 8)
-                ? 'bg-white/10 border-dashed border-amber-300/60 text-amber-300'
-                : 'bg-black/25 border-white/15 text-stone-400'"
+                ? 'bg-white/5 border-dashed border-golden-400/70 text-golden-400'
+                : 'bg-black/30 border-white/10 text-roast-400'"
           >
             <!-- Google Material Icon: local_cafe -->
             <svg v-if="i <= (activeCard ? activeCard.stamps_count : 0)" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -88,34 +88,34 @@
             </svg>
             <span v-else class="text-xs font-bold font-mono">{{ i }}</span>
 
-            <span class="text-[9px] font-bold mt-1" :class="i <= (activeCard ? activeCard.stamps_count : 0) ? 'text-amber-200' : 'text-stone-400'">
+            <span class="text-[9px] font-bold mt-1" :class="i <= (activeCard ? activeCard.stamps_count : 0) ? 'text-golden-300' : 'text-roast-400'">
               {{ i === (activeCard ? activeCard.stamps_required : 8) ? 'Premio' : `Sello ${i}` }}
             </span>
           </div>
         </div>
 
-        <div class="bg-black/30 rounded-xl p-3 flex items-center justify-between text-xs border border-white/10">
-          <span class="text-stone-200">Meta: {{ activeCard ? activeCard.stamps_required : 8 }} sellos</span>
-          <span class="font-bold text-amber-300">
+        <div class="bg-black/35 rounded-xl p-3 flex items-center justify-between text-xs border border-white/10">
+          <span class="text-roast-200">Meta: {{ activeCard ? activeCard.stamps_required : 8 }} sellos</span>
+          <span class="font-bold text-golden-400">
             {{ activeCard && activeCard.stamps_remaining > 0 ? `Faltan ${activeCard.stamps_remaining} sellos` : '¡Meta alcanzada!' }}
           </span>
         </div>
 
         <!-- Banner de Cortesías Disponibles si el cliente tiene premios acumulados -->
-        <div v-if="availableRewardsCount > 0" class="bg-amber-300 text-stone-950 rounded-xl p-3.5 flex items-center justify-between gap-2 border border-amber-400 shadow-sm">
+        <div v-if="availableRewardsCount > 0" class="bg-golden-400 text-roast-950 rounded-xl p-3.5 flex items-center justify-between gap-2 border border-golden-500 shadow-sm">
           <div class="flex items-center gap-2">
-            <div class="w-8 h-8 rounded-lg bg-stone-950 text-amber-300 flex items-center justify-center shrink-0">
+            <div class="w-8 h-8 rounded-lg bg-roast-900 text-golden-400 flex items-center justify-center shrink-0">
               <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/>
               </svg>
             </div>
             <div>
-              <p class="text-xs font-bold text-stone-950">¡Tienes {{ availableRewardsCount }} cortesía(s) disponible(s)!</p>
-              <p class="text-[10px] text-stone-800">El barista puede canjearla al escanear tu carnet.</p>
+              <p class="text-xs font-bold text-roast-950">¡Tienes {{ availableRewardsCount }} cortesía(s) disponible(s)!</p>
+              <p class="text-[10px] text-roast-800">El barista puede canjearla al escanear tu carnet.</p>
             </div>
           </div>
-          <router-link to="/recompensas" class="bg-stone-950 hover:bg-stone-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition shrink-0">
-            Ver Detalles →
+          <router-link to="/recompensas" class="bg-roast-900 hover:bg-roast-800 text-golden-200 px-3 py-1.5 rounded-lg text-xs font-bold transition shrink-0">
+            Ver detalles
           </router-link>
         </div>
       </div>
@@ -134,15 +134,15 @@
           <span class="text-[10px] uppercase font-bold tracking-wider text-emerald-800 bg-emerald-100 border border-emerald-200 px-2.5 py-0.5 rounded-full">
             ¡Operación Registrada en Caja!
           </span>
-          <h4 class="font-extrabold text-stone-950 text-base">
+          <h4 class="font-extrabold text-roast-950 text-base">
             {{ activeAlert.title }}
           </h4>
-          <p class="text-xs text-stone-700 font-medium">
+          <p class="text-xs text-roast-700 font-medium">
             {{ activeAlert.message }}
           </p>
         </div>
 
-        <div v-if="activeAlert.receipt_reference" class="bg-white rounded-lg p-2.5 border border-emerald-200 text-xs text-stone-600 font-mono inline-block">
+        <div v-if="activeAlert.receipt_reference" class="bg-white rounded-lg p-2.5 border border-emerald-200 text-xs text-roast-700 font-mono inline-block">
           Factura: <strong>{{ activeAlert.receipt_reference }}</strong>
           <span v-if="activeAlert.gross_amount"> • ${{ activeAlert.gross_amount.toLocaleString('es-CO') }} COP</span>
         </div>
@@ -151,7 +151,7 @@
           <button
             type="button"
             @click="activeAlert = null"
-            class="text-[11px] font-bold text-stone-600 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 px-3 py-1 rounded-lg border border-stone-300 transition cursor-pointer"
+            class="text-[11px] font-bold text-roast-700 hover:text-roast-950 bg-crema-surface hover:bg-white px-3 py-1 rounded-lg border border-crema-border transition cursor-pointer"
           >
             Entendido
           </button>
@@ -161,9 +161,9 @@
       <!-- ===================================================================== -->
       <!-- CÓDIGO QR PARA CAJA                                                   -->
       <!-- ===================================================================== -->
-      <div class="bg-white rounded-2xl p-5 border border-stone-300 shadow-sm space-y-4">
+      <div class="bg-white rounded-2xl p-5 border border-crema-border shadow-sm space-y-4">
         <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-xl bg-stone-900 text-white flex items-center justify-center shrink-0">
+          <div class="w-9 h-9 rounded-xl bg-roast-900 text-golden-400 flex items-center justify-center shrink-0 border border-roast-800 shadow-2xs">
             <!-- SVG: QR Code -->
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/>
@@ -172,35 +172,35 @@
             </svg>
           </div>
           <div class="min-w-0">
-            <h3 class="font-extrabold text-sm text-stone-950">Mi Código QR</h3>
-            <p class="text-[11px] text-stone-500">Muestra este código al barista para sumar sellos o canjear</p>
+            <h3 class="font-extrabold text-sm text-roast-950">Mi código QR</h3>
+            <p class="text-[11px] text-roast-600">Muestra este código al barista para sumar sellos o canjear</p>
           </div>
         </div>
 
         <!-- VISOR DEL CÓDIGO QR -->
         <div class="flex flex-col items-center justify-center pt-1 pb-1">
           <!-- QR Renderizado de Alto Contraste -->
-          <div v-if="memberQrToken" class="p-4 bg-white rounded-2xl border-2 border-stone-900 shadow-sm relative">
+          <div v-if="memberQrToken" class="p-4 bg-white rounded-2xl border-2 border-roast-900 shadow-sm relative">
             <qrcode-vue :value="memberQrToken" :size="180" level="M" render-as="svg" />
           </div>
         </div>
       </div>
 
       <!-- Guía de Uso del Código QR (Sin Costos ni Precios) -->
-      <details class="group bg-white rounded-xl border border-stone-300 px-4 py-3 text-xs text-stone-600">
-        <summary class="font-bold text-stone-900 cursor-pointer flex items-center justify-between list-none">
+      <details class="group bg-white rounded-xl border border-crema-border px-4 py-3 text-xs text-roast-700">
+        <summary class="font-bold text-roast-950 cursor-pointer flex items-center justify-between list-none">
           <span class="inline-flex items-center gap-2">
             <!-- Google Material Icon: info -->
-            <svg class="w-4 h-4 text-stone-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <svg class="w-4 h-4 text-roast-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
             </svg>
             ¿Cómo usar tu código QR?
           </span>
-          <svg class="w-4 h-4 text-stone-400 transition-transform group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg class="w-4 h-4 text-roast-500 transition-transform group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="m6 9 6 6 6-6"/>
           </svg>
         </summary>
-        <div class="mt-2 pt-2 border-t border-stone-100 leading-relaxed space-y-1.5 text-xs text-stone-600">
+        <div class="mt-2 pt-2 border-t border-crema-border leading-relaxed space-y-1.5 text-xs text-roast-700">
           <p>• <strong>Para acumular sellos:</strong> Muestra tu código QR en caja al pedir tus bebidas o productos en cualquiera de nuestras sedes.</p>
           <p>• <strong>Para reclamar premios:</strong> Al completar tu tarjeta de 8 sellos, presenta este mismo código QR al barista para recibir tu cortesía.</p>
           <p>• <strong>Código personal:</strong> Tu código QR siempre está disponible en tu aplicación para tus visitas.</p>
@@ -209,15 +209,15 @@
 
       <!-- Historial de Ciclos Pasados -->
       <div v-if="pastCycles.length > 0" class="space-y-2.5">
-        <h3 class="font-bold text-xs uppercase tracking-wider text-stone-500">Ciclos Completados</h3>
+        <h3 class="font-bold text-xs uppercase tracking-wider text-roast-500">Ciclos completados</h3>
 
-        <div class="bg-white rounded-2xl p-4 border border-stone-300 divide-y divide-stone-200">
+        <div class="bg-white rounded-2xl p-4 border border-crema-border divide-y divide-crema-border">
           <div v-for="item in pastCycles" :key="item.id" class="py-3 first:pt-0 last:pb-0 flex items-center justify-between">
             <div class="space-y-0.5">
-              <h5 class="font-bold text-xs text-stone-900">Ciclo #{{ item.cycle_number }}</h5>
-              <p class="text-[11px] text-stone-500">Completado: {{ new Date(item.completed_at || '').toLocaleDateString('es-CO') }}</p>
+              <h5 class="font-bold text-xs text-roast-900">Ciclo #{{ item.cycle_number }}</h5>
+              <p class="text-[11px] text-roast-500">Completado: {{ new Date(item.completed_at || '').toLocaleDateString('es-CO') }}</p>
             </div>
-            <span class="font-bold text-xs font-mono px-2.5 py-1 rounded-md bg-stone-100 text-stone-800 border border-stone-300">
+            <span class="font-bold text-xs font-mono px-2.5 py-1 rounded-md bg-crema-surface text-roast-800 border border-crema-border">
               {{ item.stamps_count }}/{{ item.stamps_required }}
             </span>
           </div>

@@ -1,9 +1,9 @@
 <template>
-  <div class="min-h-dvh-safe flex flex-col max-w-md mx-auto bg-stone-50 border-x border-stone-200 relative pb-20 text-stone-900">
+  <div class="min-h-dvh-safe flex flex-col max-w-md mx-auto bg-crema border-x border-crema-border relative pb-20 text-roast-900 font-sans">
     <!-- Barra Superior Compacta (< 12% viewport height) -->
-    <header class="bg-white/95 backdrop-blur-md text-stone-900 px-4 h-14 flex items-center justify-between sticky top-0 z-30 border-b border-stone-200">
-      <div class="flex items-center gap-2">
-        <div class="w-8 h-8 rounded-lg bg-stone-900 text-white flex items-center justify-center shrink-0">
+    <header class="bg-crema/90 backdrop-blur-md text-roast-900 px-4 h-14 flex items-center justify-between sticky top-0 z-30 border-b border-crema-border">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-xl bg-roast-900 text-golden-400 flex items-center justify-center shrink-0 border border-roast-800 shadow-2xs">
           <!-- SVG: Local Cafe -->
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M17 8h1a4 4 0 1 1 0 8h-1" />
@@ -14,22 +14,22 @@
           </svg>
         </div>
         <div>
-          <span class="font-extrabold text-xs sm:text-sm leading-tight tracking-tight block text-stone-950">TicketsDemo</span>
-          <span class="text-[9px] text-stone-500 font-medium block">Tarjeta de Fidelidad</span>
+          <span class="font-extrabold text-xs sm:text-sm leading-tight tracking-tight block text-roast-950">TicketsDemo</span>
+          <span class="text-[9px] text-roast-600 font-medium block">Tarjeta de fidelidad</span>
         </div>
       </div>
 
       <div class="flex items-center gap-2">
-        <!-- Acceso a Mi Cuenta (Sin riesgo de logout accidental) -->
+        <!-- Acceso a Mi Cuenta -->
         <router-link 
           v-if="currentUser" 
           to="/cuenta"
-          class="bg-stone-100 hover:bg-stone-200 text-stone-800 text-[11px] font-bold px-3 py-1.5 rounded-xl border border-stone-300 transition flex items-center gap-1.5 cursor-pointer shadow-2xs active:scale-95"
+          class="bg-white/80 hover:bg-white text-roast-900 text-[11px] font-bold px-3 py-1.5 rounded-full border border-crema-border transition flex items-center gap-1.5 cursor-pointer shadow-2xs active:scale-95"
           title="Ver mi perfil y cuenta"
         >
           <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
           <span class="max-w-[100px] truncate">{{ currentUser.full_name.split(' ')[0] }}</span>
-          <svg class="w-3.5 h-3.5 text-stone-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg class="w-3.5 h-3.5 text-roast-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/>
           </svg>
         </router-link>
@@ -38,9 +38,9 @@
           v-else
           type="button"
           @click="showAuthModal = true"
-          class="bg-stone-900 hover:bg-stone-800 text-white text-[11px] font-bold px-3.5 py-1.5 rounded-xl border border-stone-900 transition cursor-pointer shadow-2xs active:scale-95"
+          class="bg-roast-900 hover:bg-roast-800 text-golden-200 text-[11px] font-bold px-3.5 py-1.5 rounded-xl border border-roast-900 transition cursor-pointer shadow-2xs active:scale-95"
         >
-          Iniciar Sesión
+          Iniciar sesión
         </button>
       </div>
     </header>
@@ -51,11 +51,11 @@
     </main>
 
     <!-- Barra de Navegación Inferior Compacta (4 pestañas) -->
-    <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/95 backdrop-blur-md border-t border-stone-200 px-4 h-14 flex items-center justify-around z-30" aria-label="Navegación inferior">
+    <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/95 backdrop-blur-md border-t border-crema-border px-3 h-14 flex items-center justify-around z-30 shadow-lg" aria-label="Navegación inferior">
       <router-link 
         to="/" 
-        class="flex flex-col items-center gap-1 text-[11px] font-semibold transition py-1 px-2 rounded-lg" 
-        :class="$route.name === 'home' ? 'text-stone-950 font-bold' : 'text-stone-400 hover:text-stone-600'"
+        class="flex flex-col items-center gap-0.5 text-[11px] font-semibold transition py-1 px-3 rounded-xl" 
+        :class="$route.name === 'home' ? 'text-roast-950 font-bold bg-golden-100/70 border border-golden-200/80 shadow-2xs' : 'text-roast-600/75 hover:text-roast-900'"
       >
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
@@ -65,8 +65,8 @@
 
       <router-link 
         to="/mi-tarjeta" 
-        class="flex flex-col items-center gap-1 text-[11px] font-semibold transition py-1 px-2 rounded-lg" 
-        :class="$route.name === 'card' ? 'text-stone-950 font-bold' : 'text-stone-400 hover:text-stone-600'"
+        class="flex flex-col items-center gap-0.5 text-[11px] font-semibold transition py-1 px-3 rounded-xl" 
+        :class="$route.name === 'card' ? 'text-roast-950 font-bold bg-golden-100/70 border border-golden-200/80 shadow-2xs' : 'text-roast-600/75 hover:text-roast-900'"
       >
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/>
@@ -76,8 +76,8 @@
 
       <router-link 
         to="/recompensas" 
-        class="flex flex-col items-center gap-1 text-[11px] font-semibold transition py-1 px-2 rounded-lg" 
-        :class="$route.name === 'rewards' ? 'text-stone-950 font-bold' : 'text-stone-400 hover:text-stone-600'"
+        class="flex flex-col items-center gap-0.5 text-[11px] font-semibold transition py-1 px-3 rounded-xl" 
+        :class="$route.name === 'rewards' ? 'text-roast-950 font-bold bg-golden-100/70 border border-golden-200/80 shadow-2xs' : 'text-roast-600/75 hover:text-roast-900'"
       >
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/>
@@ -88,8 +88,8 @@
 
       <router-link 
         to="/cuenta" 
-        class="flex flex-col items-center gap-1 text-[11px] font-semibold transition py-1 px-2 rounded-lg" 
-        :class="$route.name === 'profile' ? 'text-stone-950 font-bold' : 'text-stone-400 hover:text-stone-600'"
+        class="flex flex-col items-center gap-0.5 text-[11px] font-semibold transition py-1 px-3 rounded-xl" 
+        :class="$route.name === 'profile' ? 'text-roast-950 font-bold bg-golden-100/70 border border-golden-200/80 shadow-2xs' : 'text-roast-600/75 hover:text-roast-900'"
       >
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/>
