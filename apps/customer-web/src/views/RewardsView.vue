@@ -5,11 +5,28 @@
       <p class="text-xs text-stone-500">Premios obtenidos al completar tus tarjetas de 8 sellos.</p>
     </div>
 
-    <div v-if="loading" class="p-8 text-center text-xs text-stone-400 font-semibold">
-      Cargando recompensas...
+    <!-- SKELETON LOADER SUAVE CON SHIMMER & DIFUMINADO -->
+    <div v-if="loading" class="space-y-4" aria-hidden="true">
+      <div class="space-y-2.5">
+        <div class="h-3.5 w-32 rounded skeleton-shimmer"></div>
+        <div v-for="n in 2" :key="n" class="bg-white rounded-2xl fluid-pad border border-stone-200 shadow-sm space-y-4">
+          <div class="flex items-start justify-between gap-3">
+            <div class="space-y-2 flex-1">
+              <div class="h-3 w-20 rounded skeleton-shimmer"></div>
+              <div class="h-4 w-44 rounded skeleton-shimmer"></div>
+              <div class="h-3 w-56 rounded skeleton-shimmer"></div>
+            </div>
+            <div class="w-10 h-10 rounded-xl skeleton-shimmer shrink-0"></div>
+          </div>
+          <div class="flex items-center justify-between pt-3 border-t border-stone-100">
+            <div class="h-3 w-24 rounded skeleton-shimmer"></div>
+            <div class="h-8 w-28 rounded-lg skeleton-shimmer"></div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <template v-else>
+    <div v-else class="space-y-5 fade-enter-soft">
       <!-- Lista de Recompensas Disponibles -->
       <div class="space-y-2.5">
         <h3 class="font-bold text-xs uppercase tracking-wider text-stone-500">Listas para Canjear</h3>
@@ -83,7 +100,7 @@
           </div>
         </div>
       </div>
-    </template>
+    </div>
 
     <!-- Modal QR de Redención -->
     <div v-if="selectedReward" class="fixed inset-0 bg-stone-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -207,10 +224,17 @@ const redeemedRewards = computed(() => {
   return rewards.value.filter(r => r.status === 'REDEEMED');
 });
 
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 const loadRewards = async () => {
   try {
     loading.value = true;
-    rewards.value = await api.getRewards();
+    const minDelay = delay(850);
+    const [res] = await Promise.all([
+      api.getRewards().catch(() => []),
+      minDelay
+    ]);
+    rewards.value = res;
   } catch (err) {
     console.error('Error cargando recompensas:', err);
   } finally {

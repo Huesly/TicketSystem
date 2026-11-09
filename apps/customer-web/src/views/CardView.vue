@@ -5,11 +5,51 @@
       <p class="text-xs text-stone-500">Tus sellos son válidos en cualquiera de nuestras sedes.</p>
     </div>
 
-    <div v-if="loading" class="p-8 text-center text-xs text-stone-400 font-semibold">
-      Cargando tarjeta digital...
+    <!-- ======================================================================= -->
+    <!-- SKELETON LOADER CON SHIMMER SUAVE & DIFUMINADO (PRECARGA ELEGANTE)      -->
+    <!-- ======================================================================= -->
+    <div v-if="loading" class="space-y-5" aria-hidden="true">
+      <!-- Skeleton Tarjeta Principal de 8 Sellos -->
+      <div class="bg-coffee-900/90 rounded-2xl fluid-pad border border-stone-900/50 space-y-5 shadow-sm">
+        <div class="flex items-center justify-between">
+          <div class="space-y-2">
+            <div class="h-3 w-28 rounded skeleton-shimmer-dark"></div>
+            <div class="h-5 w-36 rounded skeleton-shimmer-dark"></div>
+          </div>
+          <div class="h-8 w-16 rounded-xl skeleton-shimmer-dark"></div>
+        </div>
+
+        <!-- 8 Sellos Cuadrícula Skeleton -->
+        <div class="grid grid-cols-4 gap-2.5">
+          <div v-for="n in 8" :key="n" class="aspect-square rounded-xl skeleton-shimmer-dark border border-white/5"></div>
+        </div>
+
+        <div class="h-9 rounded-xl skeleton-shimmer-dark border border-white/5"></div>
+      </div>
+
+      <!-- Skeleton Código QR para Caja -->
+      <div class="bg-white rounded-2xl p-5 border border-stone-200 shadow-sm space-y-4">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl skeleton-shimmer"></div>
+          <div class="space-y-2">
+            <div class="h-4 w-32 rounded skeleton-shimmer"></div>
+            <div class="h-3 w-48 rounded skeleton-shimmer"></div>
+          </div>
+        </div>
+
+        <div class="flex flex-col items-center justify-center py-2">
+          <div class="w-48 h-48 rounded-2xl skeleton-shimmer border border-stone-200"></div>
+        </div>
+      </div>
+
+      <!-- Skeleton Acordeón de Información -->
+      <div class="h-12 bg-white rounded-xl border border-stone-200 skeleton-shimmer"></div>
     </div>
 
-    <template v-else>
+    <!-- ======================================================================= -->
+    <!-- CONTENIDO REAL CON ANIMACIÓN DIFUMINADA (FADE-ENTER-SOFT)               -->
+    <!-- ======================================================================= -->
+    <div v-else class="space-y-5 fade-enter-soft">
       <!-- Tarjeta Principal de Fidelidad (8 Sellos) -->
       <div class="bg-coffee-900 text-amber-50 rounded-2xl fluid-pad border border-stone-900 shadow-sm space-y-5">
         <div class="flex items-center justify-between">
@@ -183,7 +223,7 @@
           </div>
         </div>
       </div>
-    </template>
+    </div>
   </div>
 </template>
 
@@ -282,15 +322,21 @@ const pollLiveStatus = async () => {
   }
 };
 
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 const loadInitialData = async () => {
   try {
     loading.value = true;
-    // Cargar perfil para el ID del carnet
-    const userMe = await api.getAuthMe();
+    // Precarga con tiempo mínimo de 850ms para garantizar una transición suave y difuminada
+    const minDelay = delay(850);
+    const [userMe] = await Promise.all([
+      api.getAuthMe().catch(() => null),
+      loadCards().catch(() => null),
+      minDelay
+    ]);
     if (userMe && userMe.user) {
       currentUserId.value = userMe.user.id;
     }
-    await loadCards();
     await pollLiveStatus();
   } catch (err) {
     console.error('Error cargando carnet de socio:', err);
