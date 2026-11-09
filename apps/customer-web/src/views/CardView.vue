@@ -119,61 +119,34 @@
       </div>
 
       <!-- ===================================================================== -->
-      <!-- CARNET DE SOCIO PERMANENTE (ESTILO STARBUCKS REWARDS)                  -->
+      <!-- CÓDIGO QR PARA CAJA                                                   -->
       <!-- ===================================================================== -->
       <div class="bg-white rounded-2xl p-5 border border-stone-300 shadow-sm space-y-4">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2.5">
-            <div class="w-8 h-8 rounded-lg bg-stone-900 text-white flex items-center justify-center shrink-0">
-              <!-- SVG: QR Code -->
-              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/>
-                <path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/>
-                <path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/>
-              </svg>
-            </div>
-            <div>
-              <h3 class="font-extrabold text-sm text-stone-950">Mi Carnet Digital QR</h3>
-              <p class="text-[11px] text-stone-500">Muestra este código único para acumular y canjear</p>
-            </div>
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-stone-900 text-white flex items-center justify-center shrink-0">
+            <!-- SVG: QR Code -->
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/>
+              <path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/>
+              <path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/>
+            </svg>
           </div>
-
-          <span class="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-stone-100 text-stone-800 border border-stone-300">
-            {{ memberCode }}
-          </span>
+          <div class="min-w-0">
+            <h3 class="font-extrabold text-sm text-stone-950">Mi Código QR</h3>
+            <p class="text-[11px] text-stone-500">Muestra este código al barista para sumar sellos o canjear</p>
+          </div>
         </div>
 
-        <!-- VISOR DEL CÓDIGO QR PERMANENTE -->
-        <div class="flex flex-col items-center justify-center space-y-3 pt-1">
-          <!-- QR Renderizado de Alto Contraste Permanente -->
+        <!-- VISOR DEL CÓDIGO QR -->
+        <div class="flex flex-col items-center justify-center pt-1 pb-1">
+          <!-- QR Renderizado de Alto Contraste -->
           <div v-if="memberQrToken" class="p-4 bg-white rounded-2xl border-2 border-stone-900 shadow-sm relative">
             <qrcode-vue :value="memberQrToken" :size="180" level="M" render-as="svg" />
           </div>
-
-          <!-- Indicador de Enlace en Tiempo Real -->
-          <div class="flex items-center gap-2 text-xs font-medium text-stone-600">
-            <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
-            <span>Código de socio permanente • Actualización automática</span>
-          </div>
-
-          <!-- Botón de Copiar Token Manual (Para Pruebas del POS) -->
-          <button
-            type="button"
-            @click="copyToken"
-            class="text-[11px] font-semibold text-stone-600 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 border border-stone-300 px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 cursor-pointer active:scale-95"
-          >
-            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path v-if="copied" d="M20 6 9 17l-5-5"/>
-              <template v-else>
-                <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
-              </template>
-            </svg>
-            <span>{{ copied ? '¡Código de socio copiado!' : 'Copiar código para prueba en POS' }}</span>
-          </button>
         </div>
       </div>
 
-      <!-- Regla de Acumulación con <details> nativo para reducir ruido -->
+      <!-- Guía de Uso del Código QR (Sin Costos ni Precios) -->
       <details class="group bg-white rounded-xl border border-stone-300 px-4 py-3 text-xs text-stone-600">
         <summary class="font-bold text-stone-900 cursor-pointer flex items-center justify-between list-none">
           <span class="inline-flex items-center gap-2">
@@ -181,16 +154,16 @@
             <svg class="w-4 h-4 text-stone-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
             </svg>
-            ¿Cómo funciona tu carnet digital?
+            ¿Cómo usar tu código QR?
           </span>
           <svg class="w-4 h-4 text-stone-400 transition-transform group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="m6 9 6 6 6-6"/>
           </svg>
         </summary>
-        <div class="mt-2 pt-2 border-t border-stone-100 leading-relaxed space-y-1">
-          <p>• <strong>Un solo QR permanente:</strong> No necesitas generar nuevos códigos cada minuto ni esperar recargas.</p>
-          <p>• <strong>Ganas 1 sello por cada $10.000 COP</strong> en tus consumos (máximo 3 sellos por compra).</p>
-          <p>• <strong>Cortesías en barra:</strong> Al completar tus 8 sellos, el barista escanea este mismo carnet y te entrega la cortesía de la casa que prefieras.</p>
+        <div class="mt-2 pt-2 border-t border-stone-100 leading-relaxed space-y-1.5 text-xs text-stone-600">
+          <p>• <strong>Para acumular sellos:</strong> Muestra tu código QR en caja al pedir tus bebidas o productos en cualquiera de nuestras sedes.</p>
+          <p>• <strong>Para reclamar premios:</strong> Al completar tu tarjeta de 8 sellos, presenta este mismo código QR al barista para recibir tu cortesía.</p>
+          <p>• <strong>Código personal:</strong> Tu código QR siempre está disponible en tu aplicación para tus visitas.</p>
         </div>
       </details>
 
@@ -226,14 +199,9 @@ const availableRewardsCount = ref(0);
 
 // Identificación del socio permanente
 const currentUserId = ref('00000000-0000-0000-0000-000000000001');
-const copied = ref(false);
 
 const memberQrToken = computed(() => {
   return `cfy_member_${currentUserId.value}`;
-});
-
-const memberCode = computed(() => {
-  return `TD-${currentUserId.value.slice(0, 4).toUpperCase()}`;
 });
 
 // Alertas en tiempo real
@@ -281,13 +249,6 @@ const triggerHaptic = () => {
   if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
     navigator.vibrate([80, 40, 120]);
   }
-};
-
-const copyToken = () => {
-  if (!memberQrToken.value) return;
-  navigator.clipboard.writeText(memberQrToken.value);
-  copied.value = true;
-  setTimeout(() => { copied.value = false; }, 2500);
 };
 
 const pollLiveStatus = async () => {
