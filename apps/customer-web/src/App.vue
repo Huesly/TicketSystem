@@ -19,43 +19,28 @@
         </div>
       </div>
 
-      <div class="flex items-center gap-1.5">
-        <!-- Botón Perfil / Sesión -->
-        <div v-if="currentUser" class="flex items-center gap-1">
-          <button 
-            type="button"
-            @click="logoutCustomer"
-            title="Cerrar sesión"
-            class="bg-stone-100 hover:bg-stone-200 text-stone-800 text-[11px] font-bold px-2.5 py-1.5 rounded-lg border border-stone-300 transition flex items-center gap-1 cursor-pointer"
-          >
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-            <span class="max-w-[70px] truncate">{{ currentUser.full_name.split(' ')[0] }}</span>
-            <svg class="w-3 h-3 text-stone-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
-            </svg>
-          </button>
-        </div>
+      <div class="flex items-center gap-2">
+        <!-- Acceso a Mi Cuenta (Sin riesgo de logout accidental) -->
+        <router-link 
+          v-if="currentUser" 
+          to="/cuenta"
+          class="bg-stone-100 hover:bg-stone-200 text-stone-800 text-[11px] font-bold px-3 py-1.5 rounded-xl border border-stone-300 transition flex items-center gap-1.5 cursor-pointer shadow-2xs active:scale-95"
+          title="Ver mi perfil y cuenta"
+        >
+          <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+          <span class="max-w-[100px] truncate">{{ currentUser.full_name.split(' ')[0] }}</span>
+          <svg class="w-3.5 h-3.5 text-stone-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/>
+          </svg>
+        </router-link>
+
         <button 
           v-else
           type="button"
           @click="showAuthModal = true"
-          class="bg-stone-100 hover:bg-stone-200 text-stone-800 text-[11px] font-bold px-2.5 py-1.5 rounded-lg border border-stone-300 transition cursor-pointer"
+          class="bg-stone-900 hover:bg-stone-800 text-white text-[11px] font-bold px-3.5 py-1.5 rounded-xl border border-stone-900 transition cursor-pointer shadow-2xs active:scale-95"
         >
           Iniciar Sesión
-        </button>
-
-        <!-- Botón Mi QR -->
-        <button 
-          type="button"
-          @click="openQrModal"
-          class="bg-stone-900 hover:bg-stone-800 text-white font-semibold text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 border border-stone-900 transition active:scale-95 cursor-pointer"
-        >
-          <!-- SVG: QR Code -->
-          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/>
-            <path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/>
-          </svg>
-          <span>Mi QR</span>
         </button>
       </div>
     </header>
@@ -65,12 +50,12 @@
       <router-view />
     </main>
 
-    <!-- Barra de Navegación Inferior Compacta -->
-    <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/95 backdrop-blur-md border-t border-stone-200 px-6 h-14 flex items-center justify-around z-30" aria-label="Navegación inferior">
+    <!-- Barra de Navegación Inferior Compacta (4 pestañas) -->
+    <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/95 backdrop-blur-md border-t border-stone-200 px-4 h-14 flex items-center justify-around z-30" aria-label="Navegación inferior">
       <router-link 
         to="/" 
-        class="flex flex-col items-center gap-1 text-[11px] font-semibold transition" 
-        :class="$route.name === 'home' ? 'text-stone-950' : 'text-stone-400 hover:text-stone-600'"
+        class="flex flex-col items-center gap-1 text-[11px] font-semibold transition py-1 px-2 rounded-lg" 
+        :class="$route.name === 'home' ? 'text-stone-950 font-bold' : 'text-stone-400 hover:text-stone-600'"
       >
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
@@ -80,8 +65,8 @@
 
       <router-link 
         to="/mi-tarjeta" 
-        class="flex flex-col items-center gap-1 text-[11px] font-semibold transition" 
-        :class="$route.name === 'card' ? 'text-stone-950' : 'text-stone-400 hover:text-stone-600'"
+        class="flex flex-col items-center gap-1 text-[11px] font-semibold transition py-1 px-2 rounded-lg" 
+        :class="$route.name === 'card' ? 'text-stone-950 font-bold' : 'text-stone-400 hover:text-stone-600'"
       >
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/>
@@ -91,14 +76,25 @@
 
       <router-link 
         to="/recompensas" 
-        class="flex flex-col items-center gap-1 text-[11px] font-semibold transition" 
-        :class="$route.name === 'rewards' ? 'text-stone-950' : 'text-stone-400 hover:text-stone-600'"
+        class="flex flex-col items-center gap-1 text-[11px] font-semibold transition py-1 px-2 rounded-lg" 
+        :class="$route.name === 'rewards' ? 'text-stone-950 font-bold' : 'text-stone-400 hover:text-stone-600'"
       >
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/>
           <path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/>
         </svg>
         <span>Premios</span>
+      </router-link>
+
+      <router-link 
+        to="/cuenta" 
+        class="flex flex-col items-center gap-1 text-[11px] font-semibold transition py-1 px-2 rounded-lg" 
+        :class="$route.name === 'profile' ? 'text-stone-950 font-bold' : 'text-stone-400 hover:text-stone-600'"
+      >
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/>
+        </svg>
+        <span>Cuenta</span>
       </router-link>
     </nav>
 
@@ -310,12 +306,6 @@ const checkAuth = async () => {
   }
 };
 
-const logoutCustomer = () => {
-  api.clearToken();
-  currentUser.value = null;
-  window.dispatchEvent(new CustomEvent('confy-user-changed'));
-};
-
 const startStatusPolling = (token: string) => {
   clearInterval(pollTimer);
   pollTimer = setInterval(async () => {
@@ -405,14 +395,22 @@ const copyToken = async () => {
   setTimeout(() => { copied.value = false; }, 2000);
 };
 
+const handleOpenAuth = () => {
+  showAuthModal.value = true;
+};
+
 onMounted(() => {
   checkAuth();
   window.addEventListener('confy-user-changed', checkAuth);
+  window.addEventListener('open-auth-modal', handleOpenAuth);
+  window.addEventListener('open-qr-modal', openQrModal);
 });
 
 onUnmounted(() => {
   clearInterval(timer);
   clearInterval(pollTimer);
   window.removeEventListener('confy-user-changed', checkAuth);
+  window.removeEventListener('open-auth-modal', handleOpenAuth);
+  window.removeEventListener('open-qr-modal', openQrModal);
 });
 </script>
