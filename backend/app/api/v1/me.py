@@ -272,3 +272,148 @@ async def generate_redemption_qr(
     )
     await db.commit()
     return qr_res
+
+@router.get("/live-status", summary="Consultar estado de tarjeta en tiempo real y alertas recientes")
+async def get_live_status(
+    user_id: UUID = Depends(get_current_user_id),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Soporte en tiempo real para el carnet permanente (Estilo Starbucks Rewards).
+    Permite a la aplicación del cliente detectar instantáneamente cuándo el cajero
+    ha acreditado sellos por compra o confirmado una entrega de cortesía,
+    activando la animación de éxito y el sonido de celebración.
+    """
+    now = datetime.now(timezone.utc)
+
+    # 1. Obtener tarjeta activa de 8 sellos
+    card_stmt = (
+        select(LoyaltyCard)
+        .where(LoyaltyCard.customer_id == user_id, LoyaltyCard.status == "accumulating")
+        .order_by(LoyaltyCard.cycle_number.desc())
+        .limit(1)
+    )
+    card = (await db.execute(card_stmt)).scalar_one_or_none()
+
+    stamps_count = 0
+    cycle_number = 1
+    target = 8
+    card_id = None
+    if card:
+        card_id = card.id
+        cycle_number = card.cycle_number
+        target = card.stamps_required_snapshot or 8
+        balance_stmt = (
+            select(func.coalesce(func.sum(StampMovement.quantity), 0))
+            .where(
+                StampMovement.card_id == card.id,
+                StampMovement.movement_type.in_(["EARN", "CARRY_IN", "ADJUSTMENT"])
+            )
+        )
+        balance = (await db.execute(balance_stmt)).scalar_one()
+
+        ded_stmt = (
+            select(func.coalesce(func.sum(StampMovement.quantity), 0))
+            .where(
+                StampMovement.card_id == card.id,
+                StampMovement.movement_type.in_(["REVERSAL", "EXPIRATION", "CARRY_OUT"])
+            )
+        )
+        ded = (await db.execute(ded_stmt)).scalar_one()
+        stamps_count = max(0, min(target, balance - ded))
+
+    # 2. Conteo de recompensas disponibles
+    rew_count_stmt = (
+        select(func.count(CustomerReward.id))
+        .where(CustomerReward.customer_id == user_id, CustomerReward.status == "AVAILABLE")
+    )
+    available_rewards_count = (await db.execute(rew_count_stmt)).scalar_one()
+
+    # 3. Detectar alertas recientes (últimos 25 segundos)
+    recent_alert = None
+
+    # A. Compra reciente
+    p_stmt = (
+        select(Purchase, Store.name)
+        .join(Store, Purchase.store_id == Store.id)
+        .where(
+            Purchase.customer_id == user_id,
+            Purchase.status == "confirmed"
+        )
+        .order_by(Purchase.created_at.desc())
+        .limit(1)
+    )
+    p_row = (await db.execute(p_stmt)).first()
+    recent_purchase = None
+    if p_row:
+        p, s_name = p_row
+        p_time = p.created_at.replace(tzinfo=timezone.utc) if p.created_at.tzinfo is None else p.created_at
+        diff = (now - p_time).total_seconds()
+        if diff <= 25:
+            st_stmt = select(func.coalesce(func.sum(StampMovement.quantity), 0)).where(StampMovement.purchase_id == p.id)
+            awarded = (await db.execute(st_stmt)).scalar_one()
+            recent_purchase = {
+                "id": str(p.id),
+                "type": "PURCHASE",
+                "title": f"¡+{awarded} {'Sello Sumado' if awarded == 1 else 'Sellos Sumados'}!",
+                "message": f"Registrado en {s_name}",
+                "receipt_reference": p.receipt_reference,
+                "gross_amount": p.gross_amount,
+                "stamps_awarded": awarded,
+                "store_name": s_name,
+                "created_at": p_time.isoformat()
+            }
+
+    # B. Redención de cortesía reciente
+    r_stmt = (
+        select(RewardRedemption, Store.name, CustomerReward, RewardDefinition)
+        .join(Store, RewardRedemption.store_id == Store.id)
+        .join(CustomerReward, RewardRedemption.customer_reward_id == CustomerReward.id)
+        .join(RewardDefinition, CustomerReward.definition_id == RewardDefinition.id)
+        .where(CustomerReward.customer_id == user_id)
+        .order_by(RewardRedemption.created_at.desc())
+        .limit(1)
+    )
+    r_row = (await db.execute(r_stmt)).first()
+    recent_redemption = None
+    if r_row:
+        red, s_name, c_rew, r_def = r_row
+        red_time = red.created_at.replace(tzinfo=timezone.utc) if red.created_at.tzinfo is None else red.created_at
+        diff = (now - red_time).total_seconds()
+        if diff <= 25:
+            product_name = c_rew.terms_snapshot.get("selected_product") if c_rew.terms_snapshot else r_def.name
+            recent_redemption = {
+                "id": str(red.id),
+                "type": "REDEMPTION",
+                "title": "¡Cortesía Entregada!",
+                "message": f"Disfruta tu {product_name or 'café'}",
+                "store_name": s_name,
+                "product_name": product_name or r_def.name,
+                "created_at": red_time.isoformat()
+            }
+
+    if recent_purchase and recent_redemption:
+        if recent_purchase["created_at"] >= recent_redemption["created_at"]:
+            recent_alert = recent_purchase
+        else:
+            recent_alert = recent_redemption
+    elif recent_purchase:
+        recent_alert = recent_purchase
+    elif recent_redemption:
+        recent_alert = recent_redemption
+
+    return {
+        "user_id": str(user_id),
+        "card": {
+            "id": str(card_id) if card_id else None,
+            "cycle_number": cycle_number,
+            "stamps_count": stamps_count,
+            "stamps_required": target,
+            "stamps_remaining": max(0, target - stamps_count),
+            "progress_percentage": round((stamps_count / target) * 100, 1),
+            "is_completed": stamps_count >= target
+        },
+        "available_rewards_count": available_rewards_count,
+        "recent_alert": recent_alert
+    }
+

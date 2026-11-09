@@ -4,8 +4,7 @@
     <!-- PANTALLA 1: ASIGNACIÓN DE SEDE Y APERTURA DE TURNO POS                  -->
     <!-- ======================================================================= -->
     <div v-if="!activeStore || isSelectingStore" class="max-w-4xl mx-auto space-y-5">
-      
-      <!-- Cabecera Minimalista con Disclosure para Info Secundaria -->
+      <!-- Cabecera Minimalista -->
       <div class="bg-white rounded-2xl border border-stone-300 fluid-pad space-y-4 shadow-sm">
         <div class="flex items-start justify-between gap-4">
           <div class="space-y-1.5">
@@ -23,7 +22,7 @@
               Selecciona la sede de operación
             </h1>
             <p class="text-xs text-stone-600 max-w-xl leading-relaxed">
-              Elige el establecimiento físico donde operas esta caja para vincular las facturas, sellos y redenciones de tu turno.
+              Elige el establecimiento físico donde operas esta terminal para vincular las facturas, sellos y cortesías de tu turno.
             </p>
           </div>
 
@@ -39,28 +38,9 @@
             <span>Volver</span>
           </button>
         </div>
-
-        <!-- Disclosure Nativo (<details>) para reducir ruido visual -->
-        <details class="group bg-stone-50 rounded-xl border border-stone-200 px-3.5 py-2.5 text-xs text-stone-600">
-          <summary class="font-semibold text-stone-800 cursor-pointer flex items-center justify-between select-none">
-            <span class="flex items-center gap-2">
-              <svg class="w-4 h-4 text-stone-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
-              </svg>
-              <span>Información sobre auditoría de sede y turnos automáticos</span>
-            </span>
-            <svg class="w-4 h-4 text-stone-500 transition-transform group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="m6 9 6 6 6-6"/>
-            </svg>
-          </summary>
-          <div class="pt-2.5 mt-2.5 border-t border-stone-200 space-y-1.5 text-[11px] leading-relaxed text-stone-600">
-            <p><strong>Trazabilidad por punto de venta:</strong> Cada registro de compra o canje se audita bajo la sede activa del cajero.</p>
-            <p><strong>Sincronización futura de turnos:</strong> En la siguiente fase, la sede se asignará automáticamente al iniciar sesión según el cuadrante horario del operador.</p>
-          </div>
-        </details>
       </div>
 
-      <!-- Grid Líquido de Sedes Disponibles -->
+      <!-- Grid de Sedes Disponibles -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div 
           v-for="store in stores" 
@@ -88,7 +68,6 @@
             </div>
 
             <div class="flex items-center gap-1.5 text-[11px] text-stone-600 font-medium pt-1">
-              <!-- SVG: Map Pin -->
               <svg class="w-3.5 h-3.5 text-stone-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/>
                 <circle cx="12" cy="10" r="3"/>
@@ -115,12 +94,11 @@
     </div>
 
     <!-- ======================================================================= -->
-    <!-- PANTALLA 2: TERMINAL POS PRINCIPAL (Turno Abierto)                     -->
+    <!-- PANTALLA 2: TERMINAL POS INTELIGENTE (ESTILO STARBUCKS REWARDS)         -->
     <!-- ======================================================================= -->
     <template v-else>
-      <!-- Barra Compacta de Contexto de Sede y Selector de Modo -->
+      <!-- Barra Superior de Contexto de Sede y Estado de Caja -->
       <div class="bg-white border border-stone-300 rounded-2xl p-3.5 sm:px-5 shadow-sm flex flex-wrap items-center justify-between gap-3">
-        <!-- Info de Sede Activa -->
         <div class="flex items-center gap-3">
           <div class="w-9 h-9 rounded-xl bg-stone-100 border border-stone-300 text-stone-800 flex items-center justify-center shrink-0">
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -145,466 +123,520 @@
             class="ml-1 text-xs font-medium text-stone-700 bg-stone-50 hover:bg-stone-100 border border-stone-300 px-2.5 py-1.5 rounded-lg transition flex items-center gap-1.5 cursor-pointer"
             title="Cambiar de sede"
           >
-            <!-- SVG: Swap Horiz -->
             <svg class="w-3.5 h-3.5 text-stone-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/>
             </svg>
-            <span>Cambiar</span>
+            <span>Cambiar Sede</span>
           </button>
         </div>
 
-        <!-- Conmutador de Modo (Segmented Control Minimalista) -->
-        <div class="flex items-center bg-stone-100 p-1.5 rounded-xl border border-stone-300 w-full sm:w-auto gap-1.5">
-          <button 
-            type="button"
-            @click="switchMode('purchase')" 
-            class="flex-1 sm:flex-none px-4 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer border shadow-2xs active:scale-95"
-            :class="mode === 'purchase' 
-              ? 'bg-stone-900 text-white border-stone-900 shadow-sm' 
-              : 'bg-white text-stone-700 hover:text-stone-950 border-stone-300 hover:border-stone-400'"
-          >
-            <!-- SVG: Receipt -->
-            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/>
-              <path d="M14 8H8"/><path d="M16 12H8"/><path d="M13 16H8"/>
-            </svg>
-            <span>Registrar Compra (Sellos)</span>
-          </button>
-
-          <button 
-            type="button"
-            @click="switchMode('redemption')" 
-            class="flex-1 sm:flex-none px-4 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer border shadow-2xs active:scale-95"
-            :class="mode === 'redemption' 
-              ? 'bg-stone-900 text-white border-stone-900 shadow-sm' 
-              : 'bg-white text-stone-700 hover:text-stone-950 border-stone-300 hover:border-stone-400'"
-          >
-            <!-- SVG: Gift / Redeem -->
-            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/>
-              <path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/>
-            </svg>
-            <span>Canjear Premio</span>
-          </button>
+        <div class="flex items-center gap-2">
+          <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-800 bg-emerald-50 border border-emerald-300 px-3 py-1 rounded-full">
+            <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+            Caja Operativa • TicketsDemo &amp; PosDemo
+          </span>
         </div>
       </div>
 
-      <!-- =================================================================== -->
-      <!-- MODO 1: REGISTRAR COMPRA Y ACUMULAR SELLOS                          -->
-      <!-- =================================================================== -->
-      <div v-if="mode === 'purchase'" class="grid grid-cols-1 lg:grid-cols-12 gap-5">
-        
-        <!-- COLUMNA IZQUIERDA: PASO 1 - ESCÁNER QR (5 Columnas) -->
-        <div class="lg:col-span-5 bg-white rounded-2xl border border-stone-300 shadow-sm flex flex-col justify-between fluid-pad space-y-4">
-          <div class="space-y-4">
-            <div class="flex items-center justify-between border-b border-stone-200 pb-3">
-              <div class="flex items-center gap-2">
-                <span class="w-5 h-5 rounded-full bg-stone-900 text-white text-[11px] font-mono font-bold flex items-center justify-center">1</span>
-                <h2 class="font-bold text-sm text-stone-950">Identificación QR</h2>
+      <!-- ===================================================================== -->
+      <!-- CASO 1: NINGÚN SOCIO IDENTIFICADO AÚN (ESCANEAR O INGRESAR TOKEN)      -->
+      <!-- ===================================================================== -->
+      <div v-if="!memberData" class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <!-- Panel de Lector Óptico QR (5 Cols) -->
+        <div class="lg:col-span-6 bg-white rounded-2xl border border-stone-300 shadow-sm fluid-pad space-y-4">
+          <div class="flex items-center justify-between border-b border-stone-200 pb-3">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-stone-900 text-white text-xs font-mono font-bold flex items-center justify-center">1</span>
+              <div>
+                <h2 class="font-bold text-sm text-stone-950">Escanear Carnet del Socio</h2>
+                <p class="text-[11px] text-stone-500">Un solo QR permanente para acumular o canjear</p>
               </div>
-              
-              <span 
-                class="text-[11px] font-mono font-medium px-2.5 py-0.5 rounded-full border flex items-center gap-1.5" 
-                :class="isCameraActive 
-                  ? 'bg-emerald-50 text-emerald-800 border-emerald-300' 
-                  : 'bg-stone-100 text-stone-600 border-stone-300'"
-              >
-                <span class="w-1.5 h-1.5 rounded-full" :class="isCameraActive ? 'bg-emerald-600 animate-pulse' : 'bg-stone-400'"></span>
-                {{ isCameraActive ? 'Escáner activo' : 'En espera' }}
+            </div>
+
+            <span 
+              class="text-[11px] font-mono font-medium px-2.5 py-0.5 rounded-full border flex items-center gap-1.5" 
+              :class="isCameraActive ? 'bg-emerald-50 text-emerald-800 border-emerald-300' : 'bg-stone-100 text-stone-600 border-stone-300'"
+            >
+              <span class="w-1.5 h-1.5 rounded-full" :class="isCameraActive ? 'bg-emerald-600 animate-pulse' : 'bg-stone-400'"></span>
+              {{ isCameraActive ? 'Cámara activa' : 'En espera' }}
+            </span>
+          </div>
+
+          <!-- Visor de Video de Cámara -->
+          <div class="aspect-4/3 bg-stone-950 rounded-xl relative overflow-hidden flex flex-col items-center justify-center text-center border border-stone-800">
+            <video 
+              ref="videoRef" 
+              class="w-full h-full object-cover" 
+              :class="{ 'hidden': !isCameraActive }"
+              autoplay 
+              muted 
+              playsinline
+            ></video>
+
+            <!-- Retícula de Escaneo Activo -->
+            <div v-if="isCameraActive" class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center p-6">
+              <div class="w-44 h-44 border-2 border-emerald-400 rounded-2xl relative shadow-lg">
+                <div class="absolute inset-x-0 h-0.5 bg-emerald-400 animate-pulse top-1/2"></div>
+              </div>
+              <span class="text-[11px] text-white font-medium bg-stone-900/90 px-3 py-1 rounded-md mt-3 border border-stone-700">
+                Apunta al carnet QR del cliente
               </span>
             </div>
 
-            <!-- Visor de Video con Aspect Ratio fijo (Previene CLS) -->
-            <div class="aspect-4/3 bg-stone-950 rounded-xl relative overflow-hidden flex flex-col items-center justify-center text-center border border-stone-800">
-              <video 
-                ref="videoRef" 
-                class="w-full h-full object-cover" 
-                :class="{ 'hidden': !isCameraActive }"
-                autoplay 
-                muted 
-                playsinline
-              ></video>
-
-              <!-- Retícula Minimalista cuando la cámara está activa -->
-              <div v-if="isCameraActive" class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center p-6">
-                <div class="w-44 h-44 border border-emerald-400/90 rounded-xl relative">
-                  <div class="absolute inset-x-0 h-0.5 bg-emerald-400 animate-pulse top-1/2"></div>
-                </div>
-                <span class="text-[11px] text-white font-medium bg-stone-900/80 px-2.5 py-1 rounded-md mt-3 border border-stone-700">
-                  Alinea el código QR en el recuadro
-                </span>
+            <!-- Estado Inicial con Cámara Apagada -->
+            <div v-if="!isCameraActive" class="p-6 space-y-3 flex flex-col items-center justify-center text-center">
+              <div class="w-12 h-12 rounded-2xl bg-stone-900 border border-stone-700 text-amber-300 flex items-center justify-center">
+                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
+                  <rect width="7" height="7" x="7" y="7" rx="1"/><path d="M7 17h.01"/><path d="M17 7h.01"/><path d="M17 17h.01"/>
+                </svg>
+              </div>
+              <div class="space-y-0.5">
+                <p class="text-xs font-bold text-white">Lector de Carnet Digital</p>
+                <p class="text-[11px] text-stone-400">Activa la cámara del POS o ingresa el código del socio</p>
               </div>
 
-              <!-- Estado de Cámara Inactiva -->
-              <div v-if="!isCameraActive" class="p-6 space-y-3.5 flex flex-col items-center justify-center text-center">
-                <div class="w-12 h-12 rounded-xl bg-stone-900 border border-stone-700 text-stone-200 flex items-center justify-center">
-                  <!-- SVG: QR Code Scanner -->
-                  <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
-                    <rect width="7" height="7" x="7" y="7" rx="1"/><path d="M7 17h.01"/><path d="M17 7h.01"/><path d="M17 17h.01"/>
-                  </svg>
-                </div>
-                <div class="space-y-1 max-w-[230px]">
-                  <p class="text-xs font-semibold text-white">Lector Óptico Web</p>
-                  <p class="text-[11px] text-stone-400 leading-relaxed">
-                    Activa la cámara para leer el token QR temporal del cliente.
-                  </p>
-                </div>
-
-                <button 
-                  type="button"
-                  @click="startCamera" 
-                  class="bg-white hover:bg-stone-100 text-stone-950 font-semibold text-xs px-4 py-2 rounded-lg border border-stone-300 transition flex items-center gap-2 cursor-pointer"
-                >
-                  <!-- SVG: Videocam -->
-                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/>
-                  </svg>
-                  <span>Activar cámara</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- Barra de Control cuando la cámara está activa -->
-            <div v-if="isCameraActive" class="flex items-center justify-between text-xs bg-stone-50 p-2.5 rounded-xl border border-stone-300">
-              <div class="flex items-center gap-2 min-w-0">
-                <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
-                <span class="text-stone-700 font-semibold text-[11px] truncate">{{ activeCameraLabel }}</span>
-              </div>
-              <div class="flex items-center gap-1.5 shrink-0">
-                <button 
-                  v-if="availableCameras.length > 1"
-                  type="button"
-                  @click="toggleCamera"
-                  class="text-xs font-semibold text-stone-800 bg-white hover:bg-stone-100 border border-stone-300 px-2.5 py-1 rounded-lg transition cursor-pointer flex items-center gap-1"
-                  title="Girar entre cámara trasera y frontal"
-                >
-                  <svg class="w-3.5 h-3.5 text-stone-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M11 19H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h5"/><circle cx="12" cy="13" r="3"/><path d="m18 22 3-3-3-3"/><path d="m6 2-3 3 3 3"/>
-                  </svg>
-                  <span>Girar</span>
-                </button>
-                <button 
-                  type="button"
-                  @click="stopCamera"
-                  class="text-xs font-semibold text-red-700 bg-white hover:bg-red-50 border border-red-300 px-2.5 py-1 rounded-lg transition cursor-pointer flex items-center gap-1"
-                >
-                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <rect width="18" height="18" x="3" y="3" rx="2"/>
-                  </svg>
-                  <span>Detener</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- Mensajes de Estado de Cámara -->
-            <div v-if="cameraError" class="p-3 bg-red-50 border border-red-300 rounded-xl text-red-900 text-xs flex items-start gap-2">
-              <svg class="w-4 h-4 text-red-600 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/>
-              </svg>
-              <span>{{ cameraError }}</span>
-            </div>
-
-            <div v-if="lastScannedSuccess" class="p-3 bg-emerald-50 border border-emerald-300 rounded-xl text-emerald-900 text-xs font-medium flex items-center gap-2">
-              <svg class="w-4 h-4 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M20 6 9 17l-5-5"/>
-              </svg>
-              <span>Código QR capturado correctamente.</span>
+              <button 
+                type="button"
+                @click="startCamera" 
+                class="bg-white hover:bg-stone-100 text-stone-950 font-bold text-xs px-4 py-2.5 rounded-xl border border-stone-300 transition flex items-center gap-2 cursor-pointer shadow-sm active:scale-95"
+              >
+                <svg class="w-4 h-4 text-stone-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/>
+                </svg>
+                <span>Activar escáner de cámara</span>
+              </button>
             </div>
           </div>
 
-          <!-- Entrada Manual o Simulación -->
-          <div class="space-y-2 pt-3 border-t border-stone-200">
-            <div class="flex items-center justify-between gap-2">
-              <label for="pos-qr-token" class="text-xs font-semibold text-stone-800">
-                Token de cliente
+          <!-- Barra de Control de Cámara -->
+          <div v-if="isCameraActive" class="flex items-center justify-between text-xs bg-stone-50 p-2.5 rounded-xl border border-stone-300">
+            <span class="text-stone-700 font-semibold text-[11px] truncate">{{ activeCameraLabel }}</span>
+            <div class="flex items-center gap-1.5 shrink-0">
+              <button 
+                v-if="availableCameras.length > 1"
+                type="button"
+                @click="toggleCamera"
+                class="text-xs font-semibold text-stone-800 bg-white hover:bg-stone-100 border border-stone-300 px-2 py-1 rounded-lg transition cursor-pointer"
+              >
+                Girar
+              </button>
+              <button 
+                type="button"
+                @click="stopCamera"
+                class="text-xs font-semibold text-red-700 bg-white hover:bg-red-50 border border-red-300 px-2.5 py-1 rounded-lg transition cursor-pointer"
+              >
+                Detener
+              </button>
+            </div>
+          </div>
+
+          <div v-if="cameraError" class="p-3 bg-red-50 border border-red-300 rounded-xl text-red-900 text-xs">
+            {{ cameraError }}
+          </div>
+
+          <!-- Entrada Manual o Demo -->
+          <div class="space-y-2 pt-2 border-t border-stone-200">
+            <div class="flex items-center justify-between">
+              <label for="pos-member-token" class="text-xs font-semibold text-stone-800">
+                Código de carnet del socio:
               </label>
               <button 
                 type="button"
-                @click="simulateScan"
-                :disabled="simulating"
-                class="text-[11px] font-semibold text-stone-800 bg-stone-100 hover:bg-stone-200 border border-stone-300 px-2.5 py-1 rounded-lg transition cursor-pointer flex items-center gap-1"
+                @click="loadDemoMember"
+                class="text-[11px] font-semibold text-stone-800 bg-amber-100 hover:bg-amber-200 border border-amber-300 px-2.5 py-1 rounded-lg transition cursor-pointer flex items-center gap-1"
               >
-                <!-- SVG: Bolt -->
-                <svg class="w-3 h-3 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <svg class="w-3 h-3 text-amber-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>
                 </svg>
-                <span>Cargar QR Demo</span>
+                <span>Cargar Socio Demo (Camila R.)</span>
               </button>
             </div>
 
-            <input 
-              id="pos-qr-token"
-              v-model="tokenInput"
-              type="text"
-              placeholder="cfy_purchase_..."
-              class="w-full text-xs font-mono bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2.5 text-stone-900 placeholder:text-stone-400 focus:bg-white focus:border-stone-900 focus:outline-none transition"
-            />
+            <div class="flex gap-2">
+              <input 
+                id="pos-member-token"
+                v-model="tokenInput"
+                type="text"
+                placeholder="cfy_member_..."
+                @keyup.enter="lookupMember()"
+                class="flex-1 text-xs font-mono bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2.5 text-stone-900 placeholder:text-stone-400 focus:bg-white focus:border-stone-900 focus:outline-none transition"
+              />
+              <button
+                type="button"
+                @click="lookupMember()"
+                :disabled="isLookingUp || !tokenInput.trim()"
+                class="bg-stone-900 hover:bg-stone-800 disabled:bg-stone-200 disabled:text-stone-400 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition cursor-pointer"
+              >
+                {{ isLookingUp ? 'Buscando...' : 'Consultar' }}
+              </button>
+            </div>
+
+            <div v-if="errorMessage" class="p-3 bg-red-50 border border-red-300 rounded-xl text-red-900 text-xs mt-2">
+              {{ errorMessage }}
+            </div>
           </div>
         </div>
 
-        <!-- COLUMNA DERECHA: PASO 2 - FACTURA POS (7 Columnas) -->
-        <div class="lg:col-span-7 bg-white rounded-2xl border border-stone-300 shadow-sm flex flex-col justify-between fluid-pad space-y-5">
-          <div class="space-y-5">
-            <div class="flex items-center justify-between border-b border-stone-200 pb-3">
-              <div class="flex items-center gap-2">
-                <span class="w-5 h-5 rounded-full bg-stone-900 text-white text-[11px] font-mono font-bold flex items-center justify-center">2</span>
-                <h2 class="font-bold text-sm text-stone-950">Detalle de Factura POS</h2>
-              </div>
-              <span class="text-[11px] text-stone-500 font-medium">
-                Regla: $10.000 COP = 1 sello (máx. 3)
+        <!-- Columna Derecha: Explicación y Flujo de Atención (6 Cols) -->
+        <div class="lg:col-span-6 bg-white rounded-2xl border border-stone-300 shadow-sm fluid-pad space-y-4 flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="border-b border-stone-200 pb-3">
+              <span class="text-[10px] uppercase font-bold tracking-widest text-amber-600 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded">
+                Flujo Estilo Starbucks Rewards
               </span>
+              <h3 class="font-extrabold text-base text-stone-950 mt-1">Atención rápida y unificada en barra</h3>
+              <p class="text-xs text-stone-600 mt-0.5">El cliente solo necesita presentar un único código para todo:</p>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <!-- Campo 1: N° Factura -->
-              <div class="space-y-1.5">
-                <label for="pos-invoice-ref" class="text-xs font-semibold text-stone-800 block">
-                  Consecutivo de factura *
-                </label>
-                <input 
-                  id="pos-invoice-ref"
-                  v-model="invoiceRef"
-                  type="text" 
-                  placeholder="FAC-2026-00124"
-                  class="w-full text-sm font-mono bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2.5 text-stone-950 placeholder:text-stone-400 focus:bg-white focus:border-stone-900 focus:outline-none transition"
-                />
-              </div>
-
-              <!-- Campo 2: Importe Total -->
-              <div class="space-y-1.5">
-                <label for="pos-gross-amount" class="text-xs font-semibold text-stone-800 block">
-                  Importe bruto (COP) *
-                </label>
-                <input 
-                  id="pos-gross-amount"
-                  v-model.number="grossAmount"
-                  type="number" 
-                  placeholder="30000"
-                  class="w-full text-sm font-mono bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2.5 text-stone-950 placeholder:text-stone-400 focus:bg-white focus:border-stone-900 focus:outline-none transition"
-                />
-              </div>
-
-              <!-- Campo 3: Descuentos -->
-              <div class="space-y-1.5">
-                <label for="pos-discount-amount" class="text-xs font-semibold text-stone-800 block">
-                  Descuentos (COP)
-                </label>
-                <input 
-                  id="pos-discount-amount"
-                  v-model.number="discountAmount"
-                  type="number" 
-                  placeholder="0"
-                  class="w-full text-sm font-mono bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2.5 text-stone-950 placeholder:text-stone-400 focus:bg-white focus:border-stone-900 focus:outline-none transition"
-                />
-              </div>
-
-              <!-- Campo 4: Valor Neto Calculado -->
-              <div class="space-y-1.5">
-                <span class="text-xs font-semibold text-stone-800 block">
-                  Base neta elegible
-                </span>
-                <div class="w-full text-sm font-mono font-bold bg-stone-100 text-stone-900 rounded-xl px-3.5 py-2.5 border border-stone-300 flex items-center justify-between">
-                  <span>${{ (eligibleAmount || 0).toLocaleString('es-CO') }}</span>
-                  <span class="text-[11px] font-sans font-medium text-stone-500">COP</span>
+            <div class="space-y-3">
+              <div class="flex items-start gap-3 p-3 bg-stone-50 rounded-xl border border-stone-200">
+                <div class="w-7 h-7 rounded-lg bg-stone-900 text-amber-300 flex items-center justify-center shrink-0 font-bold text-xs">
+                  1
                 </div>
-              </div>
-            </div>
-
-            <!-- Resumen Minimalista de Sellos a Otorgar -->
-            <div class="bg-stone-50 rounded-xl p-4 border border-stone-300 flex items-center justify-between gap-4">
-              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-white border border-stone-300 text-stone-900 flex items-center justify-center shrink-0">
-                  <!-- SVG: Loyalty / Award -->
-                  <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>
-                  </svg>
-                </div>
-                <div>
-                  <span class="text-sm font-bold text-stone-950 block">
-                    Acreditación: +{{ calculatedStamps }} {{ calculatedStamps === 1 ? 'sello' : 'sellos' }}
-                  </span>
-                  <p class="text-[11px] text-stone-500">
-                    {{ eligibleAmount < 10000 ? 'Importe mínimo requerido: $10.000 COP' : 'Cumple el monto mínimo para acumular' }}
-                  </p>
+                <div class="space-y-0.5">
+                  <h4 class="text-xs font-bold text-stone-900">Escaneo Instantáneo</h4>
+                  <p class="text-[11px] text-stone-600">Al escanear el carnet digital, la pantalla mostrará su expediente, tarjeta de sellos y si tiene cortesías acumuladas.</p>
                 </div>
               </div>
 
-              <span class="text-xl font-black font-mono px-3 py-1 rounded-lg border" :class="calculatedStamps > 0 ? 'bg-emerald-50 text-emerald-800 border-emerald-300' : 'bg-stone-100 text-stone-500 border-stone-300'">
-                +{{ calculatedStamps }}
-              </span>
+              <div class="flex items-start gap-3 p-3 bg-stone-50 rounded-xl border border-stone-200">
+                <div class="w-7 h-7 rounded-lg bg-amber-400 text-stone-950 flex items-center justify-center shrink-0 font-bold text-xs">
+                  2
+                </div>
+                <div class="space-y-0.5">
+                  <h4 class="text-xs font-bold text-stone-900">Entrega de Cortesía Flexible</h4>
+                  <p class="text-[11px] text-stone-600">Si completó su ciclo de 8 sellos, pregúntale qué bebida o producto del menú prefiere hoy y confírmalo con un clic.</p>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-3 p-3 bg-stone-50 rounded-xl border border-stone-200">
+                <div class="w-7 h-7 rounded-lg bg-stone-900 text-white flex items-center justify-center shrink-0 font-bold text-xs">
+                  3
+                </div>
+                <div class="space-y-0.5">
+                  <h4 class="text-xs font-bold text-stone-900">Acreditación Automática de Factura</h4>
+                  <p class="text-[11px] text-stone-600">Ingresa el valor de la factura para sumar sellos (1 sello por cada $10.000 COP). El celular del cliente vibrará y sonará al instante.</p>
+                </div>
+              </div>
             </div>
           </div>
 
-          <!-- Pie de Formulario: Checklist + Botón de Envío -->
-          <div class="space-y-4 pt-2 border-t border-stone-200">
-            <!-- Indicadores de Estado Compactos -->
-            <div class="flex flex-wrap items-center gap-2 text-[11px]">
-              <span 
-                class="px-2.5 py-1 rounded-md border font-medium flex items-center gap-1.5"
-                :class="tokenInput ? 'bg-emerald-50 border-emerald-300 text-emerald-900' : 'bg-stone-50 border-stone-300 text-stone-500'"
-              >
-                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path v-if="tokenInput" d="M20 6 9 17l-5-5"/>
-                  <circle v-else cx="12" cy="12" r="9"/>
-                </svg>
-                <span>Token QR</span>
-              </span>
-
-              <span 
-                class="px-2.5 py-1 rounded-md border font-medium flex items-center gap-1.5"
-                :class="invoiceRef ? 'bg-emerald-50 border-emerald-300 text-emerald-900' : 'bg-stone-50 border-stone-300 text-stone-500'"
-              >
-                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path v-if="invoiceRef" d="M20 6 9 17l-5-5"/>
-                  <circle v-else cx="12" cy="12" r="9"/>
-                </svg>
-                <span>Consecutivo</span>
-              </span>
-
-              <span 
-                class="px-2.5 py-1 rounded-md border font-medium flex items-center gap-1.5"
-                :class="eligibleAmount > 0 ? 'bg-emerald-50 border-emerald-300 text-emerald-900' : 'bg-stone-50 border-stone-300 text-stone-500'"
-              >
-                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path v-if="eligibleAmount > 0" d="M20 6 9 17l-5-5"/>
-                  <circle v-else cx="12" cy="12" r="9"/>
-                </svg>
-                <span>Importe válido</span>
-              </span>
-            </div>
-
-            <!-- Botón de Envío -->
-            <button 
-              type="button"
-              @click="submitPurchase"
-              :disabled="isSubmitting || !tokenInput || !invoiceRef || eligibleAmount <= 0"
-              class="w-full font-bold text-xs sm:text-sm py-3.5 px-5 rounded-xl border transition flex items-center justify-center gap-2 cursor-pointer"
-              :class="(!tokenInput || !invoiceRef || eligibleAmount <= 0)
-                ? 'bg-stone-100 text-stone-500 border-stone-300 cursor-not-allowed' 
-                : 'bg-stone-900 hover:bg-stone-800 text-white border-stone-900 shadow-sm'"
-            >
-              <span v-if="isSubmitting">Procesando transacción...</span>
-              <span v-else-if="!tokenInput || !invoiceRef || eligibleAmount <= 0">
-                Completa los campos requeridos para registrar
-              </span>
-              <template v-else>
-                <span>Confirmar venta y acreditar +{{ calculatedStamps }} {{ calculatedStamps === 1 ? 'sello' : 'sellos' }}</span>
-                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
-                </svg>
-              </template>
-            </button>
-
-            <!-- Alertas de Resultado -->
-            <div v-if="errorMessage" class="p-3.5 bg-red-50 border border-red-300 rounded-xl text-red-900 text-xs font-medium flex items-center gap-2">
-              <svg class="w-4 h-4 text-red-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <circle cx="12" cy="12" r="10"/><line x1="15" x2="9" y1="9" y2="15"/><line x1="9" x2="15" y1="9" y2="15"/>
-              </svg>
-              <span>{{ errorMessage }}</span>
-            </div>
-
-            <div v-if="successPurchase" class="p-4 bg-emerald-50 border border-emerald-300 rounded-xl text-emerald-950 text-xs space-y-1.5">
-              <div class="flex items-center justify-between font-bold">
-                <span class="flex items-center gap-1.5">
-                  <svg class="w-4 h-4 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M20 6 9 17l-5-5"/>
-                  </svg>
-                  <span>Transacción confirmada</span>
-                </span>
-                <span class="font-mono text-[11px] bg-white px-2 py-0.5 rounded border border-emerald-300">
-                  {{ successPurchase.receipt_reference }}
-                </span>
-              </div>
-              <p class="text-stone-700">Cliente: <strong>{{ successPurchase.customer_name }}</strong> • Sellos: <strong>+{{ successPurchase.stamps_awarded }}</strong></p>
-              <div v-if="successPurchase.rewards_issued.length > 0" class="p-2.5 bg-amber-100/80 rounded-lg text-amber-950 font-semibold border border-amber-300 mt-1">
-                Ciclo completado (8/8). Recompensa emitida: {{ successPurchase.rewards_issued[0].name }}
-              </div>
-            </div>
+          <div class="p-3 bg-stone-100 rounded-xl border border-stone-300 text-center">
+            <span class="text-xs font-semibold text-stone-700">Listo para escanear al cliente que esté frente a caja</span>
           </div>
         </div>
       </div>
 
-      <!-- =================================================================== -->
-      <!-- MODO 2: CANJEAR RECOMPENSA DE CORTESÍA                              -->
-      <!-- =================================================================== -->
-      <div v-else class="max-w-xl mx-auto bg-white rounded-2xl border border-stone-300 shadow-sm fluid-pad space-y-5">
-        <div class="flex items-center justify-between border-b border-stone-200 pb-3">
-          <div class="space-y-0.5">
-            <h2 class="font-bold text-base text-stone-950">Redención de Recompensa</h2>
-            <p class="text-xs text-stone-500">Escanea o ingresa el token de canje generado por el cliente.</p>
-          </div>
-          <span class="text-xs font-mono font-semibold text-stone-700 bg-stone-100 border border-stone-300 px-2.5 py-1 rounded-lg">
-            {{ activeStore.code }}
-          </span>
-        </div>
-
-        <div class="space-y-3">
-          <div class="flex items-center justify-between">
-            <label for="pos-redeem-token" class="text-xs font-semibold text-stone-800">Token QR de redención</label>
-            <button 
-              v-if="!isCameraActive"
-              type="button"
-              @click="startCamera" 
-              class="text-xs font-semibold text-stone-800 bg-stone-100 hover:bg-stone-200 border border-stone-300 px-3 py-1.5 rounded-lg transition cursor-pointer flex items-center gap-1.5"
-            >
-              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/>
-              </svg>
-              <span>Usar cámara</span>
-            </button>
-            <button 
-              v-else
-              type="button"
-              @click="stopCamera" 
-              class="text-xs font-semibold text-red-700 bg-red-50 hover:bg-red-100 border border-red-300 px-3 py-1.5 rounded-lg transition cursor-pointer flex items-center gap-1.5"
-            >
-              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <rect width="18" height="18" x="3" y="3" rx="2"/>
-              </svg>
-              <span>Detener cámara</span>
-            </button>
-          </div>
-
-          <div v-if="isCameraActive" class="aspect-video bg-stone-950 rounded-xl overflow-hidden relative border border-stone-800">
-            <video ref="videoRef" class="w-full h-full object-cover" autoplay muted playsinline></video>
-            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div class="w-36 h-36 border border-amber-400 rounded-xl"></div>
+      <!-- ===================================================================== -->
+      <!-- CASO 2: SOCIO IDENTIFICADO (DOSSIER DEL CLIENTE EN CAJA)              -->
+      <!-- ===================================================================== -->
+      <div v-else class="space-y-5 animate-in fade-in duration-200">
+        <!-- Expediente del Socio (Header Bar) -->
+        <div class="bg-coffee-900 text-amber-50 rounded-2xl p-4 sm:p-5 border border-stone-900 shadow-md flex flex-wrap items-center justify-between gap-4">
+          <div class="flex items-center gap-3.5">
+            <div class="w-12 h-12 rounded-2xl bg-amber-400 text-stone-950 font-black text-lg flex items-center justify-center shrink-0 shadow-sm">
+              {{ memberData.full_name.charAt(0) }}
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 class="font-black text-lg text-white">{{ memberData.full_name }}</h2>
+                <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-black/40 text-amber-300 border border-amber-300/40">
+                  {{ memberData.member_code }}
+                </span>
+              </div>
+              <p class="text-xs text-stone-300">{{ memberData.email }} {{ memberData.phone ? '• ' + memberData.phone : '' }}</p>
             </div>
           </div>
 
-          <input 
-            id="pos-redeem-token"
-            v-model="tokenInput"
-            type="text"
-            placeholder="cfy_redemption_..."
-            class="w-full text-xs font-mono bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-3 text-stone-950 placeholder:text-stone-400 focus:bg-white focus:border-stone-900 focus:outline-none transition"
-          />
+          <button 
+            type="button"
+            @click="clearMember"
+            class="bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 cursor-pointer active:scale-95"
+          >
+            <svg class="w-4 h-4 text-stone-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+            </svg>
+            <span>Escanear siguiente socio</span>
+          </button>
         </div>
 
-        <button 
-          type="button"
-          @click="submitRedemption"
-          :disabled="isSubmitting || !tokenInput"
-          class="w-full font-bold text-xs sm:text-sm py-3.5 px-5 rounded-xl border transition flex items-center justify-center gap-2 cursor-pointer"
-          :class="!tokenInput 
-            ? 'bg-stone-100 text-stone-500 border-stone-300 cursor-not-allowed' 
-            : 'bg-stone-900 hover:bg-stone-800 text-white border-stone-900 shadow-sm'"
-        >
-          <span v-if="isSubmitting">Validando canje...</span>
-          <span v-else>Confirmar entrega de recompensa</span>
-        </button>
+        <!-- Grid 2 Columnas: Recompensas / Sellos + Factura -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+          
+          <!-- COLUMNA 1: CORTESÍA DE BARRA Y TARJETA ACTIVA (6 Cols) -->
+          <div class="lg:col-span-6 space-y-5">
+            
+            <!-- TARJETA MINI DE SELLOS ACTUALES -->
+            <div class="bg-white rounded-2xl border border-stone-300 p-4 sm:p-5 shadow-sm space-y-3">
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="text-[10px] uppercase font-bold tracking-widest text-stone-500">Tarjeta Activa</span>
+                  <h3 class="font-extrabold text-sm text-stone-950">Ciclo #{{ memberData.active_card.cycle_number }}</h3>
+                </div>
+                <div class="text-right">
+                  <span class="text-lg font-black font-mono text-stone-900">{{ memberData.active_card.stamps_count }} / {{ memberData.active_card.stamps_required }}</span>
+                  <span class="text-[10px] text-stone-500 block uppercase">Sellos</span>
+                </div>
+              </div>
 
-        <div v-if="errorMessage" class="p-3.5 bg-red-50 border border-red-300 rounded-xl text-red-900 text-xs font-medium flex items-center gap-2">
-          <svg class="w-4 h-4 text-red-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="12" cy="12" r="10"/><line x1="15" x2="9" y1="9" y2="15"/><line x1="9" x2="15" y1="9" y2="15"/>
-          </svg>
-          <span>{{ errorMessage }}</span>
-        </div>
+              <!-- Cuadrícula de Sellos (8 casillas) -->
+              <div class="grid grid-cols-4 gap-2">
+                <div
+                  v-for="i in memberData.active_card.stamps_required"
+                  :key="i"
+                  class="aspect-square rounded-xl flex flex-col items-center justify-center border text-[10px] font-bold"
+                  :class="i <= memberData.active_card.stamps_count
+                    ? 'bg-amber-100 border-amber-300 text-amber-900 shadow-2xs'
+                    : i === memberData.active_card.stamps_required
+                      ? 'bg-stone-50 border-dashed border-stone-300 text-stone-500'
+                      : 'bg-stone-50 border-stone-200 text-stone-400'"
+                >
+                  <svg v-if="i <= memberData.active_card.stamps_count" class="w-4 h-4 text-amber-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/>
+                  </svg>
+                  <span v-else>{{ i === 8 ? 'Premio' : i }}</span>
+                </div>
+              </div>
 
-        <div v-if="successRedemption" class="p-4 bg-emerald-50 border border-emerald-300 rounded-xl text-emerald-950 text-xs space-y-1">
-          <span class="font-bold block">Recompensa canjeada correctamente</span>
-          <p class="text-stone-700">Producto: <strong>{{ successRedemption.reward_name }}</strong> • Cliente: <strong>{{ successRedemption.customer_name }}</strong></p>
+              <div class="text-xs text-stone-500 text-center pt-1">
+                {{ memberData.active_card.stamps_count >= 8 
+                  ? '¡Tarjeta completa! El premio ya fue emitido.' 
+                  : `Faltan ${8 - memberData.active_card.stamps_count} sellos para la siguiente cortesía.` }}
+              </div>
+            </div>
+
+            <!-- SECCIÓN DE CANJE DE PREMIO / CORTESÍA (SI TIENE DISPONIBLE) -->
+            <div 
+              class="rounded-2xl border p-5 shadow-sm space-y-4"
+              :class="memberData.has_available_reward 
+                ? 'bg-amber-50 border-amber-300' 
+                : 'bg-stone-50 border-stone-200 text-stone-500'"
+            >
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                  <div 
+                    class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+                    :class="memberData.has_available_reward ? 'bg-amber-400 text-stone-950 font-bold shadow-sm' : 'bg-stone-200 text-stone-400'"
+                  >
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 class="font-extrabold text-sm text-stone-950">
+                      {{ memberData.has_available_reward ? '¡Cortesía Lista para Canje!' : 'Sin Cortesías Pendientes' }}
+                    </h3>
+                    <p class="text-[11px] text-stone-600">
+                      {{ memberData.has_available_reward 
+                        ? `${memberData.available_rewards_count} cortesía(s) disponible(s) acumulada(s)`
+                        : 'El cliente no tiene premios listos en este momento' }}
+                    </p>
+                  </div>
+                </div>
+
+                <span 
+                  v-if="memberData.has_available_reward"
+                  class="text-xs font-black font-mono px-2.5 py-1 rounded-lg bg-amber-400 text-stone-950 border border-amber-500"
+                >
+                  {{ memberData.available_rewards_count }} disponible(s)
+                </span>
+              </div>
+
+              <!-- Selector Dinámico de Producto de Cortesía si tiene premio -->
+              <div v-if="memberData.has_available_reward" class="space-y-3 pt-2 border-t border-amber-200">
+                <label class="text-xs font-bold text-stone-900 block">
+                  Elige la cortesía que desea el cliente hoy:
+                </label>
+
+                <div class="space-y-2">
+                  <div 
+                    v-for="opt in memberData.catalog_options"
+                    :key="opt.id"
+                    @click="selectedRewardProduct = opt.name"
+                    class="p-2.5 rounded-xl border text-xs cursor-pointer transition flex items-center justify-between"
+                    :class="selectedRewardProduct === opt.name 
+                      ? 'bg-amber-200/60 border-amber-500 font-bold text-stone-950 shadow-2xs' 
+                      : 'bg-white border-stone-200 hover:border-amber-300 text-stone-800'"
+                  >
+                    <div class="space-y-0.5">
+                      <span class="block">{{ opt.name }}</span>
+                      <span class="text-[10px] text-stone-500 font-normal">{{ opt.description }}</span>
+                    </div>
+                    <span class="w-4 h-4 rounded-full border flex items-center justify-center shrink-0" :class="selectedRewardProduct === opt.name ? 'border-amber-600 bg-amber-600 text-white' : 'border-stone-300'">
+                      <span v-if="selectedRewardProduct === opt.name" class="w-1.5 h-1.5 rounded-full bg-white"></span>
+                    </span>
+                  </div>
+
+                  <!-- Opción Personalizada -->
+                  <div 
+                    @click="selectedRewardProduct = 'custom'"
+                    class="p-2.5 rounded-xl border text-xs cursor-pointer transition"
+                    :class="selectedRewardProduct === 'custom' 
+                      ? 'bg-amber-200/60 border-amber-500 font-bold text-stone-950' 
+                      : 'bg-white border-stone-200 hover:border-amber-300 text-stone-800'"
+                  >
+                    <div class="flex items-center justify-between">
+                      <span>Otra cortesía acordada en barra</span>
+                      <span class="w-4 h-4 rounded-full border flex items-center justify-center shrink-0" :class="selectedRewardProduct === 'custom' ? 'border-amber-600 bg-amber-600 text-white' : 'border-stone-300'">
+                        <span v-if="selectedRewardProduct === 'custom'" class="w-1.5 h-1.5 rounded-full bg-white"></span>
+                      </span>
+                    </div>
+                    <input 
+                      v-if="selectedRewardProduct === 'custom'"
+                      v-model="customProductNote"
+                      type="text"
+                      placeholder="Ej: Latte descafeinado en leche de avena"
+                      class="mt-2 w-full text-xs font-normal bg-white border border-stone-300 rounded-lg p-2 focus:outline-none focus:border-stone-900"
+                    />
+                  </div>
+                </div>
+
+                <!-- Botón de Entregar Cortesía -->
+                <button
+                  type="button"
+                  @click="submitMemberRedemption"
+                  :disabled="isSubmittingRedemption"
+                  class="w-full bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs py-3 rounded-xl border border-stone-900 transition flex items-center justify-center gap-2 cursor-pointer shadow-sm active:scale-95"
+                >
+                  <svg class="w-4 h-4 text-amber-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/>
+                  </svg>
+                  <span>{{ isSubmittingRedemption ? 'Confirmando entrega...' : 'Entregar Cortesía Seleccionada' }}</span>
+                </button>
+
+                <!-- Toast de éxito de redención -->
+                <div v-if="successRedemption" class="p-3 bg-emerald-100 border border-emerald-300 rounded-xl text-emerald-950 text-xs font-medium space-y-1">
+                  <div class="font-bold flex items-center gap-1.5">
+                    <svg class="w-4 h-4 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <path d="M20 6 9 17l-5-5"/>
+                    </svg>
+                    <span>¡Cortesía entregada con éxito!</span>
+                  </div>
+                  <p>Producto: <strong>{{ successRedemption.reward_name }}</strong></p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- COLUMNA 2: REGISTRO DE COMPRA Y ACREDITACIÓN DE SELLOS (6 Cols) -->
+          <div class="lg:col-span-6 bg-white rounded-2xl border border-stone-300 shadow-sm p-4 sm:p-5 space-y-4 flex flex-col justify-between">
+            <div class="space-y-4">
+              <div class="flex items-center justify-between border-b border-stone-200 pb-3">
+                <div class="flex items-center gap-2">
+                  <span class="w-6 h-6 rounded-full bg-stone-900 text-white text-xs font-mono font-bold flex items-center justify-center">2</span>
+                  <div>
+                    <h3 class="font-bold text-sm text-stone-950">Acreditar Sellos por Compra</h3>
+                    <p class="text-[11px] text-stone-500">1 sello por cada $10.000 COP en la factura</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Formulario de Factura -->
+              <div class="space-y-3">
+                <div class="space-y-1">
+                  <label for="pos-invoice-input" class="text-xs font-semibold text-stone-800">
+                    Número de factura / Comprobante *
+                  </label>
+                  <input 
+                    id="pos-invoice-input"
+                    v-model="invoiceRef"
+                    type="text" 
+                    placeholder="FAC-2026-00125"
+                    class="w-full text-xs font-mono bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2.5 text-stone-950 placeholder:text-stone-400 focus:bg-white focus:border-stone-900 focus:outline-none transition"
+                  />
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                  <div class="space-y-1">
+                    <label for="pos-gross-input" class="text-xs font-semibold text-stone-800">
+                      Importe bruto (COP) *
+                    </label>
+                    <input 
+                      id="pos-gross-input"
+                      v-model.number="grossAmount"
+                      type="number" 
+                      placeholder="25000"
+                      class="w-full text-xs font-mono bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2.5 text-stone-950 placeholder:text-stone-400 focus:bg-white focus:border-stone-900 focus:outline-none transition"
+                    />
+                  </div>
+
+                  <div class="space-y-1">
+                    <label for="pos-discount-input" class="text-xs font-semibold text-stone-800">
+                      Descuento (COP)
+                    </label>
+                    <input 
+                      id="pos-discount-input"
+                      v-model.number="discountAmount"
+                      type="number" 
+                      placeholder="0"
+                      class="w-full text-xs font-mono bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2.5 text-stone-950 placeholder:text-stone-400 focus:bg-white focus:border-stone-900 focus:outline-none transition"
+                    />
+                  </div>
+                </div>
+
+                <!-- Resumen de Sellos Calculados -->
+                <div class="bg-stone-50 rounded-xl p-3.5 border border-stone-300 flex items-center justify-between">
+                  <div>
+                    <span class="text-xs font-bold text-stone-950 block">
+                      Sellos a acreditar: +{{ calculatedStamps }}
+                    </span>
+                    <span class="text-[10px] text-stone-500">
+                      Base neta: ${{ (eligibleAmount || 0).toLocaleString('es-CO') }} COP
+                    </span>
+                  </div>
+
+                  <span class="text-lg font-black font-mono px-3 py-0.5 rounded-lg border" :class="calculatedStamps > 0 ? 'bg-emerald-50 text-emerald-800 border-emerald-300' : 'bg-stone-100 text-stone-400 border-stone-200'">
+                    +{{ calculatedStamps }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-3 pt-2 border-t border-stone-200">
+              <button 
+                type="button"
+                @click="submitPurchase"
+                :disabled="isSubmittingPurchase || !invoiceRef.trim() || eligibleAmount <= 0"
+                class="w-full font-bold text-xs py-3.5 px-5 rounded-xl border transition flex items-center justify-center gap-2 cursor-pointer shadow-sm active:scale-95"
+                :class="(!invoiceRef.trim() || eligibleAmount <= 0)
+                  ? 'bg-stone-100 text-stone-400 border-stone-300 cursor-not-allowed' 
+                  : 'bg-stone-900 hover:bg-stone-800 text-white border-stone-900'"
+              >
+                <span v-if="isSubmittingPurchase">Acreditando sellos...</span>
+                <span v-else-if="!invoiceRef.trim() || eligibleAmount <= 0">Ingresa factura e importe para registrar</span>
+                <template v-else>
+                  <span>Confirmar venta y acreditar +{{ calculatedStamps }} {{ calculatedStamps === 1 ? 'sello' : 'sellos' }}</span>
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+                  </svg>
+                </template>
+              </button>
+
+              <div v-if="errorMessage" class="p-3 bg-red-50 border border-red-300 rounded-xl text-red-900 text-xs">
+                {{ errorMessage }}
+              </div>
+
+              <!-- Éxito de Compra -->
+              <div v-if="successPurchase" class="p-3.5 bg-emerald-50 border border-emerald-300 rounded-xl text-emerald-950 text-xs space-y-1">
+                <div class="flex items-center justify-between font-bold">
+                  <span class="flex items-center gap-1.5">
+                    <svg class="w-4 h-4 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <path d="M20 6 9 17l-5-5"/>
+                    </svg>
+                    <span>Venta registrada exitosamente</span>
+                  </span>
+                  <span class="font-mono text-[10px] bg-white px-2 py-0.5 rounded border border-emerald-300">
+                    {{ successPurchase.receipt_reference }}
+                  </span>
+                </div>
+                <p>Sellos acreditados: <strong>+{{ successPurchase.stamps_awarded }}</strong></p>
+                <div v-if="successPurchase.rewards_issued.length > 0" class="p-2 bg-amber-100 rounded-lg text-amber-950 font-bold border border-amber-300 mt-1">
+                  ¡El cliente completó los 8 sellos! Se activó una nueva cortesía.
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </template>
@@ -614,32 +646,46 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue';
 import { BrowserQRCodeReader } from '@zxing/library';
-import { adminApi, type StoreItem, type PurchaseResponse, type RedemptionResponse } from '../api';
+import { 
+  adminApi, 
+  type StoreItem, 
+  type PurchaseResponse, 
+  type RedemptionResponse,
+  type MemberLookupResponse
+} from '../api';
 
 const LOCAL_STORAGE_STORE_KEY = 'confy_pos_active_store_id';
 
-const mode = ref<'purchase' | 'redemption'>('purchase');
 const stores = ref<StoreItem[]>([]);
 const activeStore = ref<StoreItem | null>(null);
 const pendingStoreSelection = ref<StoreItem | null>(null);
 const isSelectingStore = ref(false);
 
+// Identificación del socio
 const tokenInput = ref('');
+const isLookingUp = ref(false);
+const memberData = ref<MemberLookupResponse | null>(null);
+const selectedRewardProduct = ref('');
+const customProductNote = ref('');
+
+// Formulario de compra
 const invoiceRef = ref('');
 const grossAmount = ref<number | null>(null);
 const discountAmount = ref<number | null>(null);
 
-const isSubmitting = ref(false);
-const simulating = ref(false);
+const isSubmittingPurchase = ref(false);
+const isSubmittingRedemption = ref(false);
 const errorMessage = ref('');
 const successPurchase = ref<PurchaseResponse | null>(null);
 const successRedemption = ref<RedemptionResponse | null>(null);
 
+// Control de cámara
 const isCameraActive = ref(false);
 const cameraError = ref('');
-const lastScannedSuccess = ref(false);
 const videoRef = ref<HTMLVideoElement | null>(null);
 let codeReader: BrowserQRCodeReader | null = null;
+const availableCameras = ref<MediaDeviceInfo[]>([]);
+const currentCameraIndex = ref(0);
 
 const playBeep = () => {
   try {
@@ -662,9 +708,6 @@ const playBeep = () => {
   }
 };
 
-const availableCameras = ref<MediaDeviceInfo[]>([]);
-const currentCameraIndex = ref(0);
-
 const activeCameraLabel = computed(() => {
   if (availableCameras.value.length === 0) return 'Cámara';
   const dev = availableCameras.value[currentCameraIndex.value];
@@ -682,7 +725,6 @@ const activeCameraLabel = computed(() => {
 const startCamera = async () => {
   cameraError.value = '';
   isCameraActive.value = true;
-  lastScannedSuccess.value = false;
 
   await nextTick();
 
@@ -706,7 +748,6 @@ const startCamera = async () => {
 
     availableCameras.value = videoInputDevices;
 
-    // Priorizar lente trasero en celulares
     const rearIdx = videoInputDevices.findIndex(d => {
       const l = d.label.toLowerCase();
       return l.includes('back') || l.includes('rear') || l.includes('trasera') || l.includes('environment');
@@ -737,25 +778,9 @@ const decodeCurrentDevice = () => {
     (result, _err) => {
       if (result) {
         const scannedText = result.getText()?.trim();
-        if (scannedText && scannedText !== tokenInput.value) {
-          // Validación de seguridad para tokens QR generados por TicketsDemo
-          if (!scannedText.startsWith('cfy_purchase_') && !scannedText.startsWith('cfy_redeem_')) {
-            errorMessage.value = 'Código no válido. Asegúrate de escanear el QR generado desde la app TicketsDemo.';
-            return;
-          }
-
-          // Detección automática del modo según el token escaneado
-          if (scannedText.startsWith('cfy_redeem_') && mode.value !== 'redemption') {
-            switchMode('redemption');
-          } else if (scannedText.startsWith('cfy_purchase_') && mode.value !== 'purchase') {
-            switchMode('purchase');
-          }
-
-          tokenInput.value = scannedText;
-          errorMessage.value = '';
+        if (scannedText) {
           playBeep();
-          lastScannedSuccess.value = true;
-          setTimeout(() => { lastScannedSuccess.value = false; }, 3500);
+          lookupMember(scannedText);
         }
       }
     }
@@ -775,13 +800,45 @@ const stopCamera = () => {
   isCameraActive.value = false;
 };
 
-const switchMode = (newMode: 'purchase' | 'redemption') => {
-  mode.value = newMode;
+const lookupMember = async (token?: string) => {
+  const t = (token || tokenInput.value).trim();
+  if (!t || !activeStore.value) return;
+  isLookingUp.value = true;
   errorMessage.value = '';
   successPurchase.value = null;
   successRedemption.value = null;
+
+  try {
+    const data = await adminApi.lookupMember(t, activeStore.value.id);
+    memberData.value = data;
+    tokenInput.value = t;
+    if (data.catalog_options && data.catalog_options.length > 0) {
+      selectedRewardProduct.value = data.catalog_options[0].name;
+    }
+    stopCamera();
+  } catch (err: any) {
+    errorMessage.value = err.message || 'No se pudo identificar el socio con este código.';
+  } finally {
+    isLookingUp.value = false;
+  }
+};
+
+const loadDemoMember = () => {
+  tokenInput.value = 'cfy_member_00000000-0000-0000-0000-000000000001';
+  lookupMember();
+};
+
+const clearMember = () => {
+  memberData.value = null;
   tokenInput.value = '';
-  stopCamera();
+  invoiceRef.value = '';
+  grossAmount.value = null;
+  discountAmount.value = null;
+  errorMessage.value = '';
+  successPurchase.value = null;
+  successRedemption.value = null;
+  selectedRewardProduct.value = '';
+  customProductNote.value = '';
 };
 
 const eligibleAmount = computed(() => {
@@ -794,6 +851,77 @@ const calculatedStamps = computed(() => {
   if (eligibleAmount.value < 10000) return 0;
   return Math.min(3, Math.max(1, Math.floor(eligibleAmount.value / 10000)));
 });
+
+const submitMemberRedemption = async () => {
+  if (!activeStore.value || !memberData.value) return;
+  isSubmittingRedemption.value = true;
+  errorMessage.value = '';
+  successRedemption.value = null;
+
+  const productNote = selectedRewardProduct.value === 'custom' 
+    ? (customProductNote.value.trim() || 'Bebida a Elección del Barista')
+    : selectedRewardProduct.value;
+
+  try {
+    const res = await adminApi.redeemMemberReward({
+      customer_id: memberData.value.customer_id,
+      store_id: activeStore.value.id,
+      reward_id: memberData.value.available_reward_id || undefined,
+      product_name_note: productNote
+    });
+
+    successRedemption.value = res;
+    // Disminuir contador local de recompensas
+    if (memberData.value) {
+      memberData.value.available_rewards_count = Math.max(0, memberData.value.available_rewards_count - 1);
+      memberData.value.has_available_reward = memberData.value.available_rewards_count > 0;
+    }
+  } catch (err: any) {
+    errorMessage.value = err.message || 'Error al canjear cortesía';
+  } finally {
+    isSubmittingRedemption.value = false;
+  }
+};
+
+const submitPurchase = async () => {
+  if (!activeStore.value) return;
+  isSubmittingPurchase.value = true;
+  errorMessage.value = '';
+  successPurchase.value = null;
+
+  const token = memberData.value 
+    ? `cfy_member_${memberData.value.customer_id}` 
+    : tokenInput.value.trim();
+
+  try {
+    const res = await adminApi.createPurchase({
+      qr_token: token,
+      store_id: activeStore.value.id,
+      receipt_reference: invoiceRef.value.trim(),
+      gross_amount: grossAmount.value || 0,
+      discount_amount: discountAmount.value || 0,
+      currency: 'COP'
+    });
+
+    successPurchase.value = res;
+    if (memberData.value && res.allocation && res.allocation.length > 0) {
+      const lastAlloc = res.allocation[res.allocation.length - 1];
+      memberData.value.active_card.stamps_count = lastAlloc.total_in_card;
+      memberData.value.active_card.cycle_number = lastAlloc.card_cycle;
+      if (res.rewards_issued && res.rewards_issued.length > 0) {
+        memberData.value.has_available_reward = true;
+        memberData.value.available_rewards_count += res.rewards_issued.length;
+      }
+    }
+    invoiceRef.value = '';
+    grossAmount.value = null;
+    discountAmount.value = null;
+  } catch (err: any) {
+    errorMessage.value = err.message || 'Error procesando compra';
+  } finally {
+    isSubmittingPurchase.value = false;
+  }
+};
 
 const loadStores = async () => {
   try {
@@ -829,73 +957,6 @@ const openStoreSelector = () => {
   pendingStoreSelection.value = activeStore.value;
   isSelectingStore.value = true;
   stopCamera();
-};
-
-const simulateScan = async () => {
-  simulating.value = true;
-  errorMessage.value = '';
-  try {
-    const res = await adminApi.generateDemoPurchaseQr();
-    tokenInput.value = res.qr_token;
-    playBeep();
-    lastScannedSuccess.value = true;
-    setTimeout(() => { lastScannedSuccess.value = false; }, 3500);
-  } catch {
-    errorMessage.value = 'Error al generar token de prueba';
-  } finally {
-    simulating.value = false;
-  }
-};
-
-const submitPurchase = async () => {
-  if (!activeStore.value) return;
-  isSubmitting.value = true;
-  errorMessage.value = '';
-  successPurchase.value = null;
-
-  try {
-    const res = await adminApi.createPurchase({
-      qr_token: tokenInput.value.trim(),
-      store_id: activeStore.value.id,
-      receipt_reference: invoiceRef.value.trim(),
-      gross_amount: grossAmount.value || 0,
-      discount_amount: discountAmount.value || 0,
-      currency: 'COP'
-    });
-
-    successPurchase.value = res;
-    tokenInput.value = '';
-    invoiceRef.value = '';
-    grossAmount.value = null;
-    discountAmount.value = null;
-    stopCamera();
-  } catch (err: any) {
-    errorMessage.value = err.message || 'Error procesando compra';
-  } finally {
-    isSubmitting.value = false;
-  }
-};
-
-const submitRedemption = async () => {
-  if (!activeStore.value) return;
-  isSubmitting.value = true;
-  errorMessage.value = '';
-  successRedemption.value = null;
-
-  try {
-    const res = await adminApi.redeemReward({
-      qr_token: tokenInput.value.trim(),
-      store_id: activeStore.value.id
-    });
-
-    successRedemption.value = res;
-    tokenInput.value = '';
-    stopCamera();
-  } catch (err: any) {
-    errorMessage.value = err.message || 'Error al canjear recompensa';
-  } finally {
-    isSubmitting.value = false;
-  }
 };
 
 onMounted(() => {

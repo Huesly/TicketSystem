@@ -66,15 +66,31 @@ class LoyaltyService:
         """
         now = datetime.now(timezone.utc)
 
-        # 1. Validar y consumir QR de compra de un solo uso
-        qr = await QrService.consume_token(
-            db=db,
-            raw_token=payload.qr_token,
-            expected_purpose="PURCHASE",
-            consumer_id=cashier_id,
-            store_id=payload.store_id
-        )
-        customer_id = qr.user_id
+        # 1. Validar token: soporte para QR Permanente de Socio (Starbucks-style) y QR efímero
+        raw_token = payload.qr_token.strip()
+        if raw_token.startswith("cfy_member_"):
+            try:
+                customer_id = UUID(raw_token.replace("cfy_member_", ""))
+                customer = await db.get(Profile, customer_id)
+                if not customer:
+                    raise HTTPException(
+                        status_code=status.HTTP_404_NOT_FOUND,
+                        detail={"code": "CUSTOMER_NOT_FOUND", "message": "Socio no registrado en la base de datos."}
+                    )
+            except ValueError:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail={"code": "INVALID_MEMBER_TOKEN", "message": "Formato de token de socio no válido."}
+                )
+        else:
+            qr = await QrService.consume_token(
+                db=db,
+                raw_token=raw_token,
+                expected_purpose="PURCHASE",
+                consumer_id=cashier_id,
+                store_id=payload.store_id
+            )
+            customer_id = qr.user_id
 
         # 2. Verificar existencia y estado de la sede
         store = await db.get(Store, payload.store_id)

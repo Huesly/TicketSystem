@@ -10,7 +10,7 @@
     </div>
 
     <template v-else>
-      <!-- Tarjeta Principal Minimalista (8 Sellos) -->
+      <!-- Tarjeta Principal de Fidelidad (8 Sellos) -->
       <div class="bg-coffee-900 text-amber-50 rounded-2xl fluid-pad border border-stone-900 shadow-sm space-y-5">
         <div class="flex items-center justify-between">
           <div>
@@ -28,9 +28,9 @@
           <div
             v-for="i in (activeCard ? activeCard.stamps_required : 8)"
             :key="i"
-            class="aspect-square rounded-xl flex flex-col items-center justify-center border"
+            class="aspect-square rounded-xl flex flex-col items-center justify-center border transition-all duration-300"
             :class="i <= (activeCard ? activeCard.stamps_count : 0)
-              ? 'bg-amber-400/20 border-amber-300 text-amber-200'
+              ? 'bg-amber-400/20 border-amber-300 text-amber-200 scale-100 shadow-xs'
               : i === (activeCard ? activeCard.stamps_required : 8)
                 ? 'bg-white/10 border-dashed border-amber-300/60 text-amber-300'
                 : 'bg-black/25 border-white/15 text-stone-400'"
@@ -61,8 +61,8 @@
           </span>
         </div>
 
-        <!-- Banner de Premio Listo si la tarjeta está completada -->
-        <div v-if="activeCard && activeCard.stamps_remaining === 0" class="bg-amber-300 text-stone-950 rounded-xl p-3.5 flex items-center justify-between gap-2 border border-amber-400 shadow-sm">
+        <!-- Banner de Cortesías Disponibles si el cliente tiene premios acumulados -->
+        <div v-if="availableRewardsCount > 0" class="bg-amber-300 text-stone-950 rounded-xl p-3.5 flex items-center justify-between gap-2 border border-amber-400 shadow-sm">
           <div class="flex items-center gap-2">
             <div class="w-8 h-8 rounded-lg bg-stone-950 text-amber-300 flex items-center justify-center shrink-0">
               <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -70,18 +70,56 @@
               </svg>
             </div>
             <div>
-              <p class="text-xs font-bold text-stone-950">¡Tarjeta completada!</p>
-              <p class="text-[10px] text-stone-700">Tu cortesía está lista para ser canjeada.</p>
+              <p class="text-xs font-bold text-stone-950">¡Tienes {{ availableRewardsCount }} cortesía(s) disponible(s)!</p>
+              <p class="text-[10px] text-stone-800">El barista puede canjearla al escanear tu carnet.</p>
             </div>
           </div>
           <router-link to="/recompensas" class="bg-stone-950 hover:bg-stone-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition shrink-0">
-            Reclamar →
+            Ver Detalles →
           </router-link>
         </div>
       </div>
 
       <!-- ===================================================================== -->
-      <!-- GENERACIÓN DEL CÓDIGO QR DIRECTO EN LA VISTA DE TARJETA               -->
+      <!-- ALERTA DE CELEBRACIÓN EN TIEMPO REAL (REACTIVA AL POS)                -->
+      <!-- ===================================================================== -->
+      <div v-if="activeAlert" class="p-4 bg-emerald-50 rounded-2xl border-2 border-emerald-400 text-center space-y-2.5 animate-in fade-in zoom-in-95 duration-300 shadow-md">
+        <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto border-2 border-emerald-300 shadow-sm animate-bounce">
+          <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 6 9 17l-5-5"/>
+          </svg>
+        </div>
+
+        <div class="space-y-0.5">
+          <span class="text-[10px] uppercase font-bold tracking-wider text-emerald-800 bg-emerald-100 border border-emerald-200 px-2.5 py-0.5 rounded-full">
+            ¡Operación Registrada en Caja!
+          </span>
+          <h4 class="font-extrabold text-stone-950 text-base">
+            {{ activeAlert.title }}
+          </h4>
+          <p class="text-xs text-stone-700 font-medium">
+            {{ activeAlert.message }}
+          </p>
+        </div>
+
+        <div v-if="activeAlert.receipt_reference" class="bg-white rounded-lg p-2.5 border border-emerald-200 text-xs text-stone-600 font-mono inline-block">
+          Factura: <strong>{{ activeAlert.receipt_reference }}</strong>
+          <span v-if="activeAlert.gross_amount"> • ${{ activeAlert.gross_amount.toLocaleString('es-CO') }} COP</span>
+        </div>
+
+        <div>
+          <button
+            type="button"
+            @click="activeAlert = null"
+            class="text-[11px] font-bold text-stone-600 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 px-3 py-1 rounded-lg border border-stone-300 transition cursor-pointer"
+          >
+            Entendido
+          </button>
+        </div>
+      </div>
+
+      <!-- ===================================================================== -->
+      <!-- CARNET DE SOCIO PERMANENTE (ESTILO STARBUCKS REWARDS)                  -->
       <!-- ===================================================================== -->
       <div class="bg-white rounded-2xl p-5 border border-stone-300 shadow-sm space-y-4">
         <div class="flex items-center justify-between">
@@ -95,120 +133,43 @@
               </svg>
             </div>
             <div>
-              <h3 class="font-extrabold text-sm text-stone-950">Mi Código QR para Caja</h3>
-              <p class="text-[11px] text-stone-500">Muestra este código al pagar para sumar sellos</p>
+              <h3 class="font-extrabold text-sm text-stone-950">Mi Carnet Digital QR</h3>
+              <p class="text-[11px] text-stone-500">Muestra este código único para acumular y canjear</p>
             </div>
           </div>
 
-          <!-- Botón Generar Otro QR -->
-          <button
-            type="button"
-            @click="fetchQr"
-            :disabled="loadingQr"
-            title="Generar otro código"
-            class="text-[11px] font-bold text-stone-700 bg-stone-100 hover:bg-stone-200 border border-stone-300 px-2.5 py-1.5 rounded-lg transition flex items-center gap-1 cursor-pointer active:scale-95"
-          >
-            <svg class="w-3.5 h-3.5 text-stone-600" :class="{ 'animate-spin': loadingQr }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/>
-            </svg>
-            <span>Nuevo QR</span>
-          </button>
+          <span class="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-stone-100 text-stone-800 border border-stone-300">
+            {{ memberCode }}
+          </span>
         </div>
 
-        <!-- ESTADO 1: CELEBRACIÓN DE OPERACIÓN CONFIRMADA -->
-        <div v-if="consumedSuccess" class="p-4 bg-emerald-50 rounded-xl border border-emerald-300 text-center space-y-2.5 animate-in fade-in zoom-in-95 duration-300">
-          <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto border-2 border-emerald-300 shadow-sm animate-bounce">
-            <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20 6 9 17l-5-5"/>
-            </svg>
+        <!-- VISOR DEL CÓDIGO QR PERMANENTE -->
+        <div class="flex flex-col items-center justify-center space-y-3 pt-1">
+          <!-- QR Renderizado de Alto Contraste Permanente -->
+          <div v-if="memberQrToken" class="p-4 bg-white rounded-2xl border-2 border-stone-900 shadow-sm relative">
+            <qrcode-vue :value="memberQrToken" :size="180" level="M" render-as="svg" />
           </div>
 
-          <div class="space-y-0.5">
-            <span class="text-[10px] uppercase font-bold tracking-wider text-emerald-800 bg-emerald-100/70 border border-emerald-200 px-2 py-0.5 rounded-full">
-              ¡Operación Confirmada en Caja!
-            </span>
-            <h4 class="font-extrabold text-stone-950 text-base">
-              +{{ consumedSuccess.stamps_awarded }} {{ consumedSuccess.stamps_awarded === 1 ? 'Sello Sumado' : 'Sellos Sumados' }}
-            </h4>
-            <p class="text-xs text-stone-600 font-medium">
-              Registrado en <strong>{{ consumedSuccess.store_name }}</strong>
-            </p>
+          <!-- Indicador de Enlace en Tiempo Real -->
+          <div class="flex items-center gap-2 text-xs font-medium text-stone-600">
+            <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+            <span>Código de socio permanente • Actualización automática</span>
           </div>
 
-          <div class="bg-white rounded-lg p-2.5 border border-emerald-200 text-xs text-stone-600 font-mono">
-            <div>Factura: <strong>{{ consumedSuccess.receipt_reference }}</strong></div>
-            <div v-if="consumedSuccess.gross_amount">Valor: ${{ consumedSuccess.gross_amount.toLocaleString('es-CO') }} COP</div>
-          </div>
-
+          <!-- Botón de Copiar Token Manual (Para Pruebas del POS) -->
           <button
             type="button"
-            @click="fetchQr"
-            class="mt-1 bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs px-4 py-2 rounded-xl transition cursor-pointer active:scale-95"
+            @click="copyToken"
+            class="text-[11px] font-semibold text-stone-600 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 border border-stone-300 px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 cursor-pointer active:scale-95"
           >
-            Generar siguiente QR
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path v-if="copied" d="M20 6 9 17l-5-5"/>
+              <template v-else>
+                <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+              </template>
+            </svg>
+            <span>{{ copied ? '¡Código de socio copiado!' : 'Copiar código para prueba en POS' }}</span>
           </button>
-        </div>
-
-        <!-- ESTADO 2: VISOR DEL CÓDIGO QR ACTIVO -->
-        <div v-else class="flex flex-col items-center justify-center space-y-3 pt-1">
-          <div v-if="loadingQr" class="aspect-square w-52 rounded-2xl bg-stone-50 border border-stone-200 flex flex-col items-center justify-center text-xs text-stone-400 gap-2">
-            <div class="w-6 h-6 border-2 border-stone-900 border-t-transparent rounded-full animate-spin"></div>
-            <span>Generando código QR seguro...</span>
-          </div>
-
-          <div v-else-if="qrExpired" class="aspect-square w-52 rounded-2xl bg-red-50 border border-red-200 flex flex-col items-center justify-center text-center p-4 gap-2">
-            <div class="w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto">
-              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-              </svg>
-            </div>
-            <span class="text-xs font-bold text-red-700">El código expiró por seguridad</span>
-            <button
-              type="button"
-              @click="fetchQr"
-              class="bg-stone-900 hover:bg-stone-800 text-white text-xs font-bold px-4 py-2 rounded-xl transition cursor-pointer active:scale-95"
-            >
-              Generar nuevo código
-            </button>
-          </div>
-
-          <template v-else-if="qrToken">
-            <!-- QR Renderizado con Marco de Alto Contraste -->
-            <div class="p-3.5 bg-white rounded-2xl border-2 border-stone-900 shadow-sm relative">
-              <qrcode-vue :value="qrToken" :size="180" level="M" render-as="svg" />
-            </div>
-
-            <!-- Estado de Espera en Vivo y Temporizador -->
-            <div class="flex items-center gap-2 text-xs font-medium text-stone-600">
-              <span class="w-2 h-2 rounded-full" :class="timeLeft > 15 ? 'bg-emerald-600 animate-pulse' : 'bg-red-600 animate-ping'"></span>
-              <span>Esperando escaneo en caja • Expira en <strong class="font-mono text-stone-950">{{ timeLeft }}s</strong></span>
-            </div>
-
-            <!-- Botón de Copiar Token Manual (Para Pruebas) -->
-            <button
-              type="button"
-              @click="copyToken"
-              class="text-[11px] font-semibold text-stone-600 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 border border-stone-300 px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 cursor-pointer active:scale-95"
-            >
-              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path v-if="copied" d="M20 6 9 17l-5-5"/>
-                <template v-else>
-                  <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
-                </template>
-              </svg>
-              <span>{{ copied ? '¡Token copiado al portapapeles!' : 'Copiar token para prueba manual' }}</span>
-            </button>
-          </template>
-
-          <div v-else class="py-4 text-center">
-            <button
-              type="button"
-              @click="fetchQr"
-              class="bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs py-3 px-5 rounded-xl border border-stone-900 transition active:scale-95 shadow-sm"
-            >
-              Generar Mi QR de Compra
-            </button>
-          </div>
         </div>
       </div>
 
@@ -220,15 +181,17 @@
             <svg class="w-4 h-4 text-stone-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
             </svg>
-            ¿Cómo acumulas sellos?
+            ¿Cómo funciona tu carnet digital?
           </span>
           <svg class="w-4 h-4 text-stone-400 transition-transform group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="m6 9 6 6 6-6"/>
           </svg>
         </summary>
-        <p class="mt-2 pt-2 border-t border-stone-100 leading-relaxed">
-          Ganas <strong>1 sello</strong> por cada <strong>$10.000 COP</strong> en tus consumos (máximo 3 sellos por compra). Los sellos sobrantes que superen la meta pasan automáticamente a tu siguiente tarjeta.
-        </p>
+        <div class="mt-2 pt-2 border-t border-stone-100 leading-relaxed space-y-1">
+          <p>• <strong>Un solo QR permanente:</strong> No necesitas generar nuevos códigos cada minuto ni esperar recargas.</p>
+          <p>• <strong>Ganas 1 sello por cada $10.000 COP</strong> en tus consumos (máximo 3 sellos por compra).</p>
+          <p>• <strong>Cortesías en barra:</strong> Al completar tus 8 sellos, el barista escanea este mismo carnet y te entrega la cortesía de la casa que prefieras.</p>
+        </div>
       </details>
 
       <!-- Historial de Ciclos Pasados -->
@@ -252,26 +215,45 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import QrcodeVue from 'qrcode.vue';
 import { api, type CardSummary } from '../api';
 
 const loading = ref(true);
 const activeCard = ref<CardSummary | null>(null);
 const pastCycles = ref<CardSummary[]>([]);
+const availableRewardsCount = ref(0);
 
-// Estado del QR de Compra
-const qrToken = ref('');
-const loadingQr = ref(false);
-const qrExpired = ref(false);
-const timeLeft = ref(60);
+// Identificación del socio permanente
+const currentUserId = ref('00000000-0000-0000-0000-000000000001');
 const copied = ref(false);
-const consumedSuccess = ref<{ store_name: string; receipt_reference: string; stamps_awarded: number; gross_amount: number } | null>(null);
 
-let countdownInterval: any = null;
-let pollingInterval: any = null;
+const memberQrToken = computed(() => {
+  return `cfy_member_${currentUserId.value}`;
+});
 
-// Audio Chime de Celebración
+const memberCode = computed(() => {
+  return `TD-${currentUserId.value.slice(0, 4).toUpperCase()}`;
+});
+
+// Alertas en tiempo real
+const activeAlert = ref<{
+  id: string;
+  type: 'PURCHASE' | 'REDEMPTION';
+  title: string;
+  message: string;
+  receipt_reference?: string;
+  gross_amount?: number;
+  stamps_awarded?: number;
+  store_name?: string;
+  product_name?: string;
+  created_at: string;
+} | null>(null);
+
+let lastHandledAlertId = '';
+let livePollingInterval: any = null;
+
+// Audio Chime de Celebración Web Audio
 const playCelebrationChime = () => {
   try {
     const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
@@ -301,101 +283,83 @@ const triggerHaptic = () => {
   }
 };
 
-const fetchQr = async () => {
-  loadingQr.value = true;
-  qrExpired.value = false;
-  consumedSuccess.value = null;
-  copied.value = false;
-  clearInterval(countdownInterval);
-  clearInterval(pollingInterval);
-
-  try {
-    const res = await api.generatePurchaseQr();
-    qrToken.value = res.qr_token;
-    timeLeft.value = res.expires_in_seconds || 60;
-
-    countdownInterval = setInterval(() => {
-      if (timeLeft.value > 0) {
-        timeLeft.value--;
-      } else {
-        qrExpired.value = true;
-        clearInterval(countdownInterval);
-        clearInterval(pollingInterval);
-      }
-    }, 1000);
-
-    startPolling(res.qr_token);
-  } catch (err) {
-    console.error('Error generando QR de compra:', err);
-  } finally {
-    loadingQr.value = false;
-  }
-};
-
-const startPolling = (token: string) => {
-  pollingInterval = setInterval(async () => {
-    if (!token || qrExpired.value || consumedSuccess.value) {
-      clearInterval(pollingInterval);
-      return;
-    }
-    try {
-      const statusRes = await api.checkQrStatus(token);
-      if (statusRes.status === 'CONSUMED') {
-        clearInterval(pollingInterval);
-        clearInterval(countdownInterval);
-        consumedSuccess.value = statusRes.purchase || {
-          store_name: 'Sede Principal',
-          receipt_reference: 'Comprobante',
-          stamps_awarded: 1,
-          gross_amount: 0
-        };
-        playCelebrationChime();
-        triggerHaptic();
-        // Recargar tarjeta inmediatamente
-        loadCards();
-      } else if (statusRes.status === 'EXPIRED') {
-        clearInterval(pollingInterval);
-        clearInterval(countdownInterval);
-        qrExpired.value = true;
-      }
-    } catch {
-      // Silencioso para polling
-    }
-  }, 1200);
-};
-
 const copyToken = () => {
-  if (!qrToken.value) return;
-  navigator.clipboard.writeText(qrToken.value);
+  if (!memberQrToken.value) return;
+  navigator.clipboard.writeText(memberQrToken.value);
   copied.value = true;
   setTimeout(() => { copied.value = false; }, 2500);
 };
 
-const loadCards = async () => {
+const pollLiveStatus = async () => {
+  try {
+    const res = await api.getLiveStatus();
+    
+    // Si la tarjeta cambió
+    if (res.card) {
+      if (!activeCard.value || activeCard.value.stamps_count !== res.card.stamps_count) {
+        if (activeCard.value) {
+          activeCard.value.stamps_count = res.card.stamps_count;
+          activeCard.value.stamps_remaining = res.card.stamps_remaining;
+          activeCard.value.progress_percentage = res.card.progress_percentage;
+        }
+      }
+    }
+    availableRewardsCount.value = res.available_rewards_count;
+
+    // Verificar si hay alerta reciente no procesada
+    if (res.recent_alert && res.recent_alert.id !== lastHandledAlertId) {
+      lastHandledAlertId = res.recent_alert.id;
+      activeAlert.value = res.recent_alert;
+      playCelebrationChime();
+      triggerHaptic();
+
+      // Recargar histórico de tarjetas completo
+      loadCards();
+    }
+  } catch {
+    // Silencioso para polling
+  }
+};
+
+const loadInitialData = async () => {
   try {
     loading.value = true;
-    const res = await api.getLoyaltyCards();
-    activeCard.value = res.active_card;
-    pastCycles.value = res.past_cycles;
+    // Cargar perfil para el ID del carnet
+    const userMe = await api.getAuthMe();
+    if (userMe && userMe.user) {
+      currentUserId.value = userMe.user.id;
+    }
+    await loadCards();
+    await pollLiveStatus();
   } catch (err) {
-    console.error('Error cargando tarjetas:', err);
+    console.error('Error cargando carnet de socio:', err);
   } finally {
     loading.value = false;
   }
 };
 
+const loadCards = async () => {
+  try {
+    const res = await api.getLoyaltyCards();
+    activeCard.value = res.active_card;
+    pastCycles.value = res.past_cycles;
+  } catch (err) {
+    console.error('Error cargando tarjetas:', err);
+  }
+};
+
 onMounted(() => {
-  loadCards();
-  fetchQr(); // Generar QR automáticamente al entrar a la tarjeta
+  loadInitialData();
+  // Polling cada 1.5s para detectar transacciones de caja en vivo
+  livePollingInterval = setInterval(pollLiveStatus, 1500);
+
   window.addEventListener('confy-user-changed', () => {
-    loadCards();
-    fetchQr();
+    loadInitialData();
   });
 });
 
 onUnmounted(() => {
-  clearInterval(countdownInterval);
-  clearInterval(pollingInterval);
-  window.removeEventListener('confy-user-changed', loadCards);
+  if (livePollingInterval) clearInterval(livePollingInterval);
+  window.removeEventListener('confy-user-changed', loadInitialData);
 });
 </script>

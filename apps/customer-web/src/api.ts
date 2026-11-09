@@ -55,6 +55,32 @@ export interface QrStatusResponse {
   };
 }
 
+export interface LiveStatusResponse {
+  user_id: string;
+  card: {
+    id: string | null;
+    cycle_number: number;
+    stamps_count: number;
+    stamps_required: number;
+    stamps_remaining: number;
+    progress_percentage: number;
+    is_completed: boolean;
+  };
+  available_rewards_count: number;
+  recent_alert?: {
+    id: string;
+    type: 'PURCHASE' | 'REDEMPTION';
+    title: string;
+    message: string;
+    receipt_reference?: string;
+    gross_amount?: number;
+    stamps_awarded?: number;
+    store_name?: string;
+    product_name?: string;
+    created_at: string;
+  } | null;
+}
+
 export interface CustomerReward {
   id: string;
   name: string;
@@ -168,6 +194,14 @@ export const api = {
       headers: getAuthHeaders()
     });
     if (!res.ok) throw new Error(`Error ${res.status}: Fallo al obtener tarjetas`);
+    return res.json();
+  },
+
+  async getLiveStatus(): Promise<LiveStatusResponse> {
+    const res = await fetch(`${API_BASE}/me/live-status`, {
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) throw new Error(`Error ${res.status}: Fallo al consultar estado en vivo`);
     return res.json();
   },
 

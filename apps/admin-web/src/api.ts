@@ -85,6 +85,28 @@ export interface RedemptionResponse {
   redeemed_at: string;
 }
 
+export interface MemberLookupResponse {
+  customer_id: string;
+  full_name: string;
+  email: string;
+  phone?: string | null;
+  member_code: string;
+  active_card: {
+    cycle_number: number;
+    stamps_count: number;
+    stamps_required: number;
+    is_completed: boolean;
+  };
+  has_available_reward: boolean;
+  available_rewards_count: number;
+  available_reward_id?: string | null;
+  catalog_options: Array<{
+    id: string;
+    name: string;
+    description: string;
+  }>;
+}
+
 export interface AuditTransactionItem {
   id: string;
   type: 'PURCHASE' | 'REDEMPTION';
@@ -308,6 +330,39 @@ export const adminApi = {
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
       const msg = err.detail?.message || err.detail || 'Fallo al redimir premio';
+      throw new Error(msg);
+    }
+    return res.json();
+  },
+
+  async lookupMember(memberToken: string, storeId: string): Promise<MemberLookupResponse> {
+    const res = await fetch(`${API_BASE}/cashier/lookup-member`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ member_token: memberToken, store_id: storeId })
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      const msg = err.detail?.message || err.detail || 'Fallo al consultar socio';
+      throw new Error(msg);
+    }
+    return res.json();
+  },
+
+  async redeemMemberReward(payload: {
+    customer_id: string;
+    store_id: string;
+    reward_id?: string;
+    product_name_note: string;
+  }): Promise<RedemptionResponse> {
+    const res = await fetch(`${API_BASE}/cashier/redeem-member-reward`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      const msg = err.detail?.message || err.detail || 'Fallo al canjear cortesía del socio';
       throw new Error(msg);
     }
     return res.json();
