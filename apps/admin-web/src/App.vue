@@ -1,10 +1,10 @@
 <template>
-  <div class="min-h-dvh-safe flex flex-col bg-crema text-roast-900 selection:bg-roast-900 selection:text-white">
+  <div class="min-h-dvh-safe flex flex-col bg-stone-100 text-stone-900 selection:bg-stone-900 selection:text-white">
     <!-- PANTALLA DE ACCESO AL SISTEMA POS SI NO HAY SESIÓN -->
     <div v-if="!currentUser" class="flex-1 flex items-center justify-center p-4">
-      <div class="bg-white rounded-2xl border border-crema-border p-6 sm:p-8 w-full max-w-sm shadow-xl space-y-5">
+      <div class="bg-white rounded-2xl border border-stone-300 p-6 sm:p-8 w-full max-w-sm shadow-xl space-y-5">
         <div class="text-center space-y-1.5">
-          <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-roast-900 to-roast-950 text-golden-300 flex items-center justify-center mx-auto mb-2 border border-roast-800 shadow-md">
+          <div class="w-11 h-11 rounded-2xl bg-stone-900 text-amber-300 flex items-center justify-center mx-auto mb-2 border border-stone-800 shadow-md">
             <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M17 8h1a4 4 0 1 1 0 8h-1" />
               <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z" />
@@ -13,8 +13,8 @@
               <line x1="14" y1="2" x2="14" y2="4" />
             </svg>
           </div>
-          <h2 class="text-lg font-extrabold text-roast-950">PosDemo Terminal</h2>
-          <p class="text-xs text-roast-600 font-medium">Ingreso para Cajeros y Administradores</p>
+          <h2 class="text-lg font-extrabold text-stone-950">PosDemo Terminal</h2>
+          <p class="text-xs text-stone-500 font-medium">Ingreso para Cajeros y Administradores</p>
         </div>
 
         <!-- Alerta de error -->
@@ -24,7 +24,7 @@
 
         <form @submit.prevent="handleLogin" class="space-y-3">
           <div>
-            <label class="block text-xs font-bold text-roast-700 mb-1">Correo Electrónico</label>
+            <label class="block text-xs font-bold text-stone-700 mb-1">Correo Electrónico</label>
             <input 
               v-model="loginEmail" 
               type="email" 
@@ -33,25 +33,25 @@
               autocapitalize="none"
               spellcheck="false"
               placeholder="cajero@confy.com.co"
-              class="w-full text-xs px-3 py-2 rounded-lg border border-crema-border focus:outline-none focus:border-roast-900 bg-crema-surface"
+              class="w-full text-xs px-3 py-2 rounded-lg border border-stone-300 focus:outline-none focus:border-stone-900 bg-stone-50 text-stone-900"
             />
           </div>
           <div>
-            <label class="block text-xs font-bold text-roast-700 mb-1">Contraseña</label>
+            <label class="block text-xs font-bold text-stone-700 mb-1">Contraseña</label>
             <input 
               v-model="loginPassword" 
               type="password" 
               required 
               autocomplete="current-password"
               placeholder="••••••••"
-              class="w-full text-xs px-3 py-2 rounded-lg border border-crema-border focus:outline-none focus:border-roast-900 bg-crema-surface"
+              class="w-full text-xs px-3 py-2 rounded-lg border border-stone-300 focus:outline-none focus:border-stone-900 bg-stone-50 text-stone-900"
             />
           </div>
 
           <button 
             type="submit" 
             :disabled="loadingLogin"
-            class="w-full bg-roast-900 hover:bg-roast-800 active:scale-[0.98] disabled:opacity-50 text-golden-100 font-bold text-xs py-2.5 rounded-xl border border-roast-900 transition cursor-pointer flex items-center justify-center gap-2 shadow-sm"
+            class="w-full bg-stone-900 hover:bg-stone-800 active:scale-[0.98] disabled:opacity-50 text-white font-bold text-xs py-2.5 rounded-xl border border-stone-900 transition cursor-pointer flex items-center justify-center gap-2 shadow-sm"
           >
             <span v-if="loadingLogin" class="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
             <span>{{ loadingLogin ? 'Validando...' : 'Iniciar Turno' }}</span>
@@ -59,24 +59,24 @@
         </form>
 
         <!-- Accesos rápidos pre-cargados para demostración -->
-        <div class="pt-3 border-t border-crema-surface space-y-2">
-          <p class="text-[10px] text-roast-500 font-semibold uppercase tracking-wider text-center">Acceso Rápido de Demostración</p>
+        <div class="pt-3 border-t border-stone-200 space-y-2">
+          <p class="text-[10px] text-stone-500 font-semibold uppercase tracking-wider text-center">Acceso Rápido de Demostración</p>
           <div class="grid grid-cols-2 gap-2">
             <button 
               type="button"
               @click="quickLogin('cajero.cabecera@confy.com.co', 'Cajero2026*')"
-              class="text-[11px] font-semibold text-roast-800 bg-crema-surface hover:bg-crema-border/60 border border-crema-border hover:border-golden-300 p-2.5 rounded-xl transition text-left cursor-pointer active:scale-95 shadow-2xs"
+              class="text-[11px] font-semibold text-stone-800 bg-stone-50 hover:bg-stone-100 border border-stone-200 hover:border-amber-400 p-2.5 rounded-xl transition text-left cursor-pointer active:scale-95 shadow-2xs"
             >
-              <span class="block font-bold text-roast-950">Juan Pérez</span>
-              <span class="text-[10px] text-roast-500 font-medium">Rol: Cajero POS</span>
+              <span class="block font-bold text-stone-950">Juan Pérez</span>
+              <span class="text-[10px] text-stone-500 font-medium">Rol: Cajero POS</span>
             </button>
             <button 
               type="button"
               @click="quickLogin('admin@confy.com.co', 'Admin2026*')"
-              class="text-[11px] font-semibold text-roast-800 bg-crema-surface hover:bg-crema-border/60 border border-crema-border hover:border-golden-300 p-2.5 rounded-xl transition text-left cursor-pointer active:scale-95 shadow-2xs"
+              class="text-[11px] font-semibold text-stone-800 bg-stone-50 hover:bg-stone-100 border border-stone-200 hover:border-amber-400 p-2.5 rounded-xl transition text-left cursor-pointer active:scale-95 shadow-2xs"
             >
-              <span class="block font-bold text-roast-950">Admin General</span>
-              <span class="text-[10px] text-roast-500 font-medium">Rol: Administrador</span>
+              <span class="block font-bold text-stone-950">Admin General</span>
+              <span class="text-[10px] text-stone-500 font-medium">Rol: Administrador</span>
             </button>
           </div>
         </div>
@@ -86,9 +86,9 @@
     <!-- SISTEMA POS AUTENTICADO -->
     <template v-else>
       <!-- Barra Superior Compacta (< 12% viewport height) -->
-      <header class="bg-white text-roast-900 px-4 sm:px-6 h-14 flex items-center justify-between border-b border-crema-border sticky top-0 z-40">
+      <header class="bg-white text-stone-900 px-4 sm:px-6 h-14 flex items-center justify-between border-b border-stone-200 sticky top-0 z-40">
         <div class="flex items-center gap-3">
-          <div class="w-8 h-8 rounded-lg bg-roast-900 text-golden-300 flex items-center justify-center shrink-0 shadow-xs">
+          <div class="w-8 h-8 rounded-lg bg-stone-900 text-amber-300 flex items-center justify-center shrink-0 shadow-xs">
             <!-- Icono SVG: Local Cafe -->
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M17 8h1a4 4 0 1 1 0 8h-1" />
@@ -99,8 +99,8 @@
             </svg>
           </div>
           <div class="flex items-baseline gap-2">
-            <span class="font-extrabold text-sm tracking-tight text-roast-950">PosDemo</span>
-            <span class="text-[11px] font-mono font-medium text-roast-500 hidden sm:inline">Terminal POS &amp; Admin</span>
+            <span class="font-extrabold text-sm tracking-tight text-stone-950">PosDemo</span>
+            <span class="text-[11px] font-mono font-medium text-stone-500 hidden sm:inline">Terminal POS &amp; Admin</span>
           </div>
         </div>
 
@@ -109,8 +109,8 @@
             to="/" 
             class="text-xs font-semibold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 border"
             :class="$route.name === 'cashier' 
-              ? 'bg-roast-900 text-golden-100 border-roast-900 shadow-xs' 
-              : 'bg-transparent text-roast-600 border-transparent hover:bg-crema-surface hover:border-crema-border hover:text-roast-900'"
+              ? 'bg-stone-900 text-white border-stone-900 shadow-xs' 
+              : 'bg-transparent text-stone-600 border-transparent hover:bg-stone-100 hover:border-stone-300 hover:text-stone-900'"
           >
             <!-- SVG: Point of Sale / Terminal -->
             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -125,8 +125,8 @@
             to="/dashboard" 
             class="text-xs font-semibold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 border"
             :class="$route.name === 'dashboard' 
-              ? 'bg-roast-900 text-golden-100 border-roast-900 shadow-xs' 
-              : 'bg-transparent text-roast-600 border-transparent hover:bg-crema-surface hover:border-crema-border hover:text-roast-900'"
+              ? 'bg-stone-900 text-white border-stone-900 shadow-xs' 
+              : 'bg-transparent text-stone-600 border-transparent hover:bg-stone-100 hover:border-stone-300 hover:text-stone-900'"
           >
             <!-- SVG: Bar Chart / Analytics -->
             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

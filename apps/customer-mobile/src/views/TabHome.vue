@@ -10,10 +10,10 @@
           </div>
           <button
             @click="openQr"
-            class="bg-roast-900 text-white font-bold text-xs px-3.5 py-2 rounded-lg flex items-center gap-1.5 shadow-sm cursor-pointer"
+            class="bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow-sm cursor-pointer"
           >
             <!-- Google Material Icon: qr_code_2 -->
-            <svg class="w-4 h-4 text-golden-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <svg class="w-4 h-4 text-amber-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <rect x="3" y="3" width="7" height="7" rx="1"/>
               <rect x="14" y="3" width="7" height="7" rx="1"/>
               <rect x="3" y="14" width="7" height="7" rx="1"/>
@@ -24,13 +24,13 @@
         </div>
 
         <!-- Tarjeta de 8 Sellos (Widget Mobile) -->
-        <div class="bg-white rounded-2xl fluid-pad border border-crema-border shadow-sm space-y-4">
+        <div class="bg-white rounded-2xl fluid-pad border border-stone-300 shadow-sm space-y-4">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-roast-900"></span>
-              <h3 class="font-bold text-sm text-roast-900">Tarjeta Activa</h3>
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+              <h3 class="font-bold text-sm text-stone-900">Tarjeta Activa</h3>
             </div>
-            <span class="text-[11px] font-bold text-roast-700 font-mono bg-crema-surface px-2.5 py-0.5 rounded-md border border-crema-border">
+            <span class="text-[11px] font-bold text-stone-700 font-mono bg-stone-100 px-2.5 py-0.5 rounded-md border border-stone-200">
               Ciclo #{{ cardInfo ? cardInfo.cycle_number : 1 }}
             </span>
           </div>
@@ -40,40 +40,45 @@
             <div
               v-for="i in 8"
               :key="i"
-              class="aspect-square rounded-xl flex flex-col items-center justify-center border"
+              class="aspect-square rounded-xl flex flex-col items-center justify-center border transition-all"
               :class="i <= currentStamps
-                ? 'bg-roast-900 border-coffee-900 text-golden-300'
+                ? 'bg-amber-400 border-2 border-amber-500 text-amber-950 shadow-xs'
                 : i === 8
-                  ? 'bg-golden-50/70 border-dashed border-golden-400 text-amber-800'
-                  : 'bg-crema-surface border-crema-surface text-roast-400'"
+                  ? 'bg-amber-50/80 border-2 border-dashed border-amber-400 text-amber-800'
+                  : 'bg-stone-50 border border-stone-200 text-stone-400'"
             >
               <!-- Google Material Icon: local_cafe -->
-              <svg v-if="i <= currentStamps" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M17 8h1a4 4 0 1 1 0 8h-1"/>
-                <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/>
-              </svg>
+              <template v-if="i <= currentStamps">
+                <svg class="w-5 h-5 text-amber-950" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M17 8h1a4 4 0 1 1 0 8h-1"/>
+                  <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/>
+                </svg>
+                <span class="text-[9px] font-black font-mono text-amber-950 mt-0.5">Sello {{ i }}</span>
+              </template>
               <!-- Google Material Icon: redeem -->
-              <svg v-else-if="i === 8" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <rect x="3" y="8" width="18" height="4" rx="1"/>
-                <path d="M12 8v13"/>
-                <path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/>
-              </svg>
-              <span v-else class="text-xs font-bold font-mono">{{ i }}</span>
-
-              <span class="text-[9px] font-bold mt-1" :class="i <= currentStamps ? 'text-amber-100' : 'text-roast-400'">
-                {{ i === 8 ? 'Premio' : `${i}` }}
-              </span>
+              <template v-else-if="i === 8">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="3" y="8" width="18" height="4" rx="1"/>
+                  <path d="M12 8v13"/>
+                  <path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/>
+                </svg>
+                <span class="text-[9px] font-bold text-amber-800 mt-0.5">Premio</span>
+              </template>
+              <template v-else>
+                <span class="text-xs font-bold font-mono">{{ i }}</span>
+                <span class="text-[9px] text-stone-400 mt-0.5">{{ i }}</span>
+              </template>
             </div>
           </div>
 
           <div class="space-y-1.5 pt-1">
             <div class="flex justify-between text-xs font-semibold">
-              <span class="text-roast-700">{{ currentStamps }} de 8 sellos</span>
-              <span class="text-roast-500">{{ Math.max(0, 8 - currentStamps) }} restantes</span>
+              <span class="text-stone-700">{{ currentStamps }} de 8 sellos</span>
+              <span class="text-stone-500">{{ Math.max(0, 8 - currentStamps) }} restantes</span>
             </div>
-            <div class="w-full bg-crema-surface rounded-full h-2 overflow-hidden border border-crema-surface">
+            <div class="w-full bg-stone-100 rounded-full h-2 overflow-hidden border border-stone-200">
               <div
-                class="bg-roast-900 h-full rounded-full transition-all duration-500"
+                class="bg-amber-500 h-full rounded-full transition-all duration-500"
                 :style="{ width: `${(currentStamps / 8) * 100}%` }"
               ></div>
             </div>

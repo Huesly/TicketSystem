@@ -1,8 +1,8 @@
 <template>
   <div class="space-y-5 fluid-container">
     <div class="space-y-0.5">
-      <h2 class="fluid-title font-extrabold text-roast-950">Mi Tarjeta Digital</h2>
-      <p class="text-xs text-roast-600">Tus sellos son válidos en cualquiera de nuestras sedes.</p>
+      <h2 class="fluid-title font-extrabold text-stone-900">Mi Tarjeta Digital</h2>
+      <p class="text-xs text-stone-500">Tus sellos son válidos en cualquiera de nuestras sedes.</p>
     </div>
 
     <!-- ======================================================================= -->
@@ -10,25 +10,25 @@
     <!-- ======================================================================= -->
     <div v-if="loading" class="space-y-5" aria-hidden="true">
       <!-- Skeleton Tarjeta Principal de 8 Sellos -->
-      <div class="bg-roast-900/90 rounded-2xl fluid-pad border border-roast-800 space-y-5 shadow-sm">
+      <div class="bg-white rounded-2xl fluid-pad border border-stone-200 space-y-5 shadow-sm">
         <div class="flex items-center justify-between">
           <div class="space-y-2">
-            <div class="h-3 w-28 rounded skeleton-shimmer-dark"></div>
-            <div class="h-5 w-36 rounded skeleton-shimmer-dark"></div>
+            <div class="h-3 w-28 rounded skeleton-shimmer"></div>
+            <div class="h-5 w-36 rounded skeleton-shimmer"></div>
           </div>
-          <div class="h-8 w-16 rounded-xl skeleton-shimmer-dark"></div>
+          <div class="h-8 w-16 rounded-xl skeleton-shimmer"></div>
         </div>
 
         <!-- 8 Sellos Cuadrícula Skeleton -->
         <div class="grid grid-cols-4 gap-2.5">
-          <div v-for="n in 8" :key="n" class="aspect-square rounded-xl skeleton-shimmer-dark border border-white/5"></div>
+          <div v-for="n in 8" :key="n" class="aspect-square rounded-xl skeleton-shimmer border border-stone-100"></div>
         </div>
 
-        <div class="h-9 rounded-xl skeleton-shimmer-dark border border-white/5"></div>
+        <div class="h-10 rounded-xl skeleton-shimmer"></div>
       </div>
 
       <!-- Skeleton Código QR para Caja -->
-      <div class="bg-white rounded-2xl p-5 border border-crema-border shadow-sm space-y-4">
+      <div class="bg-white rounded-2xl p-5 border border-stone-200 shadow-sm space-y-4">
         <div class="flex items-center gap-3">
           <div class="w-9 h-9 rounded-xl skeleton-shimmer"></div>
           <div class="space-y-2">
@@ -38,12 +38,12 @@
         </div>
 
         <div class="flex flex-col items-center justify-center py-2">
-          <div class="w-48 h-48 rounded-2xl skeleton-shimmer border border-crema-border"></div>
+          <div class="w-48 h-48 rounded-2xl skeleton-shimmer border border-stone-200"></div>
         </div>
       </div>
 
       <!-- Skeleton Acordeón de Información -->
-      <div class="h-12 bg-white rounded-xl border border-crema-border skeleton-shimmer"></div>
+      <div class="h-12 bg-white rounded-xl border border-stone-200 skeleton-shimmer"></div>
     </div>
 
     <!-- ======================================================================= -->
@@ -51,15 +51,15 @@
     <!-- ======================================================================= -->
     <div v-else class="space-y-5 fade-enter-soft">
       <!-- Tarjeta Principal de Fidelidad (8 Sellos) -->
-      <div class="bg-roast-900 text-amber-50 rounded-2xl fluid-pad border border-roast-800 shadow-md space-y-5">
+      <div class="bg-white rounded-2xl fluid-pad border border-stone-300 shadow-sm space-y-5">
         <div class="flex items-center justify-between">
           <div>
-            <span class="text-xs text-golden-400 font-semibold tracking-wide">Programa de fidelidad</span>
-            <h3 class="font-extrabold text-base text-white">Ciclo activo #{{ activeCard ? activeCard.cycle_number : 1 }}</h3>
+            <span class="text-[11px] font-bold text-amber-700 uppercase tracking-wider block">Programa de Fidelidad</span>
+            <h3 class="font-extrabold text-base text-stone-900">Ciclo Activo #{{ activeCard ? activeCard.cycle_number : 1 }}</h3>
           </div>
           <div class="text-right">
-            <span class="text-2xl font-black font-mono text-golden-400">{{ activeCard ? activeCard.stamps_count : 0 }} / {{ activeCard ? activeCard.stamps_required : 8 }}</span>
-            <p class="text-[10px] text-roast-300 uppercase tracking-wider">Sellos</p>
+            <span class="text-2xl font-black font-mono text-stone-950">{{ activeCard ? activeCard.stamps_count : 0 }} / {{ activeCard ? activeCard.stamps_required : 8 }}</span>
+            <p class="text-[10px] text-stone-500 font-semibold uppercase tracking-wider">Sellos</p>
           </div>
         </div>
 
@@ -70,52 +70,55 @@
             :key="i"
             class="aspect-square rounded-xl flex flex-col items-center justify-center border transition-all duration-300"
             :class="i <= (activeCard ? activeCard.stamps_count : 0)
-              ? 'bg-golden-400/25 border-golden-400 text-golden-300 scale-100 shadow-xs'
+              ? 'bg-amber-400 border-2 border-amber-500 text-amber-950 shadow-xs scale-100'
               : i === (activeCard ? activeCard.stamps_required : 8)
-                ? 'bg-white/5 border-dashed border-golden-400/70 text-golden-400'
-                : 'bg-black/30 border-white/10 text-roast-400'"
+                ? 'bg-amber-50/80 border-2 border-dashed border-amber-400 text-amber-800'
+                : 'bg-stone-50 border border-stone-200 text-stone-400'"
           >
-            <!-- Google Material Icon: local_cafe -->
-            <svg v-if="i <= (activeCard ? activeCard.stamps_count : 0)" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <!-- Google Material Icon: local_cafe (SELLO RECLAMADO / ACUMULADO) -->
+            <svg v-if="i <= (activeCard ? activeCard.stamps_count : 0)" class="w-5 h-5 text-amber-950" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M17 8h1a4 4 0 1 1 0 8h-1"/>
               <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/>
             </svg>
-            <!-- Google Material Icon: redeem -->
-            <svg v-else-if="i === (activeCard ? activeCard.stamps_required : 8)" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <!-- Google Material Icon: redeem (PREMIO FINAL) -->
+            <svg v-else-if="i === (activeCard ? activeCard.stamps_required : 8)" class="w-5 h-5 text-amber-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <rect x="3" y="8" width="18" height="4" rx="1"/>
               <path d="M12 8v13"/>
               <path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/>
             </svg>
-            <span v-else class="text-xs font-bold font-mono">{{ i }}</span>
+            <span v-else class="text-xs font-bold font-mono text-stone-400">{{ i }}</span>
 
-            <span class="text-[9px] font-bold mt-1" :class="i <= (activeCard ? activeCard.stamps_count : 0) ? 'text-golden-300' : 'text-roast-400'">
+            <span 
+              class="text-[10px] font-bold mt-1" 
+              :class="i <= (activeCard ? activeCard.stamps_count : 0) ? 'text-amber-950 font-black' : (i === 8 ? 'text-amber-800' : 'text-stone-400')"
+            >
               {{ i === (activeCard ? activeCard.stamps_required : 8) ? 'Premio' : `Sello ${i}` }}
             </span>
           </div>
         </div>
 
-        <div class="bg-black/35 rounded-xl p-3 flex items-center justify-between text-xs border border-white/10">
-          <span class="text-roast-200">Meta: {{ activeCard ? activeCard.stamps_required : 8 }} sellos</span>
-          <span class="font-bold text-golden-400">
+        <div class="bg-stone-50 rounded-xl p-3 flex items-center justify-between text-xs border border-stone-200">
+          <span class="text-stone-600 font-medium">Meta: {{ activeCard ? activeCard.stamps_required : 8 }} sellos</span>
+          <span class="font-bold text-stone-900">
             {{ activeCard && activeCard.stamps_remaining > 0 ? `Faltan ${activeCard.stamps_remaining} sellos` : '¡Meta alcanzada!' }}
           </span>
         </div>
 
         <!-- Banner de Cortesías Disponibles si el cliente tiene premios acumulados -->
-        <div v-if="availableRewardsCount > 0" class="bg-golden-400 text-roast-950 rounded-xl p-3.5 flex items-center justify-between gap-2 border border-golden-500 shadow-sm">
-          <div class="flex items-center gap-2">
-            <div class="w-8 h-8 rounded-lg bg-roast-900 text-golden-400 flex items-center justify-center shrink-0">
+        <div v-if="availableRewardsCount > 0" class="bg-amber-50 text-amber-950 rounded-xl p-3.5 flex items-center justify-between gap-3 border border-amber-300 shadow-xs">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-amber-400 text-stone-950 flex items-center justify-center shrink-0 shadow-2xs font-bold">
               <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/>
               </svg>
             </div>
             <div>
-              <p class="text-xs font-bold text-roast-950">¡Tienes {{ availableRewardsCount }} cortesía(s) disponible(s)!</p>
-              <p class="text-[10px] text-roast-800">El barista puede canjearla al escanear tu carnet.</p>
+              <p class="text-xs font-bold text-stone-950">¡Tienes {{ availableRewardsCount }} cortesía(s) disponible(s)!</p>
+              <p class="text-[11px] text-stone-600">El barista puede canjearla al escanear tu código QR.</p>
             </div>
           </div>
-          <router-link to="/recompensas" class="bg-roast-900 hover:bg-roast-800 text-golden-200 px-3 py-1.5 rounded-lg text-xs font-bold transition shrink-0">
-            Ver detalles
+          <router-link to="/recompensas" class="bg-stone-900 hover:bg-stone-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition shrink-0 shadow-2xs">
+            Ver premios
           </router-link>
         </div>
       </div>
@@ -134,15 +137,15 @@
           <span class="text-[10px] uppercase font-bold tracking-wider text-emerald-800 bg-emerald-100 border border-emerald-200 px-2.5 py-0.5 rounded-full">
             ¡Operación Registrada en Caja!
           </span>
-          <h4 class="font-extrabold text-roast-950 text-base">
+          <h4 class="font-extrabold text-stone-950 text-base">
             {{ activeAlert.title }}
           </h4>
-          <p class="text-xs text-roast-700 font-medium">
+          <p class="text-xs text-stone-700 font-medium">
             {{ activeAlert.message }}
           </p>
         </div>
 
-        <div v-if="activeAlert.receipt_reference" class="bg-white rounded-lg p-2.5 border border-emerald-200 text-xs text-roast-700 font-mono inline-block">
+        <div v-if="activeAlert.receipt_reference" class="bg-white rounded-lg p-2.5 border border-emerald-200 text-xs text-stone-700 font-mono inline-block">
           Factura: <strong>{{ activeAlert.receipt_reference }}</strong>
           <span v-if="activeAlert.gross_amount"> • ${{ activeAlert.gross_amount.toLocaleString('es-CO') }} COP</span>
         </div>
@@ -151,7 +154,7 @@
           <button
             type="button"
             @click="activeAlert = null"
-            class="text-[11px] font-bold text-roast-700 hover:text-roast-950 bg-crema-surface hover:bg-white px-3 py-1 rounded-lg border border-crema-border transition cursor-pointer"
+            class="text-[11px] font-bold text-stone-700 hover:text-stone-950 bg-stone-100 hover:bg-white px-3 py-1 rounded-lg border border-stone-300 transition cursor-pointer"
           >
             Entendido
           </button>
@@ -161,9 +164,9 @@
       <!-- ===================================================================== -->
       <!-- CÓDIGO QR PARA CAJA                                                   -->
       <!-- ===================================================================== -->
-      <div class="bg-white rounded-2xl p-5 border border-crema-border shadow-sm space-y-4">
+      <div class="bg-white rounded-2xl p-5 border border-stone-300 shadow-sm space-y-4">
         <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-xl bg-roast-900 text-golden-400 flex items-center justify-center shrink-0 border border-roast-800 shadow-2xs">
+          <div class="w-9 h-9 rounded-xl bg-stone-900 text-amber-300 flex items-center justify-center shrink-0 border border-stone-800 shadow-2xs">
             <!-- SVG: QR Code -->
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/>
@@ -172,35 +175,35 @@
             </svg>
           </div>
           <div class="min-w-0">
-            <h3 class="font-extrabold text-sm text-roast-950">Mi código QR</h3>
-            <p class="text-[11px] text-roast-600">Muestra este código al barista para sumar sellos o canjear</p>
+            <h3 class="font-extrabold text-sm text-stone-900">Mi código QR</h3>
+            <p class="text-[11px] text-stone-500">Muestra este código al barista para sumar sellos o canjear</p>
           </div>
         </div>
 
         <!-- VISOR DEL CÓDIGO QR -->
         <div class="flex flex-col items-center justify-center pt-1 pb-1">
           <!-- QR Renderizado de Alto Contraste -->
-          <div v-if="memberQrToken" class="p-4 bg-white rounded-2xl border-2 border-roast-900 shadow-sm relative">
+          <div v-if="memberQrToken" class="p-4 bg-white rounded-2xl border-2 border-stone-900 shadow-sm relative">
             <qrcode-vue :value="memberQrToken" :size="180" level="M" render-as="svg" />
           </div>
         </div>
       </div>
 
       <!-- Guía de Uso del Código QR (Sin Costos ni Precios) -->
-      <details class="group bg-white rounded-xl border border-crema-border px-4 py-3 text-xs text-roast-700">
-        <summary class="font-bold text-roast-950 cursor-pointer flex items-center justify-between list-none">
+      <details class="group bg-white rounded-xl border border-stone-300 px-4 py-3 text-xs text-stone-700">
+        <summary class="font-bold text-stone-900 cursor-pointer flex items-center justify-between list-none">
           <span class="inline-flex items-center gap-2">
             <!-- Google Material Icon: info -->
-            <svg class="w-4 h-4 text-roast-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <svg class="w-4 h-4 text-stone-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
             </svg>
             ¿Cómo usar tu código QR?
           </span>
-          <svg class="w-4 h-4 text-roast-500 transition-transform group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg class="w-4 h-4 text-stone-400 transition-transform group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="m6 9 6 6 6-6"/>
           </svg>
         </summary>
-        <div class="mt-2 pt-2 border-t border-crema-border leading-relaxed space-y-1.5 text-xs text-roast-700">
+        <div class="mt-2 pt-2 border-t border-stone-200 leading-relaxed space-y-1.5 text-xs text-stone-600">
           <p>• <strong>Para acumular sellos:</strong> Muestra tu código QR en caja al pedir tus bebidas o productos en cualquiera de nuestras sedes.</p>
           <p>• <strong>Para reclamar premios:</strong> Al completar tu tarjeta de 8 sellos, presenta este mismo código QR al barista para recibir tu cortesía.</p>
           <p>• <strong>Código personal:</strong> Tu código QR siempre está disponible en tu aplicación para tus visitas.</p>
@@ -209,15 +212,15 @@
 
       <!-- Historial de Ciclos Pasados -->
       <div v-if="pastCycles.length > 0" class="space-y-2.5">
-        <h3 class="font-bold text-xs uppercase tracking-wider text-roast-500">Ciclos completados</h3>
+        <h3 class="font-bold text-xs uppercase tracking-wider text-stone-500">Ciclos completados</h3>
 
-        <div class="bg-white rounded-2xl p-4 border border-crema-border divide-y divide-crema-border">
+        <div class="bg-white rounded-2xl p-4 border border-stone-300 divide-y divide-stone-200">
           <div v-for="item in pastCycles" :key="item.id" class="py-3 first:pt-0 last:pb-0 flex items-center justify-between">
             <div class="space-y-0.5">
-              <h5 class="font-bold text-xs text-roast-900">Ciclo #{{ item.cycle_number }}</h5>
-              <p class="text-[11px] text-roast-500">Completado: {{ new Date(item.completed_at || '').toLocaleDateString('es-CO') }}</p>
+              <h5 class="font-bold text-xs text-stone-900">Ciclo #{{ item.cycle_number }}</h5>
+              <p class="text-[11px] text-stone-500">Completado: {{ new Date(item.completed_at || '').toLocaleDateString('es-CO') }}</p>
             </div>
-            <span class="font-bold text-xs font-mono px-2.5 py-1 rounded-md bg-crema-surface text-roast-800 border border-crema-border">
+            <span class="font-bold text-xs font-mono px-2.5 py-1 rounded-md bg-stone-100 text-stone-800 border border-stone-300">
               {{ item.stamps_count }}/{{ item.stamps_required }}
             </span>
           </div>
@@ -238,135 +241,127 @@ const pastCycles = ref<CardSummary[]>([]);
 const availableRewardsCount = ref(0);
 
 // Identificación del socio permanente
-const currentUserId = ref('00000000-0000-0000-0000-000000000001');
+const currentCustomerId = ref<string>('');
 
 const memberQrToken = computed(() => {
-  return `cfy_member_${currentUserId.value}`;
+  return currentCustomerId.value ? `cfy_member_${currentCustomerId.value}` : '';
 });
 
-// Alertas en tiempo real
+// Alerta activa de evento POS en tiempo real
 const activeAlert = ref<{
-  id: string;
-  type: 'PURCHASE' | 'REDEMPTION';
   title: string;
   message: string;
   receipt_reference?: string;
   gross_amount?: number;
-  stamps_awarded?: number;
-  store_name?: string;
-  product_name?: string;
-  created_at: string;
 } | null>(null);
 
-let lastHandledAlertId = '';
-let livePollingInterval: any = null;
-
-// Audio Chime de Celebración Web Audio
-const playCelebrationChime = () => {
-  try {
-    const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-    if (!AudioCtx) return;
-    const ctx = new AudioCtx();
-    const notes = [523.25, 659.25, 783.99, 1046.50];
-    notes.forEach((freq, idx) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.1);
-      gain.gain.setValueAtTime(0.18, ctx.currentTime + idx * 0.1);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.1 + 0.35);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(ctx.currentTime + idx * 0.1);
-      osc.stop(ctx.currentTime + idx * 0.1 + 0.36);
-    });
-  } catch (e) {
-    console.debug('AudioContext no disponible:', e);
-  }
-};
-
-const triggerHaptic = () => {
-  if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
-    navigator.vibrate([80, 40, 120]);
-  }
-};
-
-const pollLiveStatus = async () => {
-  try {
-    const res = await api.getLiveStatus();
-    
-    // Si la tarjeta cambió
-    if (res.card) {
-      if (!activeCard.value || activeCard.value.stamps_count !== res.card.stamps_count) {
-        if (activeCard.value) {
-          activeCard.value.stamps_count = res.card.stamps_count;
-          activeCard.value.stamps_remaining = res.card.stamps_remaining;
-          activeCard.value.progress_percentage = res.card.progress_percentage;
-        }
-      }
-    }
-    availableRewardsCount.value = res.available_rewards_count;
-
-    // Verificar si hay alerta reciente no procesada
-    if (res.recent_alert && res.recent_alert.id !== lastHandledAlertId) {
-      lastHandledAlertId = res.recent_alert.id;
-      activeAlert.value = res.recent_alert;
-      playCelebrationChime();
-      triggerHaptic();
-
-      // Recargar histórico de tarjetas completo
-      loadCards();
-    }
-  } catch {
-    // Silencioso para polling
-  }
-};
+let pollTimer: any = null;
+let lastKnownStamps = -1;
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-const loadInitialData = async () => {
+const playCelebrationSound = () => {
   try {
-    loading.value = true;
-    // Precarga con tiempo mínimo de 850ms para garantizar una transición suave y difuminada
-    const minDelay = delay(850);
-    const [userMe] = await Promise.all([
-      api.getAuthMe().catch(() => null),
-      loadCards().catch(() => null),
-      minDelay
-    ]);
-    if (userMe && userMe.user) {
-      currentUserId.value = userMe.user.id;
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+    if (AudioContextClass) {
+      const audioCtx = new AudioContextClass();
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(440, now);
+      osc.frequency.exponentialRampToValueAtTime(880, now + 0.25);
+      gain.gain.setValueAtTime(0.2, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.3);
     }
-    await pollLiveStatus();
-  } catch (err) {
-    console.error('Error cargando carnet de socio:', err);
-  } finally {
-    loading.value = false;
-  }
+  } catch {}
 };
 
-const loadCards = async () => {
+const triggerHaptic = () => {
   try {
-    const res = await api.getLoyaltyCards();
-    activeCard.value = res.active_card;
-    pastCycles.value = res.past_cycles;
+    if ('vibrate' in navigator) {
+      navigator.vibrate([100, 50, 100]);
+    }
+  } catch {}
+};
+
+const fetchCardData = async (silent = false) => {
+  try {
+    if (!silent) loading.value = true;
+    const minDelay = silent ? Promise.resolve() : delay(850);
+    const [res, rewardsRes, profileRes] = await Promise.all([
+      api.getLoyaltyCards(),
+      api.getRewards().catch(() => []),
+      api.getProfile().catch(() => null),
+      minDelay
+    ]);
+
+    if (profileRes && profileRes.id) {
+      currentCustomerId.value = profileRes.id;
+    }
+
+    if (res) {
+      const newStamps = res.active_card ? res.active_card.stamps_count : 0;
+      
+      // Si hubo incremento de sellos en vivo mientras está en la pantalla
+      if (lastKnownStamps !== -1 && newStamps > lastKnownStamps) {
+        const added = newStamps - lastKnownStamps;
+        playCelebrationSound();
+        triggerHaptic();
+        activeAlert.value = {
+          title: `¡Sumaste +${added} ${added === 1 ? 'sello' : 'sellos'}!`,
+          message: 'Tu tarjeta se actualizó tras tu compra en barra.'
+        };
+      }
+      lastKnownStamps = newStamps;
+
+      activeCard.value = res.active_card;
+      pastCycles.value = res.past_cycles || [];
+    }
+
+    if (rewardsRes) {
+      availableRewardsCount.value = rewardsRes.filter((r: any) => r.status === 'AVAILABLE').length;
+    }
   } catch (err) {
-    console.error('Error cargando tarjetas:', err);
+    console.error('Error al cargar tarjeta:', err);
+  } finally {
+    if (!silent) loading.value = false;
   }
 };
 
 onMounted(() => {
-  loadInitialData();
-  // Polling cada 1.5s para detectar transacciones de caja en vivo
-  livePollingInterval = setInterval(pollLiveStatus, 1500);
+  fetchCardData();
+
+  // Escuchar eventos globales de compra o redención
+  window.addEventListener('confy-purchase-registered', (e: any) => {
+    fetchCardData(true);
+    if (e.detail) {
+      playCelebrationSound();
+      triggerHaptic();
+      activeAlert.value = {
+        title: `¡Sumaste +${e.detail.stamps_awarded} sellos!`,
+        message: 'Compra registrada exitosamente.',
+        receipt_reference: e.detail.receipt_reference,
+        gross_amount: e.detail.gross_amount
+      };
+    }
+  });
 
   window.addEventListener('confy-user-changed', () => {
-    loadInitialData();
+    fetchCardData(false);
   });
+
+  // Polling silencioso cada 4 segundos por si el cajero registró la venta en otra pestaña
+  pollTimer = setInterval(() => {
+    fetchCardData(true);
+  }, 4000);
 });
 
 onUnmounted(() => {
-  if (livePollingInterval) clearInterval(livePollingInterval);
-  window.removeEventListener('confy-user-changed', loadInitialData);
+  clearInterval(pollTimer);
 });
 </script>

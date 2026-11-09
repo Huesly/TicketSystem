@@ -46,14 +46,14 @@
           v-for="store in stores" 
           :key="store.id"
           @click="selectAndOpenStore(store)"
-          class="group bg-white rounded-2xl p-5 border transition-all duration-150 cursor-pointer flex flex-col justify-between space-y-5"
+          class="bg-white rounded-2xl p-5 border transition-all duration-150 cursor-pointer flex flex-col justify-between space-y-5"
           :class="pendingStoreSelection?.id === store.id 
-            ? 'border-2 border-roast-900 shadow-md ring-2 ring-golden-400/20' 
-            : 'border-crema-border hover:border-golden-400 shadow-sm'"
+            ? 'border-2 border-stone-900 shadow-md ring-2 ring-amber-400/20' 
+            : 'border-stone-200 hover:border-stone-400 hover:shadow-sm'"
         >
           <div class="space-y-3">
             <div class="flex items-center justify-between">
-              <span class="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-crema-surface text-roast-800 border border-crema-border">
+              <span class="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-stone-100 text-stone-800 border border-stone-200">
                 {{ store.code }}
               </span>
               <span class="inline-flex items-center gap-1.5 text-[11px] font-medium text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
@@ -63,12 +63,12 @@
             </div>
 
             <div>
-              <h2 class="font-bold text-roast-950 text-base">{{ store.name }}</h2>
-              <p class="text-xs text-roast-500 mt-0.5">{{ store.address || 'Sede comercial principal' }}</p>
+              <h2 class="font-bold text-stone-900 text-base">{{ store.name }}</h2>
+              <p class="text-xs text-stone-500 mt-0.5">{{ store.address || 'Sede comercial principal' }}</p>
             </div>
 
-            <div class="flex items-center gap-1.5 text-[11px] text-roast-600 font-medium pt-1">
-              <svg class="w-3.5 h-3.5 text-golden-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <div class="flex items-center gap-1.5 text-[11px] text-stone-600 font-medium pt-1">
+              <svg class="w-3.5 h-3.5 text-amber-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/>
                 <circle cx="12" cy="10" r="3"/>
               </svg>
@@ -81,8 +81,8 @@
             @click.stop="selectAndOpenStore(store)"
             class="w-full font-semibold text-xs py-2.5 px-4 rounded-xl border transition flex items-center justify-between cursor-pointer"
             :class="pendingStoreSelection?.id === store.id 
-              ? 'bg-roast-900 text-golden-100 border-roast-900 hover:bg-roast-800 shadow-xs' 
-              : 'bg-crema-surface text-roast-900 border-crema-border group-hover:bg-roast-900 group-hover:text-golden-100 group-hover:border-roast-900'"
+              ? 'bg-stone-900 text-white border-stone-900 shadow-xs' 
+              : 'bg-stone-100 hover:bg-stone-900 hover:text-white text-stone-900 border-stone-200'"
           >
             <span>Iniciar turno aquí</span>
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -244,9 +244,9 @@
               <button 
                 type="button"
                 @click="loadDemoMember"
-                class="text-[11px] font-semibold text-roast-800 bg-golden-100 hover:bg-golden-200 border border-golden-300 px-2.5 py-1 rounded-lg transition cursor-pointer flex items-center gap-1"
+                class="text-[11px] font-bold text-amber-950 bg-amber-100 hover:bg-amber-200 border border-amber-300 px-2.5 py-1 rounded-lg transition cursor-pointer flex items-center gap-1 shadow-2xs"
               >
-                <svg class="w-3 h-3 text-golden-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <svg class="w-3 h-3 text-amber-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>
                 </svg>
                 <span>Cargar Socio Demo (Camila R.)</span>
@@ -260,13 +260,13 @@
                 type="text"
                 placeholder="cfy_member_..."
                 @keyup.enter="lookupMember()"
-                class="flex-1 text-xs font-mono bg-crema-surface border border-crema-border rounded-xl px-3.5 py-2.5 text-roast-900 placeholder:text-roast-400 focus:bg-white focus:border-roast-900 focus:outline-none transition"
+                class="flex-1 text-xs font-mono bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2.5 text-stone-900 placeholder:text-stone-400 focus:bg-white focus:border-stone-900 focus:outline-none transition"
               />
               <button
                 type="button"
                 @click="lookupMember()"
                 :disabled="isLookingUp || !tokenInput.trim()"
-                class="bg-roast-900 hover:bg-roast-800 disabled:bg-stone-200 disabled:text-roast-400 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition cursor-pointer"
+                class="bg-stone-900 hover:bg-stone-800 disabled:bg-stone-200 disabled:text-stone-400 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition cursor-pointer shadow-sm"
               >
                 {{ isLookingUp ? 'Buscando...' : 'Consultar' }}
               </button>
@@ -333,15 +333,15 @@
       <!-- ===================================================================== -->
       <div v-else class="space-y-5 animate-in fade-in duration-200">
         <!-- Expediente del Socio (Header Bar) -->
-        <div class="bg-roast-900 text-amber-50 rounded-2xl p-4 sm:p-5 border border-roast-900 shadow-md flex flex-wrap items-center justify-between gap-4">
+        <div class="bg-stone-900 text-white rounded-2xl p-4 sm:p-5 border border-stone-800 shadow-md flex flex-wrap items-center justify-between gap-4">
           <div class="flex items-center gap-3.5">
-            <div class="w-12 h-12 rounded-2xl bg-golden-400 text-roast-950 font-black text-lg flex items-center justify-center shrink-0 shadow-sm">
+            <div class="w-12 h-12 rounded-2xl bg-amber-400 text-stone-950 font-black text-lg flex items-center justify-center shrink-0 shadow-sm">
               {{ memberData.full_name.charAt(0) }}
             </div>
             <div>
               <div class="flex items-center gap-2">
                 <h2 class="font-black text-lg text-white">{{ memberData.full_name }}</h2>
-                <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-black/40 text-golden-300 border border-golden-300/40">
+                <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-stone-800 text-amber-300 border border-amber-400/40">
                   {{ memberData.member_code }}
                 </span>
               </div>
@@ -352,7 +352,7 @@
           <button 
             type="button"
             @click="clearMember"
-            class="bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 cursor-pointer active:scale-95"
+            class="bg-stone-800 hover:bg-stone-700 text-white border border-stone-700 text-xs font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 cursor-pointer active:scale-95"
           >
             <svg class="w-4 h-4 text-stone-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
@@ -368,15 +368,15 @@
           <div class="lg:col-span-6 space-y-5">
             
             <!-- TARJETA MINI DE SELLOS ACTUALES -->
-            <div class="bg-white rounded-2xl border border-crema-border p-4 sm:p-5 shadow-sm space-y-3">
+            <div class="bg-white rounded-2xl border border-stone-300 p-4 sm:p-5 shadow-sm space-y-3">
               <div class="flex items-center justify-between">
                 <div>
-                  <span class="text-[10px] uppercase font-bold tracking-widest text-roast-500">Tarjeta Activa</span>
-                  <h3 class="font-extrabold text-sm text-roast-950">Ciclo #{{ memberData.active_card.cycle_number }}</h3>
+                  <span class="text-[10px] uppercase font-bold tracking-widest text-stone-500">Tarjeta Activa</span>
+                  <h3 class="font-extrabold text-sm text-stone-900">Ciclo #{{ memberData.active_card.cycle_number }}</h3>
                 </div>
                 <div class="text-right">
-                  <span class="text-lg font-black font-mono text-roast-900">{{ memberData.active_card.stamps_count }} / {{ memberData.active_card.stamps_required }}</span>
-                  <span class="text-[10px] text-roast-500 block uppercase">Sellos</span>
+                  <span class="text-lg font-black font-mono text-stone-900">{{ memberData.active_card.stamps_count }} / {{ memberData.active_card.stamps_required }}</span>
+                  <span class="text-[10px] text-stone-500 block uppercase">Sellos</span>
                 </div>
               </div>
 
@@ -385,21 +385,24 @@
                 <div
                   v-for="i in memberData.active_card.stamps_required"
                   :key="i"
-                  class="aspect-square rounded-xl flex flex-col items-center justify-center border text-[10px] font-bold"
+                  class="aspect-square rounded-xl flex flex-col items-center justify-center border text-[10px] font-bold transition-all"
                   :class="i <= memberData.active_card.stamps_count
-                    ? 'bg-roast-900 border-roast-900 text-golden-300 shadow-xs'
+                    ? 'bg-amber-400 border-2 border-amber-500 text-amber-950 shadow-xs'
                     : i === memberData.active_card.stamps_required
-                      ? 'bg-golden-50/70 border-dashed border-golden-400 text-golden-800'
-                      : 'bg-crema-surface border-crema-border text-roast-400'"
+                      ? 'bg-amber-50/80 border-2 border-dashed border-amber-400 text-amber-800'
+                      : 'bg-stone-50 border border-stone-200 text-stone-400'"
                 >
-                  <svg v-if="i <= memberData.active_card.stamps_count" class="w-4 h-4 text-golden-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/>
-                  </svg>
+                  <template v-if="i <= memberData.active_card.stamps_count">
+                    <svg class="w-4 h-4 text-amber-950" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/>
+                    </svg>
+                    <span class="text-[9px] font-black font-mono text-amber-950 mt-0.5">Sello {{ i }}</span>
+                  </template>
                   <span v-else>{{ i === 8 ? 'Premio' : i }}</span>
                 </div>
               </div>
 
-              <div class="text-xs text-roast-500 text-center pt-1">
+              <div class="text-xs text-stone-500 text-center pt-1">
                 {{ memberData.active_card.stamps_count >= 8 
                   ? '¡Tarjeta completa! El premio ya fue emitido.' 
                   : `Faltan ${8 - memberData.active_card.stamps_count} sellos para la siguiente cortesía.` }}
@@ -410,24 +413,24 @@
             <div 
               class="rounded-2xl border p-5 shadow-sm space-y-4"
               :class="memberData.has_available_reward 
-                ? 'bg-golden-50 border-golden-300' 
-                : 'bg-crema-surface border-crema-surface text-roast-500'"
+                ? 'bg-amber-50 border-amber-300' 
+                : 'bg-stone-50 border-stone-200 text-stone-500'"
             >
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2.5">
                   <div 
                     class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
-                    :class="memberData.has_available_reward ? 'bg-golden-400 text-roast-950 font-bold shadow-sm' : 'bg-stone-200 text-roast-400'"
+                    :class="memberData.has_available_reward ? 'bg-amber-400 text-stone-950 font-bold shadow-sm' : 'bg-stone-200 text-stone-400'"
                   >
                     <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/>
                     </svg>
                   </div>
                   <div>
-                    <h3 class="font-extrabold text-sm text-roast-950">
+                    <h3 class="font-extrabold text-sm text-stone-950">
                       {{ memberData.has_available_reward ? '¡Cortesía Lista para Canje!' : 'Sin Cortesías Pendientes' }}
                     </h3>
-                    <p class="text-[11px] text-roast-600">
+                    <p class="text-[11px] text-stone-600">
                       {{ memberData.has_available_reward 
                         ? `${memberData.available_rewards_count} cortesía(s) disponible(s) acumulada(s)`
                         : 'El cliente no tiene premios listos en este momento' }}
@@ -437,15 +440,15 @@
 
                 <span 
                   v-if="memberData.has_available_reward"
-                  class="text-xs font-black font-mono px-2.5 py-1 rounded-lg bg-golden-400 text-roast-950 border border-golden-500"
+                  class="text-xs font-black font-mono px-2.5 py-1 rounded-lg bg-amber-400 text-stone-950 border border-amber-500"
                 >
                   {{ memberData.available_rewards_count }} disponible(s)
                 </span>
               </div>
 
               <!-- Selector Dinámico de Producto de Cortesía si tiene premio -->
-              <div v-if="memberData.has_available_reward" class="space-y-3 pt-2 border-t border-golden-200">
-                <label class="text-xs font-bold text-roast-900 block">
+              <div v-if="memberData.has_available_reward" class="space-y-3 pt-2 border-t border-amber-200">
+                <label class="text-xs font-bold text-stone-900 block">
                   Elige la cortesía que desea el cliente hoy:
                 </label>
 
@@ -456,14 +459,14 @@
                     @click="selectedRewardProduct = opt.name"
                     class="p-2.5 rounded-xl border text-xs cursor-pointer transition flex items-center justify-between"
                     :class="selectedRewardProduct === opt.name 
-                      ? 'bg-golden-200/60 border-golden-500 font-bold text-roast-950 shadow-2xs' 
-                      : 'bg-white border-crema-surface hover:border-golden-300 text-roast-800'"
+                      ? 'bg-amber-100/90 border-2 border-amber-500 font-bold text-stone-950 shadow-xs' 
+                      : 'bg-white border-stone-200 hover:border-amber-300 text-stone-800'"
                   >
                     <div class="space-y-0.5">
                       <span class="block">{{ opt.name }}</span>
-                      <span class="text-[10px] text-roast-500 font-normal">{{ opt.description }}</span>
+                      <span class="text-[10px] text-stone-500 font-normal">{{ opt.description }}</span>
                     </div>
-                    <span class="w-4 h-4 rounded-full border flex items-center justify-center shrink-0" :class="selectedRewardProduct === opt.name ? 'border-amber-600 bg-amber-600 text-white' : 'border-crema-border'">
+                    <span class="w-4 h-4 rounded-full border flex items-center justify-center shrink-0" :class="selectedRewardProduct === opt.name ? 'border-amber-600 bg-amber-600 text-white' : 'border-stone-300'">
                       <span v-if="selectedRewardProduct === opt.name" class="w-1.5 h-1.5 rounded-full bg-white"></span>
                     </span>
                   </div>
@@ -473,12 +476,12 @@
                     @click="selectedRewardProduct = 'custom'"
                     class="p-2.5 rounded-xl border text-xs cursor-pointer transition"
                     :class="selectedRewardProduct === 'custom' 
-                      ? 'bg-golden-200/60 border-golden-500 font-bold text-roast-950' 
-                      : 'bg-white border-crema-surface hover:border-golden-300 text-roast-800'"
+                      ? 'bg-amber-100/90 border-2 border-amber-500 font-bold text-stone-950 shadow-xs' 
+                      : 'bg-white border-stone-200 hover:border-amber-300 text-stone-800'"
                   >
                     <div class="flex items-center justify-between">
                       <span>Otra cortesía acordada en barra</span>
-                      <span class="w-4 h-4 rounded-full border flex items-center justify-center shrink-0" :class="selectedRewardProduct === 'custom' ? 'border-amber-600 bg-amber-600 text-white' : 'border-crema-border'">
+                      <span class="w-4 h-4 rounded-full border flex items-center justify-center shrink-0" :class="selectedRewardProduct === 'custom' ? 'border-amber-600 bg-amber-600 text-white' : 'border-stone-300'">
                         <span v-if="selectedRewardProduct === 'custom'" class="w-1.5 h-1.5 rounded-full bg-white"></span>
                       </span>
                     </div>
@@ -487,7 +490,7 @@
                       v-model="customProductNote"
                       type="text"
                       placeholder="Ej: Latte descafeinado en leche de avena"
-                      class="mt-2 w-full text-xs font-normal bg-white border border-crema-border rounded-lg p-2 focus:outline-none focus:border-roast-900"
+                      class="mt-2 w-full text-xs font-normal bg-white border border-stone-300 rounded-lg p-2 focus:outline-none focus:border-stone-900"
                     />
                   </div>
                 </div>
@@ -497,9 +500,9 @@
                   type="button"
                   @click="submitMemberRedemption"
                   :disabled="isSubmittingRedemption"
-                  class="w-full bg-roast-900 hover:bg-roast-800 text-white font-bold text-xs py-3 rounded-xl border border-roast-900 transition flex items-center justify-center gap-2 cursor-pointer shadow-sm active:scale-95"
+                  class="w-full bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs py-3 rounded-xl border border-stone-900 transition flex items-center justify-center gap-2 cursor-pointer shadow-sm active:scale-95"
                 >
-                  <svg class="w-4 h-4 text-golden-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <svg class="w-4 h-4 text-amber-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/>
                   </svg>
                   <span>{{ isSubmittingRedemption ? 'Confirmando entrega...' : 'Entregar Cortesía Seleccionada' }}</span>
@@ -543,13 +546,13 @@
                     v-model="invoiceRef"
                     type="text" 
                     placeholder="FAC-2026-00125"
-                    class="w-full text-xs font-mono bg-crema-surface border border-crema-border rounded-xl px-3.5 py-2.5 text-roast-950 placeholder:text-roast-400 focus:bg-white focus:border-roast-900 focus:outline-none transition"
+                    class="w-full text-xs font-mono bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2.5 text-stone-900 placeholder:text-stone-400 focus:bg-white focus:border-stone-900 focus:outline-none transition"
                   />
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
                   <div class="space-y-1">
-                    <label for="pos-gross-input" class="text-xs font-semibold text-roast-800">
+                    <label for="pos-gross-input" class="text-xs font-semibold text-stone-800">
                       Importe bruto (COP) *
                     </label>
                     <input 
@@ -557,12 +560,12 @@
                       v-model.number="grossAmount"
                       type="number" 
                       placeholder="25000"
-                      class="w-full text-xs font-mono bg-crema-surface border border-crema-border rounded-xl px-3.5 py-2.5 text-roast-950 placeholder:text-roast-400 focus:bg-white focus:border-roast-900 focus:outline-none transition"
+                      class="w-full text-xs font-mono bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2.5 text-stone-900 placeholder:text-stone-400 focus:bg-white focus:border-stone-900 focus:outline-none transition"
                     />
                   </div>
 
                   <div class="space-y-1">
-                    <label for="pos-discount-input" class="text-xs font-semibold text-roast-800">
+                    <label for="pos-discount-input" class="text-xs font-semibold text-stone-800">
                       Descuento (COP)
                     </label>
                     <input 
@@ -570,23 +573,23 @@
                       v-model.number="discountAmount"
                       type="number" 
                       placeholder="0"
-                      class="w-full text-xs font-mono bg-crema-surface border border-crema-border rounded-xl px-3.5 py-2.5 text-roast-950 placeholder:text-roast-400 focus:bg-white focus:border-roast-900 focus:outline-none transition"
+                      class="w-full text-xs font-mono bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2.5 text-stone-900 placeholder:text-stone-400 focus:bg-white focus:border-stone-900 focus:outline-none transition"
                     />
                   </div>
                 </div>
 
                 <!-- Resumen de Sellos Calculados -->
-                <div class="bg-crema-surface rounded-xl p-3.5 border border-crema-border flex items-center justify-between">
+                <div class="bg-stone-50 rounded-xl p-3.5 border border-stone-200 flex items-center justify-between">
                   <div>
-                    <span class="text-xs font-bold text-roast-950 block">
+                    <span class="text-xs font-bold text-stone-900 block">
                       Sellos a acreditar: +{{ calculatedStamps }}
                     </span>
-                    <span class="text-[10px] text-roast-500">
+                    <span class="text-[10px] text-stone-500">
                       Base neta: ${{ (eligibleAmount || 0).toLocaleString('es-CO') }} COP
                     </span>
                   </div>
 
-                  <span class="text-lg font-black font-mono px-3 py-0.5 rounded-lg border" :class="calculatedStamps > 0 ? 'bg-emerald-50 text-emerald-800 border-emerald-300' : 'bg-crema-surface text-roast-400 border-crema-surface'">
+                  <span class="text-lg font-black font-mono px-3 py-0.5 rounded-lg border" :class="calculatedStamps > 0 ? 'bg-emerald-50 text-emerald-800 border-emerald-300' : 'bg-stone-100 text-stone-400 border-stone-200'">
                     +{{ calculatedStamps }}
                   </span>
                 </div>
@@ -600,8 +603,8 @@
                 :disabled="isSubmittingPurchase || !invoiceRef.trim() || eligibleAmount <= 0"
                 class="w-full font-bold text-xs py-3.5 px-5 rounded-xl border transition flex items-center justify-center gap-2 cursor-pointer shadow-sm active:scale-95"
                 :class="(!invoiceRef.trim() || eligibleAmount <= 0)
-                  ? 'bg-crema-surface text-roast-400 border-crema-border cursor-not-allowed' 
-                  : 'bg-roast-900 hover:bg-roast-800 text-white border-roast-900'"
+                  ? 'bg-stone-100 text-stone-400 border-stone-200 cursor-not-allowed' 
+                  : 'bg-stone-900 hover:bg-stone-800 text-white border-stone-900'"
               >
                 <span v-if="isSubmittingPurchase">Acreditando sellos...</span>
                 <span v-else-if="!invoiceRef.trim() || eligibleAmount <= 0">Ingresa factura e importe para registrar</span>
@@ -631,7 +634,7 @@
                   </span>
                 </div>
                 <p>Sellos acreditados: <strong>+{{ successPurchase.stamps_awarded }}</strong></p>
-                <div v-if="successPurchase.rewards_issued.length > 0" class="p-2 bg-golden-100 rounded-lg text-roast-950 font-bold border border-golden-300 mt-1">
+                <div v-if="successPurchase.rewards_issued.length > 0" class="p-2.5 bg-amber-100 rounded-xl text-stone-950 font-bold border border-amber-300 mt-1">
                   ¡El cliente completó los 8 sellos! Se activó una nueva cortesía.
                 </div>
               </div>
