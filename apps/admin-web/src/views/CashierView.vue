@@ -154,30 +154,30 @@
         </div>
 
         <!-- Conmutador de Modo (Segmented Control Minimalista) -->
-        <div class="flex items-center bg-stone-100 p-1 rounded-xl border border-stone-300 w-full sm:w-auto">
+        <div class="flex items-center bg-stone-100 p-1.5 rounded-xl border border-stone-300 w-full sm:w-auto gap-1.5">
           <button 
             type="button"
             @click="switchMode('purchase')" 
-            class="flex-1 sm:flex-none px-3.5 py-1.5 text-xs font-semibold rounded-lg transition flex items-center justify-center gap-1.5 cursor-pointer"
+            class="flex-1 sm:flex-none px-4 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer border shadow-2xs active:scale-95"
             :class="mode === 'purchase' 
-              ? 'bg-stone-900 text-white shadow-sm' 
-              : 'text-stone-600 hover:text-stone-900'"
+              ? 'bg-stone-900 text-white border-stone-900 shadow-sm' 
+              : 'bg-white text-stone-700 hover:text-stone-950 border-stone-300 hover:border-stone-400'"
           >
             <!-- SVG: Receipt -->
             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/>
               <path d="M14 8H8"/><path d="M16 12H8"/><path d="M13 16H8"/>
             </svg>
-            <span>Registrar Compra</span>
+            <span>Registrar Compra (Sellos)</span>
           </button>
 
           <button 
             type="button"
             @click="switchMode('redemption')" 
-            class="flex-1 sm:flex-none px-3.5 py-1.5 text-xs font-semibold rounded-lg transition flex items-center justify-center gap-1.5 cursor-pointer"
+            class="flex-1 sm:flex-none px-4 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer border shadow-2xs active:scale-95"
             :class="mode === 'redemption' 
-              ? 'bg-stone-900 text-white shadow-sm' 
-              : 'text-stone-600 hover:text-stone-900'"
+              ? 'bg-stone-900 text-white border-stone-900 shadow-sm' 
+              : 'bg-white text-stone-700 hover:text-stone-950 border-stone-300 hover:border-stone-400'"
           >
             <!-- SVG: Gift / Redeem -->
             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -736,9 +736,23 @@ const decodeCurrentDevice = () => {
     videoRef.value,
     (result, _err) => {
       if (result) {
-        const scannedText = result.getText();
+        const scannedText = result.getText()?.trim();
         if (scannedText && scannedText !== tokenInput.value) {
+          // Validación de seguridad para tokens QR generados por TicketsDemo
+          if (!scannedText.startsWith('cfy_purchase_') && !scannedText.startsWith('cfy_redeem_')) {
+            errorMessage.value = 'Código no válido. Asegúrate de escanear el QR generado desde la app TicketsDemo.';
+            return;
+          }
+
+          // Detección automática del modo según el token escaneado
+          if (scannedText.startsWith('cfy_redeem_') && mode.value !== 'redemption') {
+            switchMode('redemption');
+          } else if (scannedText.startsWith('cfy_purchase_') && mode.value !== 'purchase') {
+            switchMode('purchase');
+          }
+
           tokenInput.value = scannedText;
+          errorMessage.value = '';
           playBeep();
           lastScannedSuccess.value = true;
           setTimeout(() => { lastScannedSuccess.value = false; }, 3500);

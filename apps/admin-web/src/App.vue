@@ -13,7 +13,7 @@
               <line x1="14" y1="2" x2="14" y2="4" />
             </svg>
           </div>
-          <h2 class="text-lg font-extrabold text-stone-950">ConfyTickets Terminal</h2>
+          <h2 class="text-lg font-extrabold text-stone-950">PosDemo Terminal</h2>
           <p class="text-xs text-stone-500 font-medium">Ingreso para Cajeros y Administradores</p>
         </div>
 
@@ -29,6 +29,9 @@
               v-model="loginEmail" 
               type="email" 
               required 
+              autocomplete="username"
+              autocapitalize="none"
+              spellcheck="false"
               placeholder="cajero@confy.com.co"
               class="w-full text-xs px-3 py-2 rounded-lg border border-stone-300 focus:outline-none focus:border-stone-900 bg-stone-50"
             />
@@ -39,6 +42,7 @@
               v-model="loginPassword" 
               type="password" 
               required 
+              autocomplete="current-password"
               placeholder="••••••••"
               class="w-full text-xs px-3 py-2 rounded-lg border border-stone-300 focus:outline-none focus:border-stone-900 bg-stone-50"
             />
@@ -47,7 +51,7 @@
           <button 
             type="submit" 
             :disabled="loadingLogin"
-            class="w-full bg-stone-900 hover:bg-stone-800 disabled:opacity-50 text-white font-bold text-xs py-2.5 rounded-lg transition cursor-pointer flex items-center justify-center gap-2"
+            class="w-full bg-stone-900 hover:bg-stone-800 active:scale-[0.98] disabled:opacity-50 text-white font-bold text-xs py-2.5 rounded-lg border border-stone-900 transition cursor-pointer flex items-center justify-center gap-2"
           >
             <span v-if="loadingLogin" class="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
             <span>{{ loadingLogin ? 'Validando...' : 'Iniciar Turno' }}</span>
@@ -56,23 +60,23 @@
 
         <!-- Accesos rápidos pre-cargados para demostración -->
         <div class="pt-3 border-t border-stone-200 space-y-2">
-          <p class="text-[10px] text-stone-400 font-semibold uppercase tracking-wider text-center">Acceso Rápido de Prueba</p>
+          <p class="text-[10px] text-stone-500 font-semibold uppercase tracking-wider text-center">Acceso Rápido de Demostración</p>
           <div class="grid grid-cols-2 gap-2">
             <button 
               type="button"
               @click="quickLogin('cajero.cabecera@confy.com.co', 'Cajero2026*')"
-              class="text-[11px] font-semibold text-stone-700 bg-stone-100 hover:bg-stone-200 border border-stone-300 p-2 rounded-lg transition text-left cursor-pointer"
+              class="text-[11px] font-semibold text-stone-800 bg-stone-50 hover:bg-stone-100 border border-stone-300 hover:border-stone-400 p-2.5 rounded-xl transition text-left cursor-pointer active:scale-95 shadow-2xs"
             >
-              <span class="block font-bold text-stone-900">Juan Pérez</span>
-              <span class="text-[10px] text-stone-500">Rol: Cajero</span>
+              <span class="block font-bold text-stone-950">Juan Pérez</span>
+              <span class="text-[10px] text-stone-500 font-medium">Rol: Cajero POS</span>
             </button>
             <button 
               type="button"
               @click="quickLogin('admin@confy.com.co', 'Admin2026*')"
-              class="text-[11px] font-semibold text-stone-700 bg-stone-100 hover:bg-stone-200 border border-stone-300 p-2 rounded-lg transition text-left cursor-pointer"
+              class="text-[11px] font-semibold text-stone-800 bg-stone-50 hover:bg-stone-100 border border-stone-300 hover:border-stone-400 p-2.5 rounded-xl transition text-left cursor-pointer active:scale-95 shadow-2xs"
             >
-              <span class="block font-bold text-stone-900">Admin General</span>
-              <span class="text-[10px] text-stone-500">Rol: Administrador</span>
+              <span class="block font-bold text-stone-950">Admin General</span>
+              <span class="text-[10px] text-stone-500 font-medium">Rol: Administrador</span>
             </button>
           </div>
         </div>
@@ -95,8 +99,8 @@
             </svg>
           </div>
           <div class="flex items-baseline gap-2">
-            <span class="font-extrabold text-sm tracking-tight text-stone-950">ConfyTickets</span>
-            <span class="text-[11px] font-mono font-medium text-stone-500 hidden sm:inline">POS &amp; Admin</span>
+            <span class="font-extrabold text-sm tracking-tight text-stone-950">PosDemo</span>
+            <span class="text-[11px] font-mono font-medium text-stone-500 hidden sm:inline">Terminal POS &amp; Admin</span>
           </div>
         </div>
 

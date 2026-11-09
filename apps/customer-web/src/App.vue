@@ -14,8 +14,8 @@
           </svg>
         </div>
         <div>
-          <span class="font-extrabold text-xs sm:text-sm leading-tight tracking-tight block text-stone-950">ConfyTickets</span>
-          <span class="text-[9px] text-stone-500 font-medium block">Fidelidad Multisede</span>
+          <span class="font-extrabold text-xs sm:text-sm leading-tight tracking-tight block text-stone-950">TicketsDemo</span>
+          <span class="text-[9px] text-stone-500 font-medium block">Tarjeta de Fidelidad</span>
         </div>
       </div>
 

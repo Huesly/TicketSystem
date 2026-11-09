@@ -7,13 +7,15 @@
         <p class="text-xs text-stone-500">Supervisa auditoría en vivo, administra sedes físicas y catálogo de productos.</p>
       </div>
 
-      <!-- Segmented Control de Módulos -->
-      <div class="flex items-center bg-stone-100 p-1 rounded-xl border border-stone-300 text-xs font-semibold">
+      <!-- Segmented Control de Módulos con Alto Contraste -->
+      <div class="flex items-center bg-stone-100 p-1.5 rounded-xl border border-stone-300 text-xs font-semibold gap-1">
         <button 
           type="button"
           @click="activeTab = 'audit'"
-          class="px-3 py-1.5 rounded-lg transition cursor-pointer flex items-center gap-1.5"
-          :class="activeTab === 'audit' ? 'bg-white text-stone-950 shadow-xs font-bold' : 'text-stone-600 hover:text-stone-900'"
+          class="px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 border"
+          :class="activeTab === 'audit' 
+            ? 'bg-white text-stone-950 font-bold border-stone-400 shadow-2xs' 
+            : 'bg-transparent text-stone-600 hover:text-stone-900 border-transparent hover:border-stone-300 hover:bg-stone-200/60'"
         >
           <!-- SVG: Assessment / KPI -->
           <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -25,8 +27,10 @@
         <button 
           type="button"
           @click="activeTab = 'products'"
-          class="px-3 py-1.5 rounded-lg transition cursor-pointer flex items-center gap-1.5"
-          :class="activeTab === 'products' ? 'bg-white text-stone-950 shadow-xs font-bold' : 'text-stone-600 hover:text-stone-900'"
+          class="px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 border"
+          :class="activeTab === 'products' 
+            ? 'bg-white text-stone-950 font-bold border-stone-400 shadow-2xs' 
+            : 'bg-transparent text-stone-600 hover:text-stone-900 border-transparent hover:border-stone-300 hover:bg-stone-200/60'"
         >
           <!-- SVG: Coffee / Inventory -->
           <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -38,8 +42,10 @@
         <button 
           type="button"
           @click="activeTab = 'stores'"
-          class="px-3 py-1.5 rounded-lg transition cursor-pointer flex items-center gap-1.5"
-          :class="activeTab === 'stores' ? 'bg-white text-stone-950 shadow-xs font-bold' : 'text-stone-600 hover:text-stone-900'"
+          class="px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 border"
+          :class="activeTab === 'stores' 
+            ? 'bg-white text-stone-950 font-bold border-stone-400 shadow-2xs' 
+            : 'bg-transparent text-stone-600 hover:text-stone-900 border-transparent hover:border-stone-300 hover:bg-stone-200/60'"
         >
           <!-- SVG: Storefront -->
           <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

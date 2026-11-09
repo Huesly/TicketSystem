@@ -57,8 +57,26 @@
         <div class="bg-black/30 rounded-xl p-3 flex items-center justify-between text-xs border border-white/10">
           <span class="text-stone-200">Meta: {{ activeCard ? activeCard.stamps_required : 8 }} sellos</span>
           <span class="font-bold text-amber-300">
-            {{ activeCard && activeCard.stamps_remaining > 0 ? `Faltan ${activeCard.stamps_remaining} sellos` : 'Tarjeta completada' }}
+            {{ activeCard && activeCard.stamps_remaining > 0 ? `Faltan ${activeCard.stamps_remaining} sellos` : '¡Meta alcanzada!' }}
           </span>
+        </div>
+
+        <!-- Banner de Premio Listo si la tarjeta está completada -->
+        <div v-if="activeCard && activeCard.stamps_remaining === 0" class="bg-amber-300 text-stone-950 rounded-xl p-3.5 flex items-center justify-between gap-2 border border-amber-400 shadow-sm">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg bg-stone-950 text-amber-300 flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/>
+              </svg>
+            </div>
+            <div>
+              <p class="text-xs font-bold text-stone-950">¡Tarjeta completada!</p>
+              <p class="text-[10px] text-stone-700">Tu cortesía está lista para ser canjeada.</p>
+            </div>
+          </div>
+          <router-link to="/recompensas" class="bg-stone-950 hover:bg-stone-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition shrink-0">
+            Reclamar →
+          </router-link>
         </div>
       </div>
 

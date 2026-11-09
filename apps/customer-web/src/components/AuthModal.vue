@@ -41,6 +41,9 @@
             v-model="loginEmail" 
             type="email" 
             required 
+            autocomplete="email"
+            autocapitalize="none"
+            spellcheck="false"
             placeholder="ejemplo@correo.com"
             class="w-full text-xs px-3 py-2 rounded-lg border border-stone-300 focus:outline-none focus:border-stone-900 bg-stone-50"
           />
@@ -51,6 +54,7 @@
             v-model="loginPassword" 
             type="password" 
             required 
+            autocomplete="current-password"
             placeholder="••••••••"
             class="w-full text-xs px-3 py-2 rounded-lg border border-stone-300 focus:outline-none focus:border-stone-900 bg-stone-50"
           />
@@ -59,21 +63,22 @@
         <button 
           type="submit" 
           :disabled="loading"
-          class="w-full bg-stone-900 hover:bg-stone-800 disabled:opacity-50 text-white font-bold text-xs py-2.5 rounded-lg transition cursor-pointer flex items-center justify-center gap-2"
+          class="w-full bg-stone-900 hover:bg-stone-800 active:scale-[0.98] disabled:opacity-50 text-white font-bold text-xs py-2.5 rounded-lg border border-stone-900 transition cursor-pointer flex items-center justify-center gap-2"
         >
           <span v-if="loading" class="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-          <span>{{ loading ? 'Iniciando...' : 'Entrar' }}</span>
+          <span>{{ loading ? 'Iniciando...' : 'Entrar a Mi Tarjeta' }}</span>
         </button>
 
         <!-- Acceso rápido Demo -->
         <div class="pt-2 border-t border-stone-200 text-center">
-          <p class="text-[10px] text-stone-400 mb-2 font-medium">O prueba con la cuenta existente:</p>
+          <p class="text-[10px] text-stone-500 mb-2 font-medium">O prueba con la cuenta existente:</p>
           <button 
             type="button" 
             @click="quickLogin('camila.rodriguez@email.com', 'Cliente2026*')"
-            class="text-[11px] font-semibold text-stone-700 bg-stone-100 hover:bg-stone-200 border border-stone-300 px-3 py-1.5 rounded-lg w-full transition cursor-pointer"
+            class="text-[11px] font-semibold text-stone-800 bg-stone-100 hover:bg-stone-200 border border-stone-300 px-3 py-1.5 rounded-lg w-full transition cursor-pointer flex items-center justify-center gap-1.5"
           >
-            Entrar como Camila Rodríguez
+            <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+            <span>Entrar como Camila Rodríguez (Demostración)</span>
           </button>
         </div>
       </form>
@@ -86,7 +91,8 @@
             v-model="regName" 
             type="text" 
             required 
-            placeholder="Juan Valdés"
+            autocomplete="name"
+            placeholder="Camila Rodríguez"
             class="w-full text-xs px-3 py-2 rounded-lg border border-stone-300 focus:outline-none focus:border-stone-900 bg-stone-50"
           />
         </div>
@@ -96,26 +102,31 @@
             v-model="regEmail" 
             type="email" 
             required 
-            placeholder="juan@cafe.com"
+            autocomplete="email"
+            autocapitalize="none"
+            spellcheck="false"
+            placeholder="camila@correo.com"
             class="w-full text-xs px-3 py-2 rounded-lg border border-stone-300 focus:outline-none focus:border-stone-900 bg-stone-50"
           />
         </div>
         <div>
-          <label class="block text-xs font-bold text-stone-700 mb-1">Teléfono (WhatsApp)</label>
+          <label class="block text-xs font-bold text-stone-700 mb-1">Teléfono Móvil (WhatsApp)</label>
           <input 
             v-model="regPhone" 
             type="tel" 
+            autocomplete="tel"
             placeholder="+57 300 000 0000"
             class="w-full text-xs px-3 py-2 rounded-lg border border-stone-300 focus:outline-none focus:border-stone-900 bg-stone-50"
           />
         </div>
         <div>
-          <label class="block text-xs font-bold text-stone-700 mb-1">Contraseña (mínimo 6 caracteres)</label>
+          <label class="block text-xs font-bold text-stone-700 mb-1">Contraseña (mínimo 8 caracteres)</label>
           <input 
             v-model="regPassword" 
             type="password" 
             required 
-            minlength="6"
+            minlength="8"
+            autocomplete="new-password"
             placeholder="••••••••"
             class="w-full text-xs px-3 py-2 rounded-lg border border-stone-300 focus:outline-none focus:border-stone-900 bg-stone-50"
           />
@@ -124,7 +135,7 @@
         <button 
           type="submit" 
           :disabled="loading"
-          class="w-full bg-stone-900 hover:bg-stone-800 disabled:opacity-50 text-white font-bold text-xs py-2.5 rounded-lg transition cursor-pointer flex items-center justify-center gap-2"
+          class="w-full bg-stone-900 hover:bg-stone-800 active:scale-[0.98] disabled:opacity-50 text-white font-bold text-xs py-2.5 rounded-lg border border-stone-900 transition cursor-pointer flex items-center justify-center gap-2"
         >
           <span v-if="loading" class="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
           <span>{{ loading ? 'Registrando...' : 'Registrarme y Obtener Tarjeta' }}</span>
