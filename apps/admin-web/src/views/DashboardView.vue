@@ -7,12 +7,12 @@
         <p class="text-xs text-stone-500">Supervisa auditoría en vivo, administra sedes físicas y catálogo de productos.</p>
       </div>
 
-      <!-- Segmented Control de Módulos con Alto Contraste -->
-      <div class="flex items-center bg-stone-100 p-1.5 rounded-xl border border-stone-300 text-xs font-semibold gap-1">
+      <!-- Segmented Control de Módulos con Alto Contraste y Adaptabilidad Mobile -->
+      <div class="flex items-center bg-stone-100 p-1.5 rounded-xl border border-stone-300 text-xs font-semibold gap-1 overflow-x-auto max-w-full">
         <button 
           type="button"
           @click="activeTab = 'audit'"
-          class="px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 border"
+          class="px-3 sm:px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 border shrink-0"
           :class="activeTab === 'audit' 
             ? 'bg-white text-stone-950 font-bold border-stone-400 shadow-2xs' 
             : 'bg-transparent text-stone-600 hover:text-stone-900 border-transparent hover:border-stone-300 hover:bg-stone-200/60'"
@@ -27,7 +27,7 @@
         <button 
           type="button"
           @click="activeTab = 'products'"
-          class="px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 border"
+          class="px-3 sm:px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 border shrink-0"
           :class="activeTab === 'products' 
             ? 'bg-white text-stone-950 font-bold border-stone-400 shadow-2xs' 
             : 'bg-transparent text-stone-600 hover:text-stone-900 border-transparent hover:border-stone-300 hover:bg-stone-200/60'"
@@ -42,7 +42,7 @@
         <button 
           type="button"
           @click="activeTab = 'stores'"
-          class="px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 border"
+          class="px-3 sm:px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 border shrink-0"
           :class="activeTab === 'stores' 
             ? 'bg-white text-stone-950 font-bold border-stone-400 shadow-2xs' 
             : 'bg-transparent text-stone-600 hover:text-stone-900 border-transparent hover:border-stone-300 hover:bg-stone-200/60'"

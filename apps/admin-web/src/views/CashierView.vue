@@ -97,44 +97,63 @@
     <!-- PANTALLA 2: TERMINAL POS INTELIGENTE (ESTILO STARBUCKS REWARDS)         -->
     <!-- ======================================================================= -->
     <template v-else>
-      <!-- Barra Superior de Contexto de Sede y Estado de Caja -->
-      <div class="bg-white border border-crema-border rounded-2xl p-3.5 sm:px-5 shadow-sm flex flex-wrap items-center justify-between gap-3">
-        <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-xl bg-crema-surface border border-crema-border text-roast-800 flex items-center justify-center shrink-0 shadow-2xs">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7" />
-              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-              <path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4" />
-              <path d="M2 7h20" />
-            </svg>
-          </div>
-          <div>
-            <div class="flex items-center gap-2">
-              <span class="font-bold text-sm text-roast-950">{{ activeStore.name }}</span>
-              <span class="text-[11px] font-mono text-roast-700 bg-crema-surface border border-crema-border px-1.5 py-0.2 rounded">
-                {{ activeStore.code }}
-              </span>
+      <!-- Barra Superior de Contexto de Sede y Estado de Caja (2 Columnas x 2 Filas en Mobile) -->
+      <div class="bg-white border border-stone-300 rounded-2xl p-3 sm:px-5 shadow-sm space-y-2.5 sm:space-y-0 sm:flex sm:items-center sm:justify-between sm:gap-4">
+        <!-- Fila 1 (Mobile) / Bloque Izquierdo (Desktop): Sede y Botón Cambiar -->
+        <div class="grid grid-cols-2 sm:flex sm:items-center gap-2 sm:gap-4 items-center justify-between">
+          <!-- Columna 1 (Fila 1): Icono y Nombre de la Sede -->
+          <div class="flex items-center gap-2 sm:gap-2.5 min-w-0">
+            <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-stone-100 border border-stone-200 text-stone-800 flex items-center justify-center shrink-0 shadow-2xs">
+              <svg class="w-4 h-4 text-stone-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7" />
+                <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+                <path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4" />
+                <path d="M2 7h20" />
+              </svg>
             </div>
-            <p class="text-[11px] text-roast-500">{{ activeStore.address }} • {{ activeStore.city }}</p>
+            <div class="min-w-0">
+              <div class="flex items-center gap-1.5">
+                <span class="font-bold text-xs sm:text-sm text-stone-950 truncate">{{ activeStore.name }}</span>
+                <span class="text-[10px] font-mono font-bold text-stone-700 bg-stone-100 border border-stone-200 px-1.5 py-0.2 rounded shrink-0">
+                  {{ activeStore.code }}
+                </span>
+              </div>
+            </div>
           </div>
-          <button 
-            type="button"
-            @click="openStoreSelector"
-            class="ml-1 text-xs font-medium text-roast-700 bg-crema-surface hover:bg-crema-border/70 border border-crema-border px-2.5 py-1.5 rounded-lg transition flex items-center gap-1.5 cursor-pointer"
-            title="Cambiar de sede"
-          >
-            <svg class="w-3.5 h-3.5 text-roast-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/>
-            </svg>
-            <span>Cambiar Sede</span>
-          </button>
+
+          <!-- Columna 2 (Fila 1): Botón Recortado para Cambiar Sede -->
+          <div class="flex justify-end sm:justify-start">
+            <button 
+              type="button"
+              @click="openStoreSelector"
+              class="text-xs font-semibold text-stone-800 bg-stone-100 hover:bg-stone-200 border border-stone-300 px-2.5 py-1.5 rounded-lg transition flex items-center gap-1.5 cursor-pointer shadow-2xs active:scale-95 shrink-0"
+              title="Cambiar de sede física"
+            >
+              <svg class="w-3.5 h-3.5 text-stone-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/>
+              </svg>
+              <span>Cambiar</span>
+            </button>
+          </div>
         </div>
 
-        <div class="flex items-center gap-2">
-          <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-800 bg-emerald-50 border border-emerald-300 px-3 py-1 rounded-full">
-            <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
-            Caja Operativa • TicketsDemo &amp; PosDemo
-          </span>
+        <!-- Fila 2 (Mobile) / Bloque Derecho (Desktop): Dirección y Estado de Caja -->
+        <div class="grid grid-cols-2 sm:flex sm:items-center gap-2 sm:gap-4 items-center justify-between pt-2 sm:pt-0 border-t border-stone-100 sm:border-0">
+          <!-- Columna 1 (Fila 2): Dirección Recortada -->
+          <p class="text-[11px] text-stone-500 truncate flex items-center gap-1 min-w-0">
+            <svg class="w-3 h-3 text-stone-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>
+            </svg>
+            <span class="truncate">{{ activeStore.address || activeStore.city }}</span>
+          </p>
+
+          <!-- Columna 2 (Fila 2): Estado de Caja Recortado -->
+          <div class="flex justify-end">
+            <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-300 px-2.5 py-0.5 rounded-full shrink-0">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
+              <span>Caja Activa</span>
+            </span>
+          </div>
         </div>
       </div>
 
@@ -279,51 +298,51 @@
         </div>
 
         <!-- Columna Derecha: Explicación y Flujo de Atención (6 Cols) -->
-        <div class="lg:col-span-6 bg-white rounded-2xl border border-crema-border shadow-sm fluid-pad space-y-4 flex flex-col justify-between">
+        <div class="lg:col-span-6 bg-white rounded-2xl border border-stone-300 shadow-sm fluid-pad space-y-4 flex flex-col justify-between">
           <div class="space-y-4">
-            <div class="border-b border-crema-surface pb-3">
-              <span class="text-[10px] uppercase font-bold tracking-widest text-amber-600 bg-golden-50 border border-golden-200 px-2 py-0.5 rounded">
+            <div class="border-b border-stone-200 pb-3">
+              <span class="text-[10px] uppercase font-bold tracking-widest text-amber-800 bg-amber-50 border border-amber-300 px-2 py-0.5 rounded">
                 Flujo Estilo Starbucks Rewards
               </span>
-              <h3 class="font-extrabold text-base text-roast-950 mt-1">Atención rápida y unificada en barra</h3>
-              <p class="text-xs text-roast-600 mt-0.5">El cliente solo necesita presentar un único código para todo:</p>
+              <h3 class="font-extrabold text-base text-stone-950 mt-1">Atención rápida y unificada en barra</h3>
+              <p class="text-xs text-stone-600 mt-0.5">El cliente solo necesita presentar un único código para todo:</p>
             </div>
 
             <div class="space-y-3">
-              <div class="flex items-start gap-3 p-3 bg-crema-surface rounded-xl border border-crema-surface">
-                <div class="w-7 h-7 rounded-lg bg-roast-900 text-golden-300 flex items-center justify-center shrink-0 font-bold text-xs">
+              <div class="flex items-start gap-3 p-3 bg-stone-50 rounded-xl border border-stone-200">
+                <div class="w-7 h-7 rounded-lg bg-stone-900 text-amber-300 flex items-center justify-center shrink-0 font-bold text-xs">
                   1
                 </div>
                 <div class="space-y-0.5">
-                  <h4 class="text-xs font-bold text-roast-900">Escaneo Instantáneo</h4>
-                  <p class="text-[11px] text-roast-600">Al escanear el carnet digital, la pantalla mostrará su expediente, tarjeta de sellos y si tiene cortesías acumuladas.</p>
+                  <h4 class="text-xs font-bold text-stone-900">Escaneo Instantáneo</h4>
+                  <p class="text-[11px] text-stone-600">Al escanear el carnet digital, la pantalla mostrará su expediente, tarjeta de sellos y si tiene cortesías acumuladas.</p>
                 </div>
               </div>
 
-              <div class="flex items-start gap-3 p-3 bg-crema-surface rounded-xl border border-crema-surface">
-                <div class="w-7 h-7 rounded-lg bg-golden-400 text-roast-950 flex items-center justify-center shrink-0 font-bold text-xs">
+              <div class="flex items-start gap-3 p-3 bg-stone-50 rounded-xl border border-stone-200">
+                <div class="w-7 h-7 rounded-lg bg-amber-400 text-stone-950 flex items-center justify-center shrink-0 font-bold text-xs">
                   2
                 </div>
                 <div class="space-y-0.5">
-                  <h4 class="text-xs font-bold text-roast-900">Entrega de Cortesía Flexible</h4>
-                  <p class="text-[11px] text-roast-600">Si completó su ciclo de 8 sellos, pregúntale qué bebida o producto del menú prefiere hoy y confírmalo con un clic.</p>
+                  <h4 class="text-xs font-bold text-stone-900">Entrega de Cortesía Flexible</h4>
+                  <p class="text-[11px] text-stone-600">Si completó su ciclo de 8 sellos, pregúntale qué bebida o producto del menú prefiere hoy y confírmalo con un clic.</p>
                 </div>
               </div>
 
-              <div class="flex items-start gap-3 p-3 bg-crema-surface rounded-xl border border-crema-surface">
-                <div class="w-7 h-7 rounded-lg bg-roast-900 text-white flex items-center justify-center shrink-0 font-bold text-xs">
+              <div class="flex items-start gap-3 p-3 bg-stone-50 rounded-xl border border-stone-200">
+                <div class="w-7 h-7 rounded-lg bg-stone-900 text-white flex items-center justify-center shrink-0 font-bold text-xs">
                   3
                 </div>
                 <div class="space-y-0.5">
-                  <h4 class="text-xs font-bold text-roast-900">Acreditación Automática de Factura</h4>
-                  <p class="text-[11px] text-roast-600">Ingresa el valor de la factura para sumar sellos (1 sello por cada $10.000 COP). El celular del cliente vibrará y sonará al instante.</p>
+                  <h4 class="text-xs font-bold text-stone-900">Acreditación Automática de Factura</h4>
+                  <p class="text-[11px] text-stone-600">Ingresa el valor de la factura para sumar sellos (1 sello por cada $10.000 COP). El celular del cliente vibrará y sonará al instante.</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="p-3 bg-crema-surface rounded-xl border border-crema-border text-center">
-            <span class="text-xs font-semibold text-roast-700">Listo para escanear al cliente que esté frente a caja</span>
+          <div class="p-3 bg-stone-50 rounded-xl border border-stone-200 text-center">
+            <span class="text-xs font-semibold text-stone-700">Listo para escanear al cliente que esté frente a caja</span>
           </div>
         </div>
       </div>
@@ -352,7 +371,7 @@
           <button 
             type="button"
             @click="clearMember"
-            class="bg-stone-800 hover:bg-stone-700 text-white border border-stone-700 text-xs font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 cursor-pointer active:scale-95"
+            class="w-full sm:w-auto bg-stone-800 hover:bg-stone-700 text-white border border-stone-700 text-xs font-bold px-3.5 py-2 rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 shrink-0"
           >
             <svg class="w-4 h-4 text-stone-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M18 6 6 18"/><path d="m6 6 12 12"/>

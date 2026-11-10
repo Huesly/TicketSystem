@@ -85,9 +85,10 @@
 
     <!-- SISTEMA POS AUTENTICADO -->
     <template v-else>
-      <!-- Barra Superior Compacta (< 12% viewport height) -->
-      <header class="bg-white text-stone-900 px-4 sm:px-6 h-14 flex items-center justify-between border-b border-stone-200 sticky top-0 z-40">
-        <div class="flex items-center gap-3">
+      <!-- Barra Superior Compacta y Adaptada a Mobile (< 12% viewport height) -->
+      <header class="bg-white text-stone-900 px-3 sm:px-6 h-14 flex items-center justify-between border-b border-stone-200 sticky top-0 z-40">
+        <!-- Logo y Marca -->
+        <div class="flex items-center gap-2 sm:gap-3 shrink-0">
           <div class="w-8 h-8 rounded-lg bg-stone-900 text-amber-300 flex items-center justify-center shrink-0 shadow-xs">
             <!-- Icono SVG: Local Cafe -->
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -98,52 +99,56 @@
               <line x1="14" y1="2" x2="14" y2="4" />
             </svg>
           </div>
-          <div class="flex items-baseline gap-2">
+          <div class="flex items-baseline gap-1.5 sm:gap-2">
             <span class="font-extrabold text-sm tracking-tight text-stone-950">PosDemo</span>
-            <span class="text-[11px] font-mono font-medium text-stone-500 hidden sm:inline">Terminal POS &amp; Admin</span>
+            <span class="text-[11px] font-mono font-medium text-stone-500 hidden md:inline">Terminal POS &amp; Admin</span>
           </div>
         </div>
 
-        <nav class="flex items-center gap-1.5" aria-label="Navegación principal">
+        <!-- Navegación y Acciones Adaptadas a Mobile -->
+        <nav class="flex items-center gap-1 sm:gap-1.5" aria-label="Navegación principal">
+          <!-- Botón Terminal -->
           <router-link 
             to="/" 
-            class="text-xs font-semibold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 border"
+            class="text-[11px] sm:text-xs font-semibold px-2 sm:px-3 py-1.5 rounded-lg transition flex items-center gap-1 sm:gap-1.5 border"
             :class="$route.name === 'cashier' 
               ? 'bg-stone-900 text-white border-stone-900 shadow-xs' 
               : 'bg-transparent text-stone-600 border-transparent hover:bg-stone-100 hover:border-stone-300 hover:text-stone-900'"
           >
             <!-- SVG: Point of Sale / Terminal -->
-            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <rect width="20" height="14" x="2" y="3" rx="2" />
               <line x1="8" x2="16" y1="21" y2="21" />
               <line x1="12" x2="12" y1="17" y2="21" />
             </svg>
-            <span>Terminal</span>
+            <span class="hidden xs:inline">Terminal</span>
           </router-link>
 
+          <!-- Botón Analítica -->
           <router-link 
             to="/dashboard" 
-            class="text-xs font-semibold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 border"
+            class="text-[11px] sm:text-xs font-semibold px-2 sm:px-3 py-1.5 rounded-lg transition flex items-center gap-1 sm:gap-1.5 border"
             :class="$route.name === 'dashboard' 
               ? 'bg-stone-900 text-white border-stone-900 shadow-xs' 
               : 'bg-transparent text-stone-600 border-transparent hover:bg-stone-100 hover:border-stone-300 hover:text-stone-900'"
           >
             <!-- SVG: Bar Chart / Analytics -->
-            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <line x1="18" x2="18" y1="20" y2="10" />
               <line x1="12" x2="12" y1="20" y2="4" />
               <line x1="6" x2="6" y1="20" y2="14" />
             </svg>
-            <span>Analítica</span>
+            <span class="hidden xs:inline">Analítica</span>
           </router-link>
 
-          <div class="h-4 w-px bg-crema-border mx-1.5 hidden sm:block"></div>
+          <div class="h-4 w-px bg-stone-200 mx-0.5 sm:mx-1.5 hidden sm:block"></div>
 
-          <!-- Perfil del Cajero / Admin -->
-          <div class="flex items-center gap-2 bg-stone-50 border border-stone-300 px-2.5 py-1 rounded-lg">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-            <span class="text-[11px] text-stone-800 font-semibold">{{ currentUser.full_name }}</span>
-            <span class="text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-stone-200 text-stone-700">
+          <!-- Perfil del Cajero / Admin Adaptado a Mobile -->
+          <div class="flex items-center gap-1.5 bg-stone-50 border border-stone-300 px-2 py-1 rounded-lg">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0"></span>
+            <span class="text-[11px] text-stone-800 font-semibold hidden sm:inline max-w-[120px] truncate">{{ currentUser.full_name }}</span>
+            <span class="text-[11px] text-stone-800 font-semibold sm:hidden max-w-[65px] truncate">{{ currentUser.full_name ? currentUser.full_name.split(' ')[0] : 'POS' }}</span>
+            <span class="text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-stone-200 text-stone-700 hidden md:inline">
               {{ currentRoles.includes('GENERAL_ADMIN') ? 'Admin' : 'Cajero' }}
             </span>
           </div>
@@ -153,7 +158,7 @@
             type="button"
             @click="logout"
             title="Cerrar turno y salir"
-            class="text-xs font-semibold text-stone-600 hover:text-stone-900 hover:bg-stone-100 p-1.5 rounded-lg border border-transparent hover:border-stone-300 transition cursor-pointer"
+            class="text-xs font-semibold text-stone-600 hover:text-stone-900 hover:bg-stone-100 p-1.5 rounded-lg border border-transparent hover:border-stone-300 transition cursor-pointer shrink-0"
           >
             <svg class="w-4 h-4 text-stone-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
