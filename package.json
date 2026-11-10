@@ -10,6 +10,7 @@
     "dev:mobile": "npm --workspace=apps/customer-mobile run dev",
     "dev:web": "npm --workspace=apps/customer-web run dev",
     "dev:admin": "npm --workspace=apps/admin-web run dev",
+    "tunnel:start": "node scripts/run_tunnels.js",
     "build:all": "npm run --workspaces build"
   },
   "keywords": [
