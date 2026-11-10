@@ -7,6 +7,19 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Cafe Design System Foundations
+        cafe: {
+          primary: '#5D4432',       // Rich Espresso Roast
+          'primary-dark': '#3E2B1E',// Dark Roast Deep Coffee
+          secondary: '#E9E3DD',     // Cream froth / warm linen
+          surface: '#F9F7F5',       // Steamed milk / warm porcelain
+          text: '#3E2B1E',          // Deep readable coffee contrast
+          'text-muted': '#786558',  // Soft roast metadata
+          success: '#16A34A',       // Coffee leaf green
+          warning: '#D97706',       // Toasted caramel amber
+          danger: '#DC2626',        // Berry red
+          border: '#E3DAD2',        // Delicate warm border
+        },
         // Theme Factory: Golden Hour - Coffeehouse Edition
         roast: {
           950: '#1b120c',

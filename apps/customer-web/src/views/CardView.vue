@@ -1,8 +1,8 @@
 <template>
   <div class="space-y-5 fluid-container">
     <div class="space-y-0.5">
-      <h2 class="fluid-title font-extrabold text-stone-900">Mi Tarjeta Digital</h2>
-      <p class="text-xs text-stone-500">Tus sellos son válidos en cualquiera de nuestras sedes.</p>
+      <h2 class="fluid-title font-extrabold text-[#3E2B1E]">Mi Tarjeta Digital</h2>
+      <p class="text-xs text-[#786558]">Tus sellos son válidos en cualquiera de nuestras sedes.</p>
     </div>
 
     <!-- ======================================================================= -->
@@ -51,15 +51,15 @@
     <!-- ======================================================================= -->
     <div v-else class="space-y-5 fade-enter-soft">
       <!-- Tarjeta Principal de Fidelidad (8 Sellos) -->
-      <div class="bg-white rounded-2xl fluid-pad border border-stone-300 shadow-sm space-y-5">
+      <div class="bg-white rounded-2xl fluid-pad border border-[#E3DAD2] shadow-xs space-y-5">
         <div class="flex items-center justify-between">
           <div>
-            <span class="text-[11px] font-bold text-amber-700 uppercase tracking-wider block">Programa de Fidelidad</span>
-            <h3 class="font-extrabold text-base text-stone-900">Ciclo Activo #{{ activeCard ? activeCard.cycle_number : 1 }}</h3>
+            <span class="text-[11px] font-bold text-[#8C4B13] uppercase tracking-wider block">Programa de Fidelidad</span>
+            <h3 class="font-extrabold text-base text-[#3E2B1E]">Ciclo Activo #{{ activeCard ? activeCard.cycle_number : 1 }}</h3>
           </div>
           <div class="text-right">
-            <span class="text-2xl font-black font-mono text-stone-950">{{ activeCard ? activeCard.stamps_count : 0 }} / {{ activeCard ? activeCard.stamps_required : 8 }}</span>
-            <p class="text-[10px] text-stone-500 font-semibold uppercase tracking-wider">Sellos</p>
+            <span class="text-2xl font-black font-mono text-[#3E2B1E]">{{ activeCard ? activeCard.stamps_count : 0 }} / {{ activeCard ? activeCard.stamps_required : 8 }}</span>
+            <p class="text-[10px] text-[#786558] font-semibold uppercase tracking-wider">Sellos</p>
           </div>
         </div>
 
@@ -70,13 +70,13 @@
             :key="i"
             class="aspect-square rounded-xl flex flex-col items-center justify-center border transition-all duration-300"
             :class="i <= (activeCard ? activeCard.stamps_count : 0)
-              ? 'bg-amber-400 border-2 border-amber-500 text-amber-950 shadow-xs scale-100'
+              ? 'bg-amber-400 border-2 border-amber-500 text-stone-950 shadow-xs scale-100'
               : i === (activeCard ? activeCard.stamps_required : 8)
                 ? 'bg-amber-50/80 border-2 border-dashed border-amber-400 text-amber-800'
-                : 'bg-stone-50 border border-stone-200 text-stone-400'"
+                : 'bg-[#F9F7F5] border border-[#E3DAD2] text-[#A6978C]'"
           >
             <!-- Google Material Icon: local_cafe (SELLO RECLAMADO / ACUMULADO) -->
-            <svg v-if="i <= (activeCard ? activeCard.stamps_count : 0)" class="w-5 h-5 text-amber-950" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <svg v-if="i <= (activeCard ? activeCard.stamps_count : 0)" class="w-5 h-5 text-stone-950" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M17 8h1a4 4 0 1 1 0 8h-1"/>
               <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/>
             </svg>
@@ -86,20 +86,20 @@
               <path d="M12 8v13"/>
               <path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/>
             </svg>
-            <span v-else class="text-xs font-bold font-mono text-stone-400">{{ i }}</span>
+            <span v-else class="text-xs font-bold font-mono text-[#786558]">{{ i }}</span>
 
             <span 
               class="text-[10px] font-bold mt-1" 
-              :class="i <= (activeCard ? activeCard.stamps_count : 0) ? 'text-amber-950 font-black' : (i === 8 ? 'text-amber-800' : 'text-stone-400')"
+              :class="i <= (activeCard ? activeCard.stamps_count : 0) ? 'text-stone-950 font-black' : (i === 8 ? 'text-amber-800' : 'text-[#786558]')"
             >
               {{ i === (activeCard ? activeCard.stamps_required : 8) ? 'Premio' : `Sello ${i}` }}
             </span>
           </div>
         </div>
 
-        <div class="bg-stone-50 rounded-xl p-3 flex items-center justify-between text-xs border border-stone-200">
-          <span class="text-stone-600 font-medium">Meta: {{ activeCard ? activeCard.stamps_required : 8 }} sellos</span>
-          <span class="font-bold text-stone-900">
+        <div class="bg-[#F9F7F5] rounded-xl p-3 flex items-center justify-between text-xs border border-[#E3DAD2]">
+          <span class="text-[#786558] font-medium">Meta: {{ activeCard ? activeCard.stamps_required : 8 }} sellos</span>
+          <span class="font-bold text-[#3E2B1E]">
             {{ activeCard && activeCard.stamps_remaining > 0 ? `Faltan ${activeCard.stamps_remaining} sellos` : '¡Meta alcanzada!' }}
           </span>
         </div>
@@ -114,10 +114,10 @@
             </div>
             <div>
               <p class="text-xs font-bold text-stone-950">¡Tienes {{ availableRewardsCount }} cortesía(s) disponible(s)!</p>
-              <p class="text-[11px] text-stone-600">El barista puede canjearla al escanear tu código QR.</p>
+              <p class="text-[11px] text-[#786558]">El barista puede canjearla al escanear tu código QR.</p>
             </div>
           </div>
-          <router-link to="/recompensas" class="bg-stone-900 hover:bg-stone-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition shrink-0 shadow-2xs">
+          <router-link to="/recompensas" class="bg-[#5D4432] hover:bg-[#473325] text-white px-3 py-1.5 rounded-lg text-xs font-bold transition shrink-0 shadow-2xs">
             Ver premios
           </router-link>
         </div>
@@ -169,9 +169,9 @@
       <!-- ===================================================================== -->
       <!-- CÓDIGO QR PARA CAJA                                                   -->
       <!-- ===================================================================== -->
-      <div class="bg-white rounded-2xl p-5 border border-stone-300 shadow-sm space-y-4">
+      <div class="bg-white rounded-2xl p-5 border border-[#E3DAD2] shadow-xs space-y-4">
         <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-xl bg-stone-900 text-amber-300 flex items-center justify-center shrink-0 border border-stone-800 shadow-2xs">
+          <div class="w-9 h-9 rounded-xl bg-[#5D4432] text-[#E9E3DD] flex items-center justify-center shrink-0 border border-[#3E2B1E] shadow-2xs">
             <!-- SVG: QR Code -->
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/>
@@ -180,35 +180,35 @@
             </svg>
           </div>
           <div class="min-w-0">
-            <h3 class="font-extrabold text-sm text-stone-900">Mi código QR</h3>
-            <p class="text-[11px] text-stone-500">Muestra este código al barista para sumar sellos o canjear</p>
+            <h3 class="font-extrabold text-sm text-[#3E2B1E]">Mi código QR</h3>
+            <p class="text-[11px] text-[#786558]">Muestra este código al barista para sumar sellos o canjear</p>
           </div>
         </div>
 
         <!-- VISOR DEL CÓDIGO QR -->
         <div class="flex flex-col items-center justify-center pt-1 pb-1">
           <!-- QR Renderizado de Alto Contraste -->
-          <div v-if="memberQrToken" class="p-4 bg-white rounded-2xl border-2 border-stone-900 shadow-sm relative">
+          <div v-if="memberQrToken" class="p-4 bg-white rounded-2xl border-2 border-[#3E2B1E] shadow-sm relative">
             <qrcode-vue :value="memberQrToken" :size="180" level="M" render-as="svg" />
           </div>
         </div>
       </div>
 
       <!-- Guía de Uso del Código QR (Sin Costos ni Precios) -->
-      <details class="group bg-white rounded-xl border border-stone-300 px-4 py-3 text-xs text-stone-700">
-        <summary class="font-bold text-stone-900 cursor-pointer flex items-center justify-between list-none">
+      <details class="group bg-white rounded-xl border border-[#E3DAD2] px-4 py-3 text-xs text-[#3E2B1E]">
+        <summary class="font-bold text-[#3E2B1E] cursor-pointer flex items-center justify-between list-none">
           <span class="inline-flex items-center gap-2">
             <!-- Google Material Icon: info -->
-            <svg class="w-4 h-4 text-stone-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <svg class="w-4 h-4 text-[#786558]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
             </svg>
             ¿Cómo usar tu código QR?
           </span>
-          <svg class="w-4 h-4 text-stone-400 transition-transform group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg class="w-4 h-4 text-[#786558] transition-transform group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="m6 9 6 6 6-6"/>
           </svg>
         </summary>
-        <div class="mt-2 pt-2 border-t border-stone-200 leading-relaxed space-y-1.5 text-xs text-stone-600">
+        <div class="mt-2 pt-2 border-t border-[#E3DAD2] leading-relaxed space-y-1.5 text-xs text-[#786558]">
           <p>• <strong>Para acumular sellos:</strong> Muestra tu código QR en caja al pedir tus bebidas o productos en cualquiera de nuestras sedes.</p>
           <p>• <strong>Para reclamar premios:</strong> Al completar tu tarjeta de 8 sellos, presenta este mismo código QR al barista para recibir tu cortesía.</p>
           <p>• <strong>Código personal:</strong> Tu código QR siempre está disponible en tu aplicación para tus visitas.</p>
@@ -217,15 +217,15 @@
 
       <!-- Historial de Ciclos Pasados -->
       <div v-if="pastCycles.length > 0" class="space-y-2.5">
-        <h3 class="font-bold text-xs uppercase tracking-wider text-stone-500">Ciclos completados</h3>
+        <h3 class="font-bold text-xs uppercase tracking-wider text-[#786558]">Ciclos completados</h3>
 
-        <div class="bg-white rounded-2xl p-4 border border-stone-300 divide-y divide-stone-200">
+        <div class="bg-white rounded-2xl p-4 border border-[#E3DAD2] divide-y divide-[#E3DAD2]">
           <div v-for="item in pastCycles" :key="item.id" class="py-3 first:pt-0 last:pb-0 flex items-center justify-between">
             <div class="space-y-0.5">
-              <h5 class="font-bold text-xs text-stone-900">Ciclo #{{ item.cycle_number }}</h5>
-              <p class="text-[11px] text-stone-500">Completado: {{ new Date(item.completed_at || '').toLocaleDateString('es-CO') }}</p>
+              <h5 class="font-bold text-xs text-[#3E2B1E]">Ciclo #{{ item.cycle_number }}</h5>
+              <p class="text-[11px] text-[#786558]">Completado: {{ new Date(item.completed_at || '').toLocaleDateString('es-CO') }}</p>
             </div>
-            <span class="font-bold text-xs font-mono px-2.5 py-1 rounded-md bg-stone-100 text-stone-800 border border-stone-300">
+            <span class="font-bold text-xs font-mono px-2.5 py-1 rounded-md bg-[#F9F7F5] text-[#3E2B1E] border border-[#E3DAD2]">
               {{ item.stamps_count }}/{{ item.stamps_required }}
             </span>
           </div>

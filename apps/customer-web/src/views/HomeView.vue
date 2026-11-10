@@ -64,19 +64,19 @@
     <div v-else class="space-y-5 fade-enter-soft">
       <!-- Saludo Minimalista -->
       <div class="space-y-0.5">
-        <h2 class="fluid-title font-extrabold text-stone-900">Hola, {{ customerName }}</h2>
-        <p class="text-xs text-stone-500">Cada visita suma a tu próxima bebida de especialidad.</p>
+        <h2 class="fluid-title font-extrabold text-[#3E2B1E]">Hola, {{ customerName }}</h2>
+        <p class="text-xs text-[#786558]">Cada visita suma a tu próxima bebida de especialidad.</p>
       </div>
 
-      <!-- Banner Destacado de Especialidad -->
-      <div class="bg-stone-900 text-white rounded-2xl fluid-pad border border-stone-800 shadow-md flex items-center justify-between gap-4">
+      <!-- Banner Destacado de Especialidad (Cafe Espresso Gradient) -->
+      <div class="bg-gradient-to-br from-[#2B1D14] via-[#3E2B1E] to-[#1B120C] text-white rounded-2xl fluid-pad border border-[#5D4432]/60 shadow-md flex items-center justify-between gap-4">
         <div class="space-y-1">
-          <div class="inline-flex items-center gap-1.5 text-[10px] font-bold text-amber-300 bg-white/10 px-2.5 py-0.5 rounded-full border border-white/15">
+          <div class="inline-flex items-center gap-1.5 text-[10px] font-bold text-amber-200 bg-white/10 px-2.5 py-0.5 rounded-full border border-white/15">
             <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
             Cosecha de Origen
           </div>
           <h3 class="font-extrabold text-sm text-white tracking-tight">Café de Origen Huila</h3>
-          <p class="text-xs text-stone-300 leading-snug">Notas tostadas a chocolate negro y caramelo.</p>
+          <p class="text-xs text-[#E9E3DD]/90 leading-snug">Notas tostadas a chocolate negro y caramelo.</p>
         </div>
         <div class="w-11 h-11 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-amber-300 shrink-0 shadow-inner">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -87,13 +87,13 @@
       </div>
 
       <!-- Widget de Tarjeta de 8 Sellos -->
-      <div class="bg-white rounded-2xl fluid-pad border border-stone-300 shadow-sm space-y-4">
+      <div class="bg-white rounded-2xl fluid-pad border border-[#E3DAD2] shadow-xs space-y-4">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
             <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
-            <h3 class="font-bold text-sm text-stone-900">Tarjeta Activa</h3>
+            <h3 class="font-bold text-sm text-[#3E2B1E]">Tarjeta Activa</h3>
           </div>
-          <span class="text-[11px] font-bold text-stone-700 font-mono bg-stone-100 px-2.5 py-0.5 rounded-md border border-stone-300">
+          <span class="text-[11px] font-bold text-[#3E2B1E] font-mono bg-[#F9F7F5] px-2.5 py-0.5 rounded-md border border-[#E3DAD2]">
             Ciclo #{{ activeCard ? activeCard.cycle_number : 1 }}
           </span>
         </div>
@@ -105,13 +105,13 @@
             :key="slot"
             class="aspect-square rounded-xl flex flex-col items-center justify-center transition-all duration-200 border"
             :class="slot <= currentStamps
-              ? 'bg-amber-400 border-2 border-amber-500 text-amber-950 shadow-xs'
+              ? 'bg-amber-400 border-2 border-amber-500 text-stone-950 shadow-xs'
               : slot === 8
                 ? 'bg-amber-50/80 border-2 border-dashed border-amber-400 text-amber-800'
-                : 'bg-stone-50 border border-stone-200 text-stone-400'"
+                : 'bg-[#F9F7F5] border border-[#E3DAD2] text-[#A6978C]'"
           >
             <!-- Sellos Llenos: Icono de Café Dorado de Alto Contraste -->
-            <svg v-if="slot <= currentStamps" class="w-5 h-5 text-amber-950" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <svg v-if="slot <= currentStamps" class="w-5 h-5 text-stone-950" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M17 8h1a4 4 0 1 1 0 8h-1"/>
               <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/>
             </svg>
@@ -121,11 +121,11 @@
               <path d="M12 8v13"/>
               <path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/>
             </svg>
-            <span v-else class="text-xs font-bold font-mono text-stone-400">{{ slot }}</span>
+            <span v-else class="text-xs font-bold font-mono text-[#786558]">{{ slot }}</span>
 
             <span 
               class="text-[10px] font-bold mt-1" 
-              :class="slot <= currentStamps ? 'text-amber-950 font-black' : (slot === 8 ? 'text-amber-800' : 'text-stone-400')"
+              :class="slot <= currentStamps ? 'text-stone-950 font-black' : (slot === 8 ? 'text-amber-800' : 'text-[#786558]')"
             >
               {{ slot === 8 ? 'Premio' : `Sello ${slot}` }}
             </span>
@@ -135,10 +135,10 @@
         <!-- Barra de Progreso -->
         <div class="space-y-1.5 pt-1">
           <div class="flex justify-between text-xs font-semibold">
-            <span class="text-stone-800">{{ currentStamps }} de 8 sellos</span>
-            <span class="text-stone-500">{{ Math.max(0, 8 - currentStamps) }} restantes</span>
+            <span class="text-[#3E2B1E]">{{ currentStamps }} de 8 sellos</span>
+            <span class="text-[#786558]">{{ Math.max(0, 8 - currentStamps) }} restantes</span>
           </div>
-          <div class="w-full bg-stone-100 rounded-full h-2.5 overflow-hidden border border-stone-200">
+          <div class="w-full bg-[#E9E3DD] rounded-full h-2.5 overflow-hidden border border-[#D0C6BE]">
             <div
               class="bg-amber-500 h-full rounded-full transition-all duration-500"
               :style="{ width: `${Math.min(100, (currentStamps / 8) * 100)}%` }"
@@ -158,13 +158,13 @@
           <div
             v-for="prod in products"
             :key="prod.id"
-            class="bg-white rounded-xl p-3.5 border border-stone-300 hover:border-stone-400 transition-colors flex items-center justify-between gap-3 shadow-2xs"
+            class="bg-white rounded-xl p-3.5 border border-[#E3DAD2] hover:border-[#D0C6BE] transition-colors flex items-center justify-between gap-3 shadow-2xs"
           >
             <div class="min-w-0 space-y-0.5">
-              <h4 class="font-bold text-xs text-stone-900 truncate">{{ prod.name }}</h4>
-              <p class="text-[11px] text-stone-500 line-clamp-1">{{ prod.description }}</p>
+              <h4 class="font-bold text-xs text-[#3E2B1E] truncate">{{ prod.name }}</h4>
+              <p class="text-[11px] text-[#786558] line-clamp-1">{{ prod.description }}</p>
             </div>
-            <span class="text-xs font-black font-mono text-stone-900 bg-stone-100 px-2.5 py-1 rounded-lg border border-stone-300 shrink-0">
+            <span class="text-xs font-black font-mono text-[#3E2B1E] bg-[#F9F7F5] px-2.5 py-1 rounded-lg border border-[#E3DAD2] shrink-0">
               ${{ prod.price.toLocaleString('es-CO') }}
             </span>
           </div>

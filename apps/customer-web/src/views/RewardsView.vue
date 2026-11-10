@@ -1,8 +1,8 @@
 <template>
   <div class="space-y-5 fluid-container">
     <div class="space-y-0.5">
-      <h2 class="fluid-title font-extrabold text-stone-900">Mis Recompensas</h2>
-      <p class="text-xs text-stone-500">Premios obtenidos al completar tus tarjetas de 8 sellos.</p>
+      <h2 class="fluid-title font-extrabold text-[#3E2B1E]">Mis Recompensas</h2>
+      <p class="text-xs text-[#786558]">Premios obtenidos al completar tus tarjetas de 8 sellos.</p>
     </div>
 
     <!-- BANNER DE CELEBRACIÓN DE CANJE EN TIEMPO REAL (REACTIVO A CAJA) -->
@@ -64,28 +64,28 @@
       <!-- Lista de Recompensas Disponibles -->
       <div class="space-y-2.5">
         <div class="flex items-center justify-between">
-          <h3 class="font-bold text-xs uppercase tracking-wider text-stone-500">Listas para Canjear</h3>
+          <h3 class="font-bold text-xs uppercase tracking-wider text-[#786558]">Listas para Canjear</h3>
           <span v-if="availableRewards.length > 0" class="text-[11px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">
             {{ availableRewards.length }} disponible{{ availableRewards.length > 1 ? 's' : '' }}
           </span>
         </div>
 
-        <div v-if="availableRewards.length === 0" class="p-6 bg-white rounded-2xl border border-stone-300 text-center space-y-2">
-          <div class="w-11 h-11 rounded-xl bg-stone-100 border border-stone-200 flex items-center justify-center mx-auto text-stone-500">
+        <div v-if="availableRewards.length === 0" class="p-6 bg-white rounded-2xl border border-[#E3DAD2] text-center space-y-2">
+          <div class="w-11 h-11 rounded-xl bg-[#F9F7F5] border border-[#E3DAD2] flex items-center justify-center mx-auto text-[#786558]">
             <!-- Google Material Icon: local_cafe -->
             <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M17 8h1a4 4 0 1 1 0 8h-1"/>
               <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/>
             </svg>
           </div>
-          <p class="text-xs font-bold text-stone-800">No tienes recompensas pendientes</p>
-          <p class="text-[11px] text-stone-500 max-w-xs mx-auto">Acumula 8 sellos en tu tarjeta digital para desbloquear tu próxima bebida de especialidad.</p>
+          <p class="text-xs font-bold text-[#3E2B1E]">No tienes recompensas pendientes</p>
+          <p class="text-[11px] text-[#786558] max-w-xs mx-auto">Acumula 8 sellos en tu tarjeta digital para desbloquear tu próxima bebida de especialidad.</p>
         </div>
 
         <div
           v-for="reward in availableRewards"
           :key="reward.id"
-          class="bg-white rounded-2xl fluid-pad border border-stone-300 shadow-sm space-y-3.5 hover:border-stone-400 transition-colors"
+          class="bg-white rounded-2xl fluid-pad border border-[#E3DAD2] shadow-xs space-y-3.5 hover:border-[#D0C6BE] transition-colors"
         >
           <div class="flex items-start justify-between gap-3">
             <div class="space-y-1">
@@ -93,10 +93,10 @@
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
                 Disponible en caja
               </span>
-              <h4 class="font-extrabold text-sm text-stone-900">{{ reward.name }}</h4>
-              <p class="text-xs text-stone-500 leading-snug">{{ reward.description }}</p>
+              <h4 class="font-extrabold text-sm text-[#3E2B1E]">{{ reward.name }}</h4>
+              <p class="text-xs text-[#786558] leading-snug">{{ reward.description }}</p>
             </div>
-            <div class="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-700 shrink-0">
+            <div class="w-10 h-10 rounded-xl bg-[#FDF8EF] border border-[#F4D9AA] flex items-center justify-center text-[#B06512] shrink-0">
               <!-- Google Material Icon: redeem -->
               <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <rect x="3" y="8" width="18" height="4" rx="1"/>
@@ -106,14 +106,14 @@
             </div>
           </div>
 
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-3 border-t border-stone-200 text-xs">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-3 border-t border-[#E3DAD2] text-xs">
             <div class="space-y-0.5">
-              <span class="text-stone-500 block">Válido hasta: <strong class="text-stone-800">{{ new Date(reward.expires_at).toLocaleDateString('es-CO') }}</strong></span>
-              <p class="text-[11px] text-stone-500">Presenta tu carnet QR permanente en caja al ordenar.</p>
+              <span class="text-[#786558] block">Válido hasta: <strong class="text-[#3E2B1E]">{{ new Date(reward.expires_at).toLocaleDateString('es-CO') }}</strong></span>
+              <p class="text-[11px] text-[#786558]">Presenta tu carnet QR permanente en caja al ordenar.</p>
             </div>
             <router-link
               to="/mi-tarjeta"
-              class="bg-stone-900 hover:bg-stone-800 text-white font-bold px-3.5 py-2 rounded-xl text-xs transition cursor-pointer inline-flex items-center justify-center gap-1.5 shadow-sm active:scale-95 shrink-0"
+              class="bg-[#5D4432] hover:bg-[#473325] text-white font-bold px-3.5 py-2 rounded-xl text-xs transition cursor-pointer inline-flex items-center justify-center gap-1.5 shadow-xs active:scale-95 shrink-0"
             >
               <!-- Google Material Icon: qr_code_2 -->
               <svg class="w-3.5 h-3.5 text-amber-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -128,41 +128,41 @@
       </div>
 
       <!-- Guía Rápida de Canje Tipo Starbucks -->
-      <div class="bg-amber-50/80 rounded-2xl p-4 border border-amber-200 space-y-2">
+      <div class="bg-[#FDF8EF] rounded-2xl p-4 border border-[#F4D9AA] space-y-2">
         <div class="flex items-center gap-2">
           <div class="w-6 h-6 rounded-lg bg-amber-400 text-stone-950 flex items-center justify-center shrink-0 font-bold text-xs">
             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
             </svg>
           </div>
-          <h4 class="font-bold text-xs text-stone-900">¿Cómo reclamar tu recompensa?</h4>
+          <h4 class="font-bold text-xs text-[#3E2B1E]">¿Cómo reclamar tu recompensa?</h4>
         </div>
-        <p class="text-[11px] text-stone-700 leading-relaxed">
+        <p class="text-[11px] text-[#733D16] leading-relaxed">
           Solo presenta tu <strong>código QR permanente de socio</strong> en caja. El barista verá de inmediato tus recompensas disponibles y podrás acordar tu café o cortesía preferida sin códigos temporales.
         </p>
       </div>
 
       <!-- Historial de Premios Canjeados -->
       <div v-if="redeemedRewards.length > 0" class="space-y-2.5">
-        <h3 class="font-bold text-xs uppercase tracking-wider text-stone-500">Canjeadas Anteriormente</h3>
+        <h3 class="font-bold text-xs uppercase tracking-wider text-[#786558]">Canjeadas Anteriormente</h3>
 
-        <div class="bg-white rounded-2xl p-4 border border-stone-300 divide-y divide-stone-200">
+        <div class="bg-white rounded-2xl p-4 border border-[#E3DAD2] divide-y divide-[#E3DAD2]">
           <div v-for="item in redeemedRewards" :key="item.id" class="py-3.5 first:pt-0 last:pb-0 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div class="space-y-1">
               <div class="flex items-center gap-2">
-                <h5 class="font-bold text-xs text-stone-800">{{ item.name }}</h5>
-                <span class="text-[10px] font-bold text-stone-600 bg-stone-100 border border-stone-200 px-2 py-0.5 rounded">
+                <h5 class="font-bold text-xs text-[#3E2B1E]">{{ item.name }}</h5>
+                <span class="text-[10px] font-bold text-[#786558] bg-[#F9F7F5] border border-[#E3DAD2] px-2 py-0.5 rounded">
                   Ya utilizado
                 </span>
               </div>
-              <p v-if="item.selected_product" class="text-xs text-stone-700 font-medium">
+              <p v-if="item.selected_product" class="text-xs text-[#3E2B1E] font-medium">
                 Producto entregado: <strong>{{ item.selected_product }}</strong>
               </p>
-              <p class="text-[11px] text-stone-500">
+              <p class="text-[11px] text-[#786558]">
                 Canjeada el {{ new Date(item.redeemed_at || item.issued_at).toLocaleDateString('es-CO') }} • No disponible para más usos
               </p>
             </div>
-            <span class="text-[11px] font-mono text-stone-400 self-start sm:self-center">
+            <span class="text-[11px] font-mono text-[#A6978C] self-start sm:self-center">
               Completado
             </span>
           </div>
