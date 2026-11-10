@@ -15,6 +15,8 @@ class CustomerRewardSchema(BaseModel):
     status: str
     issued_at: datetime
     expires_at: Optional[datetime] = None
+    redeemed_at: Optional[datetime] = None
+    selected_product: Optional[str] = None
     eligible_stores: List[str] = []
 
     model_config = ConfigDict(from_attributes=True)

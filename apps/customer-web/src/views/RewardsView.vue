@@ -5,6 +5,40 @@
       <p class="text-xs text-stone-500">Premios obtenidos al completar tus tarjetas de 8 sellos.</p>
     </div>
 
+    <!-- BANNER DE CELEBRACIÓN DE CANJE EN TIEMPO REAL (REACTIVO A CAJA) -->
+    <div v-if="activeRedemptionAlert" class="p-4 bg-emerald-50 rounded-2xl border-2 border-emerald-400 text-center space-y-2 animate-in fade-in zoom-in-95 duration-300 shadow-md">
+      <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto border-2 border-emerald-300 shadow-sm animate-bounce">
+        <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 6 9 17l-5-5"/>
+        </svg>
+      </div>
+
+      <div class="space-y-0.5">
+        <span class="text-[10px] uppercase font-bold tracking-wider text-emerald-800 bg-emerald-100 border border-emerald-200 px-2.5 py-0.5 rounded-full">
+          ¡Cortesía Entregada con Éxito!
+        </span>
+        <h4 class="font-extrabold text-stone-950 text-base">
+          {{ activeRedemptionAlert.title }}
+        </h4>
+        <p class="text-xs text-stone-700 font-medium">
+          {{ activeRedemptionAlert.message }} {{ activeRedemptionAlert.store_name ? '• ' + activeRedemptionAlert.store_name : '' }}
+        </p>
+        <p class="text-[11px] text-stone-500 pt-1">
+          Tu beneficio ha sido marcado como utilizado y ya no está disponible para nuevos canjes.
+        </p>
+      </div>
+
+      <div>
+        <button
+          type="button"
+          @click="activeRedemptionAlert = null"
+          class="text-[11px] font-bold text-stone-700 hover:text-stone-950 bg-stone-100 hover:bg-white px-3 py-1 rounded-lg border border-stone-300 transition cursor-pointer"
+        >
+          Entendido
+        </button>
+      </div>
+    </div>
+
     <!-- SKELETON LOADER SUAVE CON SHIMMER & DIFUMINADO -->
     <div v-if="loading" class="space-y-4" aria-hidden="true">
       <div class="space-y-2.5">
@@ -51,7 +85,7 @@
         <div
           v-for="reward in availableRewards"
           :key="reward.id"
-          class="bg-white rounded-2xl fluid-pad border border-stone-300 shadow-sm space-y-4 hover:border-stone-400 transition-colors"
+          class="bg-white rounded-2xl fluid-pad border border-stone-300 shadow-sm space-y-3.5 hover:border-stone-400 transition-colors"
         >
           <div class="flex items-start justify-between gap-3">
             <div class="space-y-1">
@@ -72,20 +106,23 @@
             </div>
           </div>
 
-          <div class="flex items-center justify-between pt-3 border-t border-stone-200 text-xs">
-            <span class="text-stone-500">Válido hasta: <strong class="text-stone-800">{{ new Date(reward.expires_at).toLocaleDateString('es-CO') }}</strong></span>
-            <button
-              @click="openRedemptionQr(reward)"
-              class="bg-stone-900 hover:bg-stone-800 text-white font-bold px-3.5 py-2 rounded-lg text-xs transition cursor-pointer inline-flex items-center gap-1.5 shadow-sm active:scale-95"
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-3 border-t border-stone-200 text-xs">
+            <div class="space-y-0.5">
+              <span class="text-stone-500 block">Válido hasta: <strong class="text-stone-800">{{ new Date(reward.expires_at).toLocaleDateString('es-CO') }}</strong></span>
+              <p class="text-[11px] text-stone-500">Presenta tu carnet QR permanente en caja al ordenar.</p>
+            </div>
+            <router-link
+              to="/mi-tarjeta"
+              class="bg-stone-900 hover:bg-stone-800 text-white font-bold px-3.5 py-2 rounded-xl text-xs transition cursor-pointer inline-flex items-center justify-center gap-1.5 shadow-sm active:scale-95 shrink-0"
             >
+              <!-- Google Material Icon: qr_code_2 -->
               <svg class="w-3.5 h-3.5 text-amber-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <rect x="3" y="3" width="7" height="7" rx="1"/>
-                <rect x="14" y="3" width="7" height="7" rx="1"/>
-                <rect x="3" y="14" width="7" height="7" rx="1"/>
-                <path d="M14 14h3v3h-3z"/>
+                <rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/>
+                <path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/>
+                <path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/>
               </svg>
-              <span>Mostrar en Caja</span>
-            </button>
+              <span>Ver mi Carnet QR</span>
+            </router-link>
           </div>
         </div>
       </div>
@@ -101,7 +138,7 @@
           <h4 class="font-bold text-xs text-stone-900">¿Cómo reclamar tu recompensa?</h4>
         </div>
         <p class="text-[11px] text-stone-700 leading-relaxed">
-          Solo presenta tu código QR de socio en caja. El barista verá de inmediato tus recompensas disponibles y podrás acordar tu café o cortesía preferida.
+          Solo presenta tu <strong>código QR permanente de socio</strong> en caja. El barista verá de inmediato tus recompensas disponibles y podrás acordar tu café o cortesía preferida sin códigos temporales.
         </p>
       </div>
 
@@ -110,89 +147,26 @@
         <h3 class="font-bold text-xs uppercase tracking-wider text-stone-500">Canjeadas Anteriormente</h3>
 
         <div class="bg-white rounded-2xl p-4 border border-stone-300 divide-y divide-stone-200">
-          <div v-for="item in redeemedRewards" :key="item.id" class="py-3 first:pt-0 last:pb-0 flex items-center justify-between">
-            <div class="space-y-0.5">
-              <h5 class="font-bold text-xs text-stone-900">{{ item.name }}</h5>
-              <p class="text-[11px] text-stone-500">Canjeada el {{ new Date(item.issued_at).toLocaleDateString('es-CO') }}</p>
+          <div v-for="item in redeemedRewards" :key="item.id" class="py-3.5 first:pt-0 last:pb-0 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <h5 class="font-bold text-xs text-stone-800">{{ item.name }}</h5>
+                <span class="text-[10px] font-bold text-stone-600 bg-stone-100 border border-stone-200 px-2 py-0.5 rounded">
+                  Ya utilizado
+                </span>
+              </div>
+              <p v-if="item.selected_product" class="text-xs text-stone-700 font-medium">
+                Producto entregado: <strong>{{ item.selected_product }}</strong>
+              </p>
+              <p class="text-[11px] text-stone-500">
+                Canjeada el {{ new Date(item.redeemed_at || item.issued_at).toLocaleDateString('es-CO') }} • No disponible para más usos
+              </p>
             </div>
-            <span class="text-[10px] font-bold text-stone-600 bg-stone-100 border border-stone-200 px-2 py-0.5 rounded">
-              Canjeado
+            <span class="text-[11px] font-mono text-stone-400 self-start sm:self-center">
+              Completado
             </span>
           </div>
         </div>
-      </div>
-    </div>
-
-    <!-- Modal QR de Socio / Redención -->
-    <div v-if="selectedReward" class="fixed inset-0 bg-stone-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div class="bg-white rounded-2xl border border-stone-300 p-5 w-full max-w-xs text-center shadow-2xl space-y-4">
-        
-        <!-- ESTADO: REDENCIÓN CONFIRMADA EN CAJA -->
-        <div v-if="redeemedSuccess" class="py-4 space-y-3 animate-in fade-in zoom-in-95 duration-300">
-          <div class="w-14 h-14 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto border-2 border-emerald-300 shadow-sm animate-bounce">
-            <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20 6 9 17l-5-5"/>
-            </svg>
-          </div>
-          <div class="space-y-1">
-            <span class="text-[10px] uppercase font-bold tracking-wider text-emerald-800 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">
-              ¡Premio Redimido!
-            </span>
-            <h3 class="font-extrabold text-stone-950 text-base leading-tight">
-              {{ selectedReward.name }}
-            </h3>
-            <p class="text-xs text-stone-600 font-medium">
-              ¡Que disfrutes tu café de cortesía!
-            </p>
-          </div>
-        </div>
-
-        <!-- ESTADO: QR ACTIVO -->
-        <template v-else>
-          <div class="flex items-center justify-between">
-            <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-md">
-              Canjear en Caja
-            </span>
-            <button @click="closeRedemptionModal" class="text-stone-400 hover:text-stone-700 p-1 rounded-lg cursor-pointer transition" aria-label="Cerrar">
-              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
-              </svg>
-            </button>
-          </div>
-
-          <div class="space-y-0.5">
-            <h3 class="font-extrabold text-stone-900 text-sm">{{ selectedReward.name }}</h3>
-            <p class="text-xs text-stone-500">Presenta este código al cajero para validar tu recompensa.</p>
-          </div>
-
-          <!-- Contenedor QR con aspect-square para evitar CLS -->
-          <div class="bg-stone-50 p-4 rounded-xl border border-stone-200 aspect-square w-full max-w-[210px] mx-auto flex items-center justify-center">
-            <div v-if="!effectiveQrValue" class="text-xs text-stone-400 flex flex-col items-center gap-2">
-              <div class="w-6 h-6 border-2 border-stone-800 border-t-transparent rounded-full animate-spin"></div>
-              Generando código...
-            </div>
-            <div v-else class="bg-white p-2.5 rounded-lg border border-stone-200 shadow-xs">
-              <qrcode-vue
-                :value="effectiveQrValue"
-                :size="165"
-                level="M"
-                render-as="svg"
-              />
-            </div>
-          </div>
-
-          <div class="space-y-2">
-            <button
-              @click="goToCard"
-              class="w-full text-xs font-bold bg-stone-900 hover:bg-stone-800 text-white py-2.5 px-3 rounded-xl transition cursor-pointer flex items-center justify-center gap-1.5 shadow-xs"
-            >
-              <span>Ver mi Tarjeta Digital Completa</span>
-            </button>
-            <p class="text-[11px] text-stone-500">
-              Tu código de socio es personal y sirve tanto para sellos como para premios.
-            </p>
-          </div>
-        </template>
       </div>
     </div>
   </div>
@@ -200,23 +174,14 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { useRouter } from 'vue-router';
-import QrcodeVue from 'qrcode.vue';
 import { api, type CustomerReward } from '../api';
 
-const router = useRouter();
 const loading = ref(true);
 const rewards = ref<CustomerReward[]>([]);
-const selectedReward = ref<CustomerReward | null>(null);
-const memberId = ref('');
-const redemptionToken = ref('');
-const redeemedSuccess = ref(false);
+const activeRedemptionAlert = ref<any | null>(null);
 
-let redeemPollTimer: any = null;
-
-const effectiveQrValue = computed(() => {
-  return redemptionToken.value || memberId.value || '';
-});
+let lastHandledAlertId = '';
+let livePollTimer: any = null;
 
 const playRedeemChime = () => {
   try {
@@ -239,6 +204,14 @@ const playRedeemChime = () => {
   } catch {}
 };
 
+const triggerHaptic = () => {
+  try {
+    if ('vibrate' in navigator) {
+      navigator.vibrate([100, 50, 100]);
+    }
+  } catch {}
+};
+
 const availableRewards = computed(() => {
   return rewards.value.filter(r => r.status === 'AVAILABLE');
 });
@@ -249,87 +222,49 @@ const redeemedRewards = computed(() => {
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-const loadRewards = async () => {
+const loadRewards = async (silent = false) => {
   try {
-    loading.value = true;
-    const minDelay = delay(850);
-    const [res, profileRes] = await Promise.all([
+    if (!silent) loading.value = true;
+    const minDelay = silent ? Promise.resolve() : delay(850);
+    const [res] = await Promise.all([
       api.getRewards().catch(() => []),
-      api.getProfile().catch(() => null),
       minDelay
     ]);
     rewards.value = res;
-    if (profileRes && profileRes.id) {
-      memberId.value = profileRes.id;
-    }
   } catch (err) {
     console.error('Error cargando recompensas:', err);
   } finally {
-    loading.value = false;
+    if (!silent) loading.value = false;
   }
 };
 
-const startRedeemPolling = (token: string) => {
-  clearInterval(redeemPollTimer);
-  redeemPollTimer = setInterval(async () => {
-    if (!selectedReward.value || !token) {
-      clearInterval(redeemPollTimer);
-      return;
-    }
-    try {
-      const res = await api.checkQrStatus(token);
-      if (res.status === 'CONSUMED') {
-        clearInterval(redeemPollTimer);
-        playRedeemChime();
-        redeemedSuccess.value = true;
-        await loadRewards();
-        window.dispatchEvent(new CustomEvent('confy-user-changed'));
-
-        setTimeout(() => {
-          closeRedemptionModal();
-        }, 2800);
-      }
-    } catch {
-      // Ignore
-    }
-  }, 1200);
-};
-
-const openRedemptionQr = async (reward: CustomerReward) => {
-  selectedReward.value = reward;
-  redemptionToken.value = '';
-  redeemedSuccess.value = false;
-  clearInterval(redeemPollTimer);
-
+const pollLiveStatus = async () => {
   try {
-    const res = await api.generateRewardQr(reward.id);
-    redemptionToken.value = res.qr_token;
-    startRedeemPolling(res.qr_token);
+    const live = await api.getLiveStatus();
+    if (live && live.recent_alert && live.recent_alert.id !== lastHandledAlertId) {
+      lastHandledAlertId = live.recent_alert.id;
+
+      if (live.recent_alert.type === 'REDEMPTION') {
+        activeRedemptionAlert.value = live.recent_alert;
+        playRedeemChime();
+        triggerHaptic();
+        await loadRewards(true);
+        window.dispatchEvent(new CustomEvent('confy-user-changed'));
+      }
+    }
   } catch {
-    // Si falla la generación del token de un solo uso, usamos el ID de socio permanente como fallback
-    redemptionToken.value = memberId.value;
+    // Silencioso
   }
-};
-
-const closeRedemptionModal = () => {
-  selectedReward.value = null;
-  redemptionToken.value = '';
-  redeemedSuccess.value = false;
-  clearInterval(redeemPollTimer);
-};
-
-const goToCard = () => {
-  closeRedemptionModal();
-  router.push('/mi-tarjeta');
 };
 
 onMounted(() => {
   loadRewards();
-  window.addEventListener('confy-user-changed', loadRewards);
+  livePollTimer = setInterval(pollLiveStatus, 2000);
+  window.addEventListener('confy-user-changed', () => loadRewards(true));
 });
 
 onUnmounted(() => {
-  clearInterval(redeemPollTimer);
-  window.removeEventListener('confy-user-changed', loadRewards);
+  clearInterval(livePollTimer);
+  window.removeEventListener('confy-user-changed', () => loadRewards(true));
 });
 </script>

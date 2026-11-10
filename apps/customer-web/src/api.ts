@@ -89,6 +89,8 @@ export interface CustomerReward {
   status: 'AVAILABLE' | 'REDEEMED' | 'EXPIRED' | 'CANCELLED';
   issued_at: string;
   expires_at: string;
+  redeemed_at?: string;
+  selected_product?: string;
   eligible_stores: string[];
 }
 

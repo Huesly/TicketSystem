@@ -235,6 +235,10 @@ async def get_my_rewards(
 
     response: List[CustomerRewardSchema] = []
     for reward, r_def in results:
+        product_note = None
+        if reward.terms_snapshot and isinstance(reward.terms_snapshot, dict):
+            product_note = reward.terms_snapshot.get("selected_product")
+
         response.append(CustomerRewardSchema(
             id=reward.id,
             name=r_def.name,
@@ -243,6 +247,8 @@ async def get_my_rewards(
             status=reward.status,
             issued_at=reward.issued_at,
             expires_at=reward.expires_at,
+            redeemed_at=reward.redeemed_at,
+            selected_product=product_note,
             eligible_stores=["Todas las sedes participantes"]
         ))
     return response

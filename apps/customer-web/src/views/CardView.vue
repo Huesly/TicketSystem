@@ -150,6 +150,11 @@
           <span v-if="activeAlert.gross_amount"> • ${{ activeAlert.gross_amount.toLocaleString('es-CO') }} COP</span>
         </div>
 
+        <div v-else-if="activeAlert.product_name" class="bg-white rounded-xl p-2.5 border border-emerald-200 text-xs text-stone-700 inline-block space-y-0.5">
+          <p>Producto entregado: <strong>{{ activeAlert.product_name }}</strong></p>
+          <p class="text-[11px] text-stone-500">{{ activeAlert.store_name ? 'Entregado en ' + activeAlert.store_name : 'Canje confirmado' }} • Cortesía completada</p>
+        </div>
+
         <div>
           <button
             type="button"
@@ -249,10 +254,15 @@ const memberQrToken = computed(() => {
 
 // Alerta activa de evento POS en tiempo real
 const activeAlert = ref<{
+  id?: string;
   title: string;
   message: string;
+  type?: 'PURCHASE' | 'REDEMPTION' | string;
   receipt_reference?: string;
   gross_amount?: number;
+  product_name?: string;
+  store_name?: string;
+  stamps_awarded?: number;
 } | null>(null);
 
 let pollTimer: any = null;
@@ -288,6 +298,8 @@ const triggerHaptic = () => {
     }
   } catch {}
 };
+
+let lastHandledAlertId = '';
 
 const fetchCardData = async (silent = false) => {
   try {
@@ -333,6 +345,40 @@ const fetchCardData = async (silent = false) => {
   }
 };
 
+const pollLiveStatus = async () => {
+  try {
+    const live = await api.getLiveStatus();
+    if (live) {
+      // Sincronizar conteo de sellos
+      if (live.card && activeCard.value) {
+        if (activeCard.value.stamps_count !== live.card.stamps_count) {
+          activeCard.value.stamps_count = live.card.stamps_count;
+          activeCard.value.stamps_remaining = live.card.stamps_remaining;
+          activeCard.value.progress_percentage = live.card.progress_percentage;
+        }
+      }
+
+      // Sincronizar cortesías disponibles
+      if (typeof live.available_rewards_count === 'number') {
+        availableRewardsCount.value = live.available_rewards_count;
+      }
+
+      // Si hay alerta en vivo reciente de compra o de redención en caja
+      if (live.recent_alert && live.recent_alert.id !== lastHandledAlertId) {
+        lastHandledAlertId = live.recent_alert.id;
+        activeAlert.value = live.recent_alert;
+        playCelebrationSound();
+        triggerHaptic();
+
+        // Actualizar datos completos de la tarjeta y cortesías
+        await fetchCardData(true);
+      }
+    }
+  } catch {
+    // Silencioso
+  }
+};
+
 onMounted(() => {
   fetchCardData();
 
@@ -355,10 +401,8 @@ onMounted(() => {
     fetchCardData(false);
   });
 
-  // Polling silencioso cada 4 segundos por si el cajero registró la venta en otra pestaña
-  pollTimer = setInterval(() => {
-    fetchCardData(true);
-  }, 4000);
+  // Polling silencioso cada 2 segundos para reactividad instantánea con caja
+  pollTimer = setInterval(pollLiveStatus, 2000);
 });
 
 onUnmounted(() => {
