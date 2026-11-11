@@ -11,9 +11,10 @@ from sqlalchemy import select
 
 from app.core.database import get_db
 from app.core.security import get_password_hash, verify_password, create_access_token
-from app.schemas.auth import LoginRequest, RegisterRequest, TokenResponse, AuthMeResponse
+from app.schemas.auth import LoginRequest, RegisterRequest, RegisterStaffRequest, TokenResponse, AuthMeResponse
 from app.schemas.user import UserProfileSchema
-from app.models.user import Profile, BusinessMembership
+from app.models.user import Profile, BusinessMembership, MembershipStoreAssignment
+from app.models.business import Business, Store
 from app.models.loyalty import LoyaltyProgram, LoyaltyProgramVersion, LoyaltyCard
 from app.api.deps import get_current_user, get_user_roles
 
@@ -136,6 +137,96 @@ async def register(
         user=UserProfileSchema.model_validate(new_profile),
         roles=roles
     )
+
+
+@router.post("/register-staff", response_model=TokenResponse, status_code=status.HTTP_201_CREATED, summary="Registro de administradores y cajeros")
+async def register_staff(
+    payload: RegisterStaffRequest,
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Registra un nuevo miembro del equipo administrativo o de caja,
+    asignándole su rol correspondiente y vinculándolo a una sede.
+    """
+    email_clean = payload.email.lower().strip()
+    existing = await db.execute(select(Profile).where(Profile.email == email_clean))
+    if existing.scalar_one_or_none():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Ya existe una cuenta registrada con este correo electrónico"
+        )
+
+    # Obtener el negocio principal
+    b_stmt = select(Business).limit(1)
+    b_res = await db.execute(b_stmt)
+    business = b_res.scalar_one_or_none()
+    if not business:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="No se encontró una empresa configurada en el sistema"
+        )
+
+    new_user_id = uuid.uuid4()
+    hashed = get_password_hash(payload.password)
+
+    new_profile = Profile(
+        id=new_user_id,
+        full_name=payload.full_name.strip(),
+        email=email_clean,
+        phone=payload.phone.strip() if payload.phone else None,
+        hashed_password=hashed,
+        status="active"
+    )
+    db.add(new_profile)
+
+    membership_id = uuid.uuid4()
+    membership = BusinessMembership(
+        id=membership_id,
+        business_id=business.id,
+        user_id=new_user_id,
+        role=payload.role,
+        status="active"
+    )
+    db.add(membership)
+    await db.flush()
+
+    # Asignar sede si se especificó o la primera sede disponible
+    target_store_id = None
+    if payload.store_id:
+        try:
+            target_store_id = uuid.UUID(payload.store_id)
+        except ValueError:
+            pass
+
+    if not target_store_id:
+        s_stmt = select(Store.id).where(Store.business_id == business.id).limit(1)
+        s_res = await db.execute(s_stmt)
+        target_store_id = s_res.scalar_one_or_none()
+
+    if target_store_id:
+        store_assignment = MembershipStoreAssignment(
+            membership_id=membership_id,
+            store_id=target_store_id
+        )
+        db.add(store_assignment)
+
+    await db.commit()
+    await db.refresh(new_profile)
+
+    roles: List[str] = [payload.role]
+    token = create_access_token(data={
+        "sub": str(new_profile.id),
+        "email": new_profile.email,
+        "roles": roles
+    })
+
+    return TokenResponse(
+        access_token=token,
+        token_type="bearer",
+        user=UserProfileSchema.model_validate(new_profile),
+        roles=roles
+    )
+
 
 
 @router.get("/me", response_model=AuthMeResponse, summary="Obtener usuario en sesión actual y sus roles")

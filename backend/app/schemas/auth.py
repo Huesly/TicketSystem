@@ -16,6 +16,14 @@ class RegisterRequest(BaseModel):
     password: str = Field(..., min_length=6, max_length=100)
     phone: Optional[str] = Field(None, max_length=30)
 
+class RegisterStaffRequest(BaseModel):
+    full_name: str = Field(..., min_length=3, max_length=150)
+    email: EmailStr
+    password: str = Field(..., min_length=6, max_length=100)
+    phone: Optional[str] = Field(None, max_length=30)
+    role: str = Field("GENERAL_ADMIN", pattern="^(GENERAL_ADMIN|CASHIER|STORE_ADMIN)$")
+    store_id: Optional[str] = None
+
 class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"

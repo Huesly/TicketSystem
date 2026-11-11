@@ -68,19 +68,6 @@
           <span v-if="loading" class="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
           <span>{{ loading ? 'Iniciando...' : 'Entrar a Mi Tarjeta' }}</span>
         </button>
-
-        <!-- Acceso rápido Demo -->
-        <div class="pt-2 border-t border-stone-200 text-center">
-          <p class="text-[10px] text-stone-500 mb-2 font-medium">O prueba con la cuenta existente:</p>
-          <button 
-            type="button" 
-            @click="quickLogin('camila.rodriguez@email.com', 'Cliente2026*')"
-            class="text-[11px] font-semibold text-stone-800 bg-stone-100 hover:bg-stone-200 border border-stone-300 px-3 py-1.5 rounded-lg w-full transition cursor-pointer flex items-center justify-center gap-1.5"
-          >
-            <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
-            <span>Entrar como Camila Rodríguez (Demostración)</span>
-          </button>
-        </div>
       </form>
 
       <!-- Formulario Registro -->
@@ -92,7 +79,7 @@
             type="text" 
             required 
             autocomplete="name"
-            placeholder="Camila Rodríguez"
+            placeholder="Ej: Laura Martínez"
             class="w-full text-xs px-3 py-2 rounded-lg border border-stone-300 focus:outline-none focus:border-stone-900 bg-stone-50"
           />
         </div>
@@ -105,7 +92,7 @@
             autocomplete="email"
             autocapitalize="none"
             spellcheck="false"
-            placeholder="camila@correo.com"
+            placeholder="tu.correo@ejemplo.com"
             class="w-full text-xs px-3 py-2 rounded-lg border border-stone-300 focus:outline-none focus:border-stone-900 bg-stone-50"
           />
         </div>
@@ -177,12 +164,6 @@ const handleLogin = async () => {
   } finally {
     loading.value = false;
   }
-};
-
-const quickLogin = async (email: string, pass: string) => {
-  loginEmail.value = email;
-  loginPassword.value = pass;
-  await handleLogin();
 };
 
 const handleRegister = async () => {

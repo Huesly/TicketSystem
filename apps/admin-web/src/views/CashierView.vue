@@ -254,23 +254,11 @@
             {{ cameraError }}
           </div>
 
-          <!-- Entrada Manual o Demo -->
+          <!-- Entrada Manual del Carnet del Socio -->
           <div class="space-y-2 pt-2 border-t border-crema-surface">
-            <div class="flex items-center justify-between">
-              <label for="pos-member-token" class="text-xs font-semibold text-roast-800">
-                Código de carnet del socio:
-              </label>
-              <button 
-                type="button"
-                @click="loadDemoMember"
-                class="text-[11px] font-bold text-amber-950 bg-amber-100 hover:bg-amber-200 border border-amber-300 px-2.5 py-1 rounded-lg transition cursor-pointer flex items-center gap-1 shadow-2xs"
-              >
-                <svg class="w-3 h-3 text-amber-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>
-                </svg>
-                <span>Cargar Socio Demo (Camila R.)</span>
-              </button>
-            </div>
+            <label for="pos-member-token" class="block text-xs font-semibold text-roast-800">
+              Código de carnet del socio (escaneo de cámara o pegado manual):
+            </label>
 
             <div class="flex gap-2">
               <input 
@@ -843,11 +831,6 @@ const lookupMember = async (token?: string) => {
   } finally {
     isLookingUp.value = false;
   }
-};
-
-const loadDemoMember = () => {
-  tokenInput.value = 'cfy_member_00000000-0000-0000-0000-000000000001';
-  lookupMember();
 };
 
 const clearMember = () => {

@@ -14,15 +14,36 @@
             </svg>
           </div>
           <h2 class="text-lg font-extrabold text-stone-950">PosDemo Terminal</h2>
-          <p class="text-xs text-stone-500 font-medium">Ingreso para Cajeros y Administradores</p>
+          <p class="text-xs text-stone-500 font-medium">Acceso para Cajeros y Administradores</p>
+        </div>
+
+        <!-- Selector de Modo: Iniciar Turno vs Registrar Personal -->
+        <div class="flex p-1 bg-stone-100 rounded-xl border border-stone-200">
+          <button 
+            type="button" 
+            @click="authMode = 'login'; authError = ''"
+            class="flex-1 py-1.5 text-xs font-bold rounded-lg transition cursor-pointer"
+            :class="authMode === 'login' ? 'bg-white text-stone-950 shadow-xs' : 'text-stone-500 hover:text-stone-900'"
+          >
+            Iniciar Turno
+          </button>
+          <button 
+            type="button" 
+            @click="authMode = 'register'; authError = ''"
+            class="flex-1 py-1.5 text-xs font-bold rounded-lg transition cursor-pointer"
+            :class="authMode === 'register' ? 'bg-white text-stone-950 shadow-xs' : 'text-stone-500 hover:text-stone-900'"
+          >
+            Registrar Personal
+          </button>
         </div>
 
         <!-- Alerta de error -->
-        <div v-if="loginError" class="p-2.5 rounded-lg bg-red-50 border border-red-200 text-xs text-red-700 font-medium">
-          {{ loginError }}
+        <div v-if="authError" class="p-2.5 rounded-lg bg-red-50 border border-red-200 text-xs text-red-700 font-medium">
+          {{ authError }}
         </div>
 
-        <form @submit.prevent="handleLogin" class="space-y-3">
+        <!-- Formulario Iniciar Turno (Login) -->
+        <form v-if="authMode === 'login'" @submit.prevent="handleLogin" class="space-y-3">
           <div>
             <label class="block text-xs font-bold text-stone-700 mb-1">Correo Electrónico</label>
             <input 
@@ -32,7 +53,7 @@
               autocomplete="username"
               autocapitalize="none"
               spellcheck="false"
-              placeholder="cajero@confy.com.co"
+              placeholder="tu.correo@confy.com.co"
               class="w-full text-xs px-3 py-2 rounded-lg border border-stone-300 focus:outline-none focus:border-stone-900 bg-stone-50 text-stone-900"
             />
           </div>
@@ -50,36 +71,89 @@
 
           <button 
             type="submit" 
-            :disabled="loadingLogin"
+            :disabled="authLoading"
             class="w-full bg-stone-900 hover:bg-stone-800 active:scale-[0.98] disabled:opacity-50 text-white font-bold text-xs py-2.5 rounded-xl border border-stone-900 transition cursor-pointer flex items-center justify-center gap-2 shadow-sm"
           >
-            <span v-if="loadingLogin" class="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-            <span>{{ loadingLogin ? 'Validando...' : 'Iniciar Turno' }}</span>
+            <span v-if="authLoading" class="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+            <span>{{ authLoading ? 'Validando...' : 'Iniciar Turno' }}</span>
           </button>
         </form>
 
-        <!-- Accesos rápidos pre-cargados para demostración -->
-        <div class="pt-3 border-t border-stone-200 space-y-2">
-          <p class="text-[10px] text-stone-500 font-semibold uppercase tracking-wider text-center">Acceso Rápido de Demostración</p>
-          <div class="grid grid-cols-2 gap-2">
-            <button 
-              type="button"
-              @click="quickLogin('cajero.cabecera@confy.com.co', 'Cajero2026*')"
-              class="text-[11px] font-semibold text-stone-800 bg-stone-50 hover:bg-stone-100 border border-stone-200 hover:border-amber-400 p-2.5 rounded-xl transition text-left cursor-pointer active:scale-95 shadow-2xs"
-            >
-              <span class="block font-bold text-stone-950">Juan Pérez</span>
-              <span class="text-[10px] text-stone-500 font-medium">Rol: Cajero POS</span>
-            </button>
-            <button 
-              type="button"
-              @click="quickLogin('admin@confy.com.co', 'Admin2026*')"
-              class="text-[11px] font-semibold text-stone-800 bg-stone-50 hover:bg-stone-100 border border-stone-200 hover:border-amber-400 p-2.5 rounded-xl transition text-left cursor-pointer active:scale-95 shadow-2xs"
-            >
-              <span class="block font-bold text-stone-950">Admin General</span>
-              <span class="text-[10px] text-stone-500 font-medium">Rol: Administrador</span>
-            </button>
+        <!-- Formulario Registrar Personal (Staff Register) -->
+        <form v-else @submit.prevent="handleRegisterStaff" class="space-y-3">
+          <div>
+            <label class="block text-xs font-bold text-stone-700 mb-1">Nombre Completo</label>
+            <input 
+              v-model="regName" 
+              type="text" 
+              required 
+              autocomplete="name"
+              placeholder="Ej: Laura Martínez"
+              class="w-full text-xs px-3 py-2 rounded-lg border border-stone-300 focus:outline-none focus:border-stone-900 bg-stone-50 text-stone-900"
+            />
           </div>
-        </div>
+
+          <div>
+            <label class="block text-xs font-bold text-stone-700 mb-1">Correo Corporativo</label>
+            <input 
+              v-model="regEmail" 
+              type="email" 
+              required 
+              autocomplete="email"
+              autocapitalize="none"
+              spellcheck="false"
+              placeholder="laura.admin@confy.com.co"
+              class="w-full text-xs px-3 py-2 rounded-lg border border-stone-300 focus:outline-none focus:border-stone-900 bg-stone-50 text-stone-900"
+            />
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-xs font-bold text-stone-700 mb-1">Rol</label>
+              <select
+                v-model="regRole"
+                class="w-full text-xs px-2.5 py-2 rounded-lg border border-stone-300 focus:outline-none focus:border-stone-900 bg-stone-50 text-stone-900 font-semibold"
+              >
+                <option value="GENERAL_ADMIN">Admin General</option>
+                <option value="CASHIER">Cajero POS</option>
+                <option value="STORE_ADMIN">Admin Sede</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-stone-700 mb-1">Sede</label>
+              <select
+                v-model="regStoreId"
+                class="w-full text-xs px-2.5 py-2 rounded-lg border border-stone-300 focus:outline-none focus:border-stone-900 bg-stone-50 text-stone-900 font-semibold"
+              >
+                <option value="87c69994-6e69-425b-8cb0-b08be5f97371">Cabecera</option>
+                <option value="bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb">Centro</option>
+                <option value="cccccccc-cccc-cccc-cccc-cccccccccccc">Cañaveral</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-stone-700 mb-1">Contraseña (mínimo 6 caracteres)</label>
+            <input 
+              v-model="regPassword" 
+              type="password" 
+              required 
+              minlength="6"
+              autocomplete="new-password"
+              placeholder="••••••••"
+              class="w-full text-xs px-3 py-2 rounded-lg border border-stone-300 focus:outline-none focus:border-stone-900 bg-stone-50 text-stone-900"
+            />
+          </div>
+
+          <button 
+            type="submit" 
+            :disabled="authLoading"
+            class="w-full bg-stone-900 hover:bg-stone-800 active:scale-[0.98] disabled:opacity-50 text-white font-bold text-xs py-2.5 rounded-xl border border-stone-900 transition cursor-pointer flex items-center justify-center gap-2 shadow-sm"
+          >
+            <span v-if="authLoading" class="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+            <span>{{ authLoading ? 'Creando...' : 'Crear Cuenta y Acceder' }}</span>
+          </button>
+        </form>
       </div>
     </div>
 
@@ -198,10 +272,19 @@ import { adminApi, type AdminUser } from './api';
 const currentUser = ref<AdminUser | null>(adminApi.getStoredUser());
 const currentRoles = ref<string[]>(adminApi.getStoredRoles());
 
+const authMode = ref<'login' | 'register'>('login');
+const authLoading = ref(false);
+const authError = ref('');
+
 const loginEmail = ref('');
 const loginPassword = ref('');
-const loadingLogin = ref(false);
-const loginError = ref('');
+
+// Campos de Registro de Personal
+const regName = ref('');
+const regEmail = ref('');
+const regPassword = ref('');
+const regRole = ref('GENERAL_ADMIN');
+const regStoreId = ref('87c69994-6e69-425b-8cb0-b08be5f97371');
 
 const checkSession = async () => {
   const me = await adminApi.getAuthMe();
@@ -215,23 +298,37 @@ const checkSession = async () => {
 };
 
 const handleLogin = async () => {
-  loadingLogin.value = true;
-  loginError.value = '';
+  authLoading.value = true;
+  authError.value = '';
   try {
     const res = await adminApi.login(loginEmail.value, loginPassword.value);
     currentUser.value = res.user;
     currentRoles.value = res.roles;
   } catch (err: any) {
-    loginError.value = err.message || 'Error al iniciar sesión';
+    authError.value = err.message || 'Error al iniciar sesión';
   } finally {
-    loadingLogin.value = false;
+    authLoading.value = false;
   }
 };
 
-const quickLogin = async (email: string, pass: string) => {
-  loginEmail.value = email;
-  loginPassword.value = pass;
-  await handleLogin();
+const handleRegisterStaff = async () => {
+  authLoading.value = true;
+  authError.value = '';
+  try {
+    const res = await adminApi.registerStaff({
+      full_name: regName.value.trim(),
+      email: regEmail.value.trim(),
+      password: regPassword.value,
+      role: regRole.value,
+      store_id: regStoreId.value
+    });
+    currentUser.value = res.user;
+    currentRoles.value = res.roles;
+  } catch (err: any) {
+    authError.value = err.message || 'Error al registrar personal';
+  } finally {
+    authLoading.value = false;
+  }
 };
 
 const logout = () => {

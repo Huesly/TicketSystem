@@ -201,7 +201,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { api, type CardSummary, type ProductItem, type FeaturedBanner } from '../api';
 
 const loading = ref(true);
-const customerName = ref('Camila');
+const customerName = ref('Socio');
 const activeCard = ref<CardSummary | null>(null);
 const products = ref<ProductItem[]>([]);
 const banner = ref<FeaturedBanner | null>(null);

@@ -215,6 +215,30 @@ export const adminApi = {
     return data;
   },
 
+  async registerStaff(payload: {
+    full_name: string;
+    email: string;
+    password: string;
+    role: string;
+    phone?: string;
+    store_id?: string;
+  }): Promise<AuthResponse> {
+    const res = await fetch(`${API_BASE}/auth/register-staff`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || 'Fallo en el registro de personal');
+    }
+    const data: AuthResponse = await res.json();
+    localStorage.setItem(TOKEN_KEY, data.access_token);
+    localStorage.setItem(USER_KEY, JSON.stringify(data.user));
+    localStorage.setItem(ROLES_KEY, JSON.stringify(data.roles));
+    return data;
+  },
+
   async getAuthMe(): Promise<{ user: AdminUser; roles: string[] } | null> {
     const token = this.getToken();
     if (!token) return null;
