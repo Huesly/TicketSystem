@@ -26,6 +26,16 @@ export interface CardSummary {
   completed_at?: string | null;
 }
 
+export interface FeaturedBanner {
+  id?: string;
+  badge_text: string;
+  title: string;
+  description: string;
+  icon: string;
+  status: 'active' | 'inactive';
+  target_url?: string | null;
+}
+
 export interface CustomerCardsResponse {
   active_card: CardSummary | null;
   past_cycles: CardSummary[];
@@ -247,6 +257,20 @@ export const api = {
   async getProducts(): Promise<ProductItem[]> {
     const res = await fetch(`${API_BASE}/admin/products`);
     if (!res.ok) throw new Error(`Error ${res.status}: Fallo al listar productos`);
+    return res.json();
+  },
+
+  async getFeaturedBanner(): Promise<FeaturedBanner> {
+    const res = await fetch(`${API_BASE}/me/banner`);
+    if (!res.ok) {
+      return {
+        badge_text: 'Cosecha de Origen',
+        title: 'Café de Origen Huila',
+        description: 'Notas tostadas a chocolate negro y caramelo.',
+        icon: 'coffee',
+        status: 'active'
+      };
+    }
     return res.json();
   }
 };

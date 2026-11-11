@@ -21,6 +21,7 @@ from app.models.business import Store
 from app.models.loyalty import LoyaltyCard, StampMovement
 from app.models.purchase import Purchase, QrToken
 from app.models.reward import CustomerReward, RewardRedemption, RewardDefinition
+from app.models.content import Banner
 from app.services.qr_service import QrService
 
 router = APIRouter(prefix="/me", tags=["Cliente"])
@@ -422,4 +423,37 @@ async def get_live_status(
         "available_rewards_count": available_rewards_count,
         "recent_alert": recent_alert
     }
+
+
+@router.get("/banner", summary="Consultar banner destacado activo para clientes")
+async def get_featured_banner(db: AsyncSession = Depends(get_db)):
+    """
+    Retorna el banner de novedades o cosecha activa configurado por la administración.
+    """
+    stmt = (
+        select(Banner)
+        .where(Banner.status == "active")
+        .order_by(Banner.sort_order.asc(), Banner.updated_at.desc())
+        .limit(1)
+    )
+    res = await db.execute(stmt)
+    banner = res.scalar_one_or_none()
+    if not banner:
+        return {
+            "badge_text": "Cosecha de Origen",
+            "title": "Café de Origen Huila",
+            "description": "Notas tostadas a chocolate negro y caramelo.",
+            "icon": "coffee",
+            "status": "active"
+        }
+    return {
+        "id": str(banner.id),
+        "badge_text": banner.badge_text or "Cosecha de Origen",
+        "title": banner.title,
+        "description": banner.description or "",
+        "icon": banner.icon or "coffee",
+        "status": banner.status,
+        "target_url": banner.target_url
+    }
+
 

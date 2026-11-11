@@ -35,9 +35,11 @@ class Banner(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     business_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("businesses.id", ondelete="RESTRICT"), nullable=False)
+    badge_text: Mapped[Optional[str]] = mapped_column(String(50), default="Cosecha de Origen", nullable=True)
     title: Mapped[str] = mapped_column(String(120), nullable=False)
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    image_path: Mapped[str] = mapped_column(Text, nullable=False)
+    icon: Mapped[Optional[str]] = mapped_column(String(50), default="coffee", nullable=True)
+    image_path: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     target_url: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     sort_order: Mapped[int] = mapped_column(SmallInteger, default=0, nullable=False)
     status: Mapped[str] = mapped_column(String(20), default="active", nullable=False)

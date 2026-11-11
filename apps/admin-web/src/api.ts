@@ -7,6 +7,27 @@ const TOKEN_KEY = 'confy_pos_token';
 const USER_KEY = 'confy_pos_user';
 const ROLES_KEY = 'confy_pos_roles';
 
+export interface BannerConfig {
+  id: string;
+  business_id: string;
+  badge_text: string;
+  title: string;
+  description: string;
+  icon: string;
+  status: 'active' | 'inactive';
+  target_url?: string | null;
+  updated_at?: string;
+}
+
+export interface BannerUpdatePayload {
+  badge_text: string;
+  title: string;
+  description: string;
+  icon: string;
+  status: 'active' | 'inactive';
+  target_url?: string | null;
+}
+
 export interface AdminUser {
   id: string;
   full_name: string;
@@ -374,6 +395,31 @@ export const adminApi = {
       headers: getAuthHeaders()
     });
     if (!res.ok) throw new Error('Fallo al generar QR demo');
+    return res.json();
+  },
+
+  async getBannerConfig(): Promise<BannerConfig> {
+    const res = await fetch(`${API_BASE}/admin/banner`, {
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) throw new Error(`Error ${res.status}: Fallo al cargar configuración del banner`);
+    return res.json();
+  },
+
+  async updateBannerConfig(payload: BannerUpdatePayload): Promise<BannerConfig> {
+    const res = await fetch(`${API_BASE}/admin/banner`, {
+      method: 'PUT',
+      headers: {
+        ...getAuthHeaders(),
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      const msg = err.detail?.[0]?.msg || err.detail?.message || err.detail || 'Fallo al guardar banner';
+      throw new Error(msg);
+    }
     return res.json();
   }
 };

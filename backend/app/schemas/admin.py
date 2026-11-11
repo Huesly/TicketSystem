@@ -65,3 +65,23 @@ class AuditTransactionItem(BaseModel):
     stamps_awarded: Optional[int] = None
     reward_name: Optional[str] = None
     status: str
+
+# --- BANNER Y NOVEDADES DINÁMICAS ---
+class BannerUpdateSchema(BaseModel):
+    badge_text: str = Field(..., min_length=2, max_length=30, description="Etiqueta superior (ej. Cosecha de Origen, Novedad)")
+    title: str = Field(..., min_length=2, max_length=60, description="Título principal de la novedad o cosecha")
+    description: str = Field(..., min_length=2, max_length=140, description="Descripción breve o notas de cata")
+    icon: str = Field("coffee", max_length=30, description="Identificador visual del icono")
+    status: str = Field("active", pattern="^(active|inactive)$", description="Estado visible (active) u oculto (inactive)")
+    target_url: Optional[str] = Field(None, max_length=255)
+
+class BannerResponseSchema(BaseModel):
+    id: UUID
+    business_id: UUID
+    badge_text: str
+    title: str
+    description: Optional[str] = None
+    icon: str
+    status: str
+    target_url: Optional[str] = None
+    updated_at: datetime

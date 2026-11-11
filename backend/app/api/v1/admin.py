@@ -16,14 +16,16 @@ from app.models.user import Profile
 from app.models.loyalty import LoyaltyCard, StampMovement
 from app.models.purchase import Purchase
 from app.models.reward import CustomerReward, RewardRedemption, RewardDefinition
-from app.models.content import Product
+from app.models.content import Product, Banner
 from app.schemas.admin import (
     ProductCreateSchema,
     ProductUpdateSchema,
     ProductResponseSchema,
     StoreCreateSchema,
     StoreUpdateSchema,
-    AuditTransactionItem
+    AuditTransactionItem,
+    BannerUpdateSchema,
+    BannerResponseSchema
 )
 from app.api.deps import get_current_cashier_or_admin, get_current_admin
 
@@ -330,3 +332,74 @@ async def delete_product(
     await db.delete(product)
     await db.commit()
     return None
+
+
+# -----------------------------------------------------------------------------
+# 5. GESTIÓN DE BANNER Y NOVEDADES DINÁMICAS
+# -----------------------------------------------------------------------------
+@router.get("/banner", response_model=BannerResponseSchema, summary="Obtener configuración del banner activo")
+async def get_admin_banner(
+    current_user = Depends(get_current_cashier_or_admin),
+    db: AsyncSession = Depends(get_db)
+):
+    bid = await get_default_business_id(db)
+    stmt = select(Banner).where(Banner.business_id == bid).order_by(Banner.sort_order.asc()).limit(1)
+    res = await db.execute(stmt)
+    banner = res.scalar_one_or_none()
+    if not banner:
+        now = datetime.now(timezone.utc)
+        banner = Banner(
+            business_id=bid,
+            badge_text="Cosecha de Origen",
+            title="Café de Origen Huila",
+            description="Notas tostadas a chocolate negro y caramelo.",
+            icon="coffee",
+            status="active",
+            created_at=now,
+            updated_at=now
+        )
+        db.add(banner)
+        await db.commit()
+        await db.refresh(banner)
+
+    return banner
+
+
+@router.put("/banner", response_model=BannerResponseSchema, summary="Actualizar banner de novedades con validación")
+async def update_admin_banner(
+    payload: BannerUpdateSchema,
+    current_user = Depends(get_current_cashier_or_admin),
+    db: AsyncSession = Depends(get_db)
+):
+    bid = await get_default_business_id(db)
+    stmt = select(Banner).where(Banner.business_id == bid).order_by(Banner.sort_order.asc()).limit(1)
+    res = await db.execute(stmt)
+    banner = res.scalar_one_or_none()
+    now = datetime.now(timezone.utc)
+
+    if not banner:
+        banner = Banner(
+            business_id=bid,
+            badge_text=payload.badge_text.strip(),
+            title=payload.title.strip(),
+            description=payload.description.strip(),
+            icon=payload.icon.strip(),
+            status=payload.status,
+            target_url=payload.target_url.strip() if payload.target_url else None,
+            created_at=now,
+            updated_at=now
+        )
+        db.add(banner)
+    else:
+        banner.badge_text = payload.badge_text.strip()
+        banner.title = payload.title.strip()
+        banner.description = payload.description.strip()
+        banner.icon = payload.icon.strip()
+        banner.status = payload.status
+        banner.target_url = payload.target_url.strip() if payload.target_url else None
+        banner.updated_at = now
+
+    await db.commit()
+    await db.refresh(banner)
+    return banner
+

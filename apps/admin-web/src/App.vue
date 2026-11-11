@@ -141,6 +141,22 @@
             <span class="hidden xs:inline">Analítica</span>
           </router-link>
 
+          <!-- Botón Banner de Novedades -->
+          <router-link 
+            to="/banners" 
+            class="text-[11px] sm:text-xs font-semibold px-2 sm:px-3 py-1.5 rounded-lg transition flex items-center gap-1 sm:gap-1.5 border"
+            :class="$route.name === 'banners' 
+              ? 'bg-stone-900 text-white border-stone-900 shadow-xs' 
+              : 'bg-transparent text-stone-600 border-transparent hover:bg-stone-100 hover:border-stone-300 hover:text-stone-900'"
+          >
+            <!-- SVG: Megaphone / Banner -->
+            <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="m3 11 18-5v12L3 14v-3z"/>
+              <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>
+            </svg>
+            <span class="hidden xs:inline">Banner</span>
+          </router-link>
+
           <div class="h-4 w-px bg-stone-200 mx-0.5 sm:mx-1.5 hidden sm:block"></div>
 
           <!-- Perfil del Cajero / Admin Adaptado a Mobile -->

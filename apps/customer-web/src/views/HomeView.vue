@@ -68,18 +68,40 @@
         <p class="text-xs text-[#786558]">Cada visita suma a tu próxima bebida de especialidad.</p>
       </div>
 
-      <!-- Banner Destacado de Especialidad (Cafe Espresso Gradient) -->
-      <div class="bg-gradient-to-br from-[#2B1D14] via-[#3E2B1E] to-[#1B120C] text-white rounded-2xl fluid-pad border border-[#5D4432]/60 shadow-md flex items-center justify-between gap-4">
+      <!-- Banner Destacado de Especialidad (Cafe Espresso Gradient) - Administrable Dinámicamente -->
+      <div 
+        v-if="banner && banner.status === 'active'"
+        class="bg-gradient-to-br from-[#2B1D14] via-[#3E2B1E] to-[#1B120C] text-white rounded-2xl fluid-pad border border-[#5D4432]/60 shadow-md flex items-center justify-between gap-4 transition-all duration-300"
+      >
         <div class="space-y-1">
           <div class="inline-flex items-center gap-1.5 text-[10px] font-bold text-amber-200 bg-white/10 px-2.5 py-0.5 rounded-full border border-white/15">
             <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
-            Cosecha de Origen
+            {{ banner.badge_text || 'Cosecha de Origen' }}
           </div>
-          <h3 class="font-extrabold text-sm text-white tracking-tight">Café de Origen Huila</h3>
-          <p class="text-xs text-[#E9E3DD]/90 leading-snug">Notas tostadas a chocolate negro y caramelo.</p>
+          <h3 class="font-extrabold text-sm text-white tracking-tight">{{ banner.title }}</h3>
+          <p class="text-xs text-[#E9E3DD]/90 leading-snug">{{ banner.description }}</p>
         </div>
         <div class="w-11 h-11 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-amber-300 shrink-0 shadow-inner">
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <!-- Ícono de Novedades -->
+          <svg v-if="banner.icon === 'sparkles'" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+          </svg>
+          <!-- Ícono de Tostión / Fuego -->
+          <svg v-else-if="banner.icon === 'flame'" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
+          </svg>
+          <!-- Ícono de Recomendación / Premio -->
+          <svg v-else-if="banner.icon === 'award'" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="8" r="6"/>
+            <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>
+          </svg>
+          <!-- Ícono de Descuento / Etiqueta -->
+          <svg v-else-if="banner.icon === 'tag'" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/>
+            <path d="M7 7h.01"/>
+          </svg>
+          <!-- Ícono Predeterminado: Taza de Café de Especialidad -->
+          <svg v-else class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M17 8h1a4 4 0 1 1 0 8h-1"/>
             <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/>
           </svg>
@@ -176,12 +198,13 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { api, type CardSummary, type ProductItem } from '../api';
+import { api, type CardSummary, type ProductItem, type FeaturedBanner } from '../api';
 
 const loading = ref(true);
 const customerName = ref('Camila');
 const activeCard = ref<CardSummary | null>(null);
 const products = ref<ProductItem[]>([]);
+const banner = ref<FeaturedBanner | null>(null);
 
 const currentStamps = computed(() => activeCard.value?.stamps_count || 0);
 
@@ -191,10 +214,11 @@ const loadData = async () => {
   try {
     loading.value = true;
     const minDelay = delay(850);
-    const [cardRes, profileRes, prodRes] = await Promise.all([
+    const [cardRes, profileRes, prodRes, bannerRes] = await Promise.all([
       api.getLoyaltyCards().catch(() => null),
       api.getProfile().catch(() => null),
       api.getProducts().catch(() => []),
+      api.getFeaturedBanner().catch(() => null),
       minDelay
     ]);
 
@@ -206,6 +230,9 @@ const loadData = async () => {
     }
     if (prodRes && prodRes.length > 0) {
       products.value = prodRes;
+    }
+    if (bannerRes) {
+      banner.value = bannerRes;
     }
   } catch (err) {
     console.error('Error cargando datos de inicio:', err);
