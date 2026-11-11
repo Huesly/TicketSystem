@@ -429,30 +429,28 @@ async def get_live_status(
 async def get_featured_banner(db: AsyncSession = Depends(get_db)):
     """
     Retorna el banner de novedades o cosecha activa configurado por la administración.
+    Si está marcado como inactivo u oculto por el administrador, retorna status: inactive.
     """
     stmt = (
         select(Banner)
-        .where(Banner.status == "active")
         .order_by(Banner.sort_order.asc(), Banner.updated_at.desc())
         .limit(1)
     )
     res = await db.execute(stmt)
     banner = res.scalar_one_or_none()
-    if not banner:
+
+    if not banner or banner.status != "active":
         return {
-            "badge_text": "Cosecha de Origen",
-            "title": "Café de Origen Huila",
-            "description": "Notas tostadas a chocolate negro y caramelo.",
-            "icon": "coffee",
-            "status": "active"
+            "status": "inactive"
         }
+
     return {
         "id": str(banner.id),
         "badge_text": banner.badge_text or "Cosecha de Origen",
         "title": banner.title,
         "description": banner.description or "",
         "icon": banner.icon or "coffee",
-        "status": banner.status,
+        "status": "active",
         "target_url": banner.target_url
     }
 

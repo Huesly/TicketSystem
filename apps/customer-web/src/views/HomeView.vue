@@ -231,9 +231,7 @@ const loadData = async () => {
     if (prodRes && prodRes.length > 0) {
       products.value = prodRes;
     }
-    if (bannerRes) {
-      banner.value = bannerRes;
-    }
+    banner.value = bannerRes;
   } catch (err) {
     console.error('Error cargando datos de inicio:', err);
   } finally {
