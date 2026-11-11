@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 
 from app.core.database import get_db
-from app.api.deps import security_scheme, HTTPAuthorizationCredentials
+from app.api.deps import security_scheme, HTTPAuthorizationCredentials, get_current_user
 from app.core.security import decode_access_token
 from app.schemas.user import UserProfileSchema, UserUpdateSchema
 from app.schemas.loyalty import CustomerCardsResponse, CardSummarySchema
@@ -26,38 +26,17 @@ from app.services.qr_service import QrService
 
 router = APIRouter(prefix="/me", tags=["Cliente"])
 
-# Extrae usuario autenticado desde el JWT Bearer con fallback a demo
+# Extrae el ID del usuario autenticado de forma estricta a través del token JWT
 async def get_current_user_id(
-    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security_scheme)
+    current_user: Profile = Depends(get_current_user)
 ) -> UUID:
-    if credentials and credentials.credentials:
-        payload = decode_access_token(credentials.credentials)
-        if payload and "sub" in payload:
-            try:
-                return UUID(payload["sub"])
-            except Exception:
-                pass
-    # ID demo por defecto como fallback seguro en caso de prueba inicial
-    return UUID("00000000-0000-0000-0000-000000000001")
+    return current_user.id
 
 @router.get("", response_model=UserProfileSchema, summary="Consultar perfil del cliente actual")
 async def get_my_profile(
-    user_id: UUID = Depends(get_current_user_id),
-    db: AsyncSession = Depends(get_db)
+    current_user: Profile = Depends(get_current_user)
 ):
-    profile = await db.get(Profile, user_id)
-    if not profile:
-        # Si no existe en BD local (primera ejecución), crear perfil de prueba
-        profile = Profile(
-            id=user_id,
-            full_name="Camila Rodríguez",
-            email="camila.rodriguez@email.com",
-            phone="+573001234567",
-            status="active"
-        )
-        db.add(profile)
-        await db.commit()
-    return profile
+    return current_user
 
 @router.get("/loyalty/cards", response_model=CustomerCardsResponse, summary="Consultar tarjeta activa e historial")
 async def get_my_cards(

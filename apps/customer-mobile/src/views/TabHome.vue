@@ -5,7 +5,7 @@
         <!-- Encabezado Minimalista Mobile -->
         <div class="flex items-center justify-between pt-2">
           <div>
-            <h2 class="fluid-title font-extrabold text-roast-900">Hola, Camila</h2>
+            <h2 class="fluid-title font-extrabold text-roast-900">Hola, {{ customerName }}</h2>
             <p class="text-xs text-roast-500">Cada café suma a tu próxima cortesía.</p>
           </div>
           <button
@@ -169,6 +169,7 @@ const qrToken = ref('');
 const timeLeft = ref(60);
 const qrExpired = ref(false);
 const loadingQr = ref(false);
+const customerName = ref('Socio');
 const products = ref<any[]>([]);
 const cardInfo = ref<any>(null);
 let timer: any = null;
