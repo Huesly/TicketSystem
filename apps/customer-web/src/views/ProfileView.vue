@@ -111,6 +111,24 @@
           </div>
         </div>
 
+        <!-- Opciones de Seguridad y Contraseña -->
+        <div class="bg-white rounded-2xl p-4 border border-[#E3DAD2] shadow-sm space-y-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-[#786558]">Seguridad de la Cuenta</h4>
+          <button
+            type="button"
+            @click="openChangePasswordModal"
+            class="w-full text-xs font-bold text-[#3E2B1E] bg-[#F9F7F5] hover:bg-[#E9E3DD]/60 border border-[#E3DAD2] px-4 py-2.5 rounded-xl transition flex items-center justify-between cursor-pointer"
+          >
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-[#786558]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/>
+              </svg>
+              <span>Cambiar mi contraseña</span>
+            </div>
+            <span class="text-xs text-[#786558]">→</span>
+          </button>
+        </div>
+
         <!-- Botón de Cerrar Sesión Seguro -->
         <div class="bg-white rounded-2xl p-4 border border-[#E3DAD2] shadow-sm space-y-2">
           <button
@@ -186,6 +204,96 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal Cambiar Contraseña del Cliente -->
+    <div v-if="showChangePasswordModal" class="fixed inset-0 bg-stone-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div class="bg-white rounded-2xl border border-[#E3DAD2] p-5 w-full max-w-sm shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-200">
+        <div class="flex items-center justify-between pb-1 border-b border-[#E3DAD2]">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-xl bg-[#5D4432] text-[#E9E3DD] flex items-center justify-center">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-sm font-extrabold text-[#3E2B1E]">Seguridad</h3>
+              <p class="text-[11px] text-[#786558]">Cambiar mi contraseña</p>
+            </div>
+          </div>
+          <button 
+            type="button" 
+            @click="showChangePasswordModal = false" 
+            class="text-[#786558] hover:text-[#3E2B1E] p-1 rounded-lg cursor-pointer"
+          >
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+            </svg>
+          </button>
+        </div>
+
+        <div v-if="pwdError" class="p-2.5 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700 font-medium">
+          {{ pwdError }}
+        </div>
+        <div v-if="pwdSuccess" class="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 font-medium">
+          {{ pwdSuccess }}
+        </div>
+
+        <form @submit.prevent="handleChangePassword" class="space-y-3">
+          <div class="space-y-1">
+            <label class="block text-xs font-bold text-[#3E2B1E]">Contraseña Actual</label>
+            <input 
+              v-model="currentPassword" 
+              type="password" 
+              required 
+              placeholder="••••••••"
+              class="w-full text-xs px-3 py-2 rounded-xl border border-[#E3DAD2] focus:border-[#5D4432] bg-[#F9F7F5] text-[#3E2B1E] outline-none"
+            />
+          </div>
+
+          <div class="space-y-1">
+            <label class="block text-xs font-bold text-[#3E2B1E]">Nueva Contraseña (mínimo 6 caracteres)</label>
+            <input 
+              v-model="newPassword" 
+              type="password" 
+              required 
+              minlength="6"
+              placeholder="••••••••"
+              class="w-full text-xs px-3 py-2 rounded-xl border border-[#E3DAD2] focus:border-[#5D4432] bg-[#F9F7F5] text-[#3E2B1E] outline-none"
+            />
+          </div>
+
+          <div class="space-y-1">
+            <label class="block text-xs font-bold text-[#3E2B1E]">Confirmar Nueva Contraseña</label>
+            <input 
+              v-model="confirmPassword" 
+              type="password" 
+              required 
+              minlength="6"
+              placeholder="••••••••"
+              class="w-full text-xs px-3 py-2 rounded-xl border border-[#E3DAD2] focus:border-[#5D4432] bg-[#F9F7F5] text-[#3E2B1E] outline-none"
+            />
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 pt-2">
+            <button 
+              type="button" 
+              @click="showChangePasswordModal = false" 
+              class="w-full text-xs font-bold text-[#3E2B1E] bg-[#F9F7F5] hover:bg-stone-200 py-2.5 rounded-xl border border-[#E3DAD2] transition cursor-pointer"
+            >
+              Cancelar
+            </button>
+            <button 
+              type="submit" 
+              :disabled="pwdLoading"
+              class="w-full bg-[#5D4432] hover:bg-[#473325] disabled:opacity-50 text-white font-bold text-xs py-2.5 rounded-xl transition cursor-pointer flex items-center justify-center gap-1.5 shadow-sm active:scale-95"
+            >
+              <span v-if="pwdLoading" class="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+              <span>{{ pwdLoading ? 'Guardando...' : 'Actualizar' }}</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -198,6 +306,61 @@ const router = useRouter();
 const loading = ref(true);
 const currentUser = ref<CustomerProfile | null>(null);
 const showLogoutConfirm = ref(false);
+
+// Cambio de Contraseña Modal
+const showChangePasswordModal = ref(false);
+const currentPassword = ref('');
+const newPassword = ref('');
+const confirmPassword = ref('');
+const pwdLoading = ref(false);
+const pwdError = ref('');
+const pwdSuccess = ref('');
+
+const openChangePasswordModal = () => {
+  currentPassword.value = '';
+  newPassword.value = '';
+  confirmPassword.value = '';
+  pwdError.value = '';
+  pwdSuccess.value = '';
+  showChangePasswordModal.value = true;
+};
+
+const handleChangePassword = async () => {
+  pwdError.value = '';
+  pwdSuccess.value = '';
+
+  if (!currentPassword.value) {
+    pwdError.value = 'Ingresa tu contraseña actual.';
+    return;
+  }
+  if (!newPassword.value || newPassword.value.length < 6) {
+    pwdError.value = 'La nueva contraseña debe tener al menos 6 caracteres.';
+    return;
+  }
+  if (newPassword.value !== confirmPassword.value) {
+    pwdError.value = 'Las contraseñas no coinciden.';
+    return;
+  }
+
+  pwdLoading.value = true;
+  try {
+    const res = await api.changePassword({
+      current_password: currentPassword.value,
+      new_password: newPassword.value
+    });
+    pwdSuccess.value = res.message || 'Contraseña actualizada correctamente.';
+    currentPassword.value = '';
+    newPassword.value = '';
+    confirmPassword.value = '';
+    setTimeout(() => {
+      showChangePasswordModal.value = false;
+    }, 1800);
+  } catch (err: any) {
+    pwdError.value = err.message || 'Error al cambiar contraseña';
+  } finally {
+    pwdLoading.value = false;
+  }
+};
 const loyaltyStats = ref({
   activeStamps: 0,
   completedCycles: 0,

@@ -270,5 +270,44 @@ export const api = {
     } catch {
       return null;
     }
+  },
+
+  async forgotPassword(email: string): Promise<{ message: string; expires_in_minutes?: number; dev_code?: string }> {
+    const res = await fetch(`${API_BASE}/auth/forgot-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || 'Error al solicitar código de recuperación');
+    }
+    return res.json();
+  },
+
+  async resetPassword(payload: { email: string; code: string; new_password: string }): Promise<{ message: string }> {
+    const res = await fetch(`${API_BASE}/auth/reset-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || 'Error al restablecer la contraseña');
+    }
+    return res.json();
+  },
+
+  async changePassword(payload: { current_password: string; new_password: string }): Promise<{ message: string }> {
+    const res = await fetch(`${API_BASE}/auth/change-password`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || 'Error al actualizar la contraseña');
+    }
+    return res.json();
   }
 };

@@ -46,10 +46,10 @@
       <!-- Tarjeta Contenedora de Autenticación -->
       <div class="bg-white rounded-2xl p-6 border border-[#E3DAD2] shadow-sm space-y-5">
         <!-- Selector de Pestañas -->
-        <div class="grid grid-cols-2 gap-1 bg-[#F9F7F5] p-1 rounded-xl border border-[#E3DAD2]">
+        <div v-if="authTab !== 'forgot'" class="grid grid-cols-2 gap-1 bg-[#F9F7F5] p-1 rounded-xl border border-[#E3DAD2]">
           <button
             type="button"
-            @click="authTab = 'login'; authError = ''"
+            @click="authTab = 'login'; authError = ''; authSuccess = ''"
             class="text-xs font-bold py-2 rounded-lg transition cursor-pointer"
             :class="authTab === 'login' ? 'bg-[#5D4432] text-white shadow-2xs' : 'text-[#786558] hover:text-[#3E2B1E]'"
           >
@@ -57,12 +57,20 @@
           </button>
           <button
             type="button"
-            @click="authTab = 'register'; authError = ''"
+            @click="authTab = 'register'; authError = ''; authSuccess = ''"
             class="text-xs font-bold py-2 rounded-lg transition cursor-pointer"
             :class="authTab === 'register' ? 'bg-[#5D4432] text-white shadow-2xs' : 'text-[#786558] hover:text-[#3E2B1E]'"
           >
             Crear Cuenta
           </button>
+        </div>
+
+        <!-- Alerta de Éxito -->
+        <div v-if="authSuccess" class="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-xs flex items-center gap-2 animate-in fade-in">
+          <svg class="w-4 h-4 shrink-0 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 6 9 17l-5-5"/>
+          </svg>
+          <span>{{ authSuccess }}</span>
         </div>
 
         <!-- Alerta de Error -->
@@ -88,7 +96,16 @@
           </div>
 
           <div class="space-y-1.5">
-            <label class="block text-xs font-bold text-[#3E2B1E]">Contraseña</label>
+            <div class="flex items-center justify-between">
+              <label class="block text-xs font-bold text-[#3E2B1E]">Contraseña</label>
+              <button 
+                type="button" 
+                @click="openForgotPassword"
+                class="text-[11px] text-[#8C4B13] hover:underline font-semibold cursor-pointer"
+              >
+                ¿Olvidaste tu contraseña?
+              </button>
+            </div>
             <input
               v-model="loginPassword"
               type="password"
@@ -112,7 +129,7 @@
         </form>
 
         <!-- FORMULARIO 2: CREAR CUENTA -->
-        <form v-else @submit.prevent="handleRegister" class="space-y-3.5">
+        <form v-else-if="authTab === 'register'" @submit.prevent="handleRegister" class="space-y-3.5">
           <div class="space-y-1">
             <label class="block text-xs font-bold text-[#3E2B1E]">Nombre y Apellido</label>
             <input
@@ -176,6 +193,136 @@
             <span>{{ isSubmitting ? 'Creando cuenta...' : 'Crear Cuenta y Obtener Tarjeta' }}</span>
           </button>
         </form>
+
+        <!-- FORMULARIO 3: RECUPERAR CONTRASEÑA (OTP POR CORREO) -->
+        <div v-else-if="authTab === 'forgot'" class="space-y-4">
+          <!-- Paso 1: Solicitar Código OTP -->
+          <form v-if="recoveryStep === 1" @submit.prevent="handleRequestOtp" class="space-y-3.5">
+            <div class="text-center space-y-1 pb-1">
+              <h3 class="text-sm font-extrabold text-[#3E2B1E]">Recuperar Contraseña</h3>
+              <p class="text-xs text-[#786558]">Ingresa tu correo registrado para recibir un código de seguridad de 6 dígitos.</p>
+            </div>
+
+            <div class="space-y-1">
+              <label class="block text-xs font-bold text-[#3E2B1E]">Correo Registrado</label>
+              <input
+                v-model="recoveryEmail"
+                type="email"
+                required
+                autocomplete="email"
+                placeholder="tu.correo@ejemplo.com"
+                class="w-full bg-[#F9F7F5] border border-[#E3DAD2] focus:border-[#5D4432] focus:ring-1 focus:ring-[#5D4432] rounded-xl px-3.5 py-2.5 text-xs text-[#3E2B1E] placeholder-[#A6978C] outline-none transition"
+              />
+            </div>
+
+            <button
+              type="submit"
+              :disabled="isSubmitting"
+              class="w-full bg-[#5D4432] hover:bg-[#473325] disabled:opacity-50 text-white font-bold text-xs py-3 rounded-xl transition cursor-pointer shadow-sm active:scale-95 flex items-center justify-center gap-2"
+            >
+              <svg v-if="isSubmitting" class="w-4 h-4 animate-spin text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10" stroke-opacity="0.25"/><path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"/>
+              </svg>
+              <span>{{ isSubmitting ? 'Enviando código...' : 'Enviar Código al Correo' }}</span>
+            </button>
+
+            <div class="text-center pt-1">
+              <button
+                type="button"
+                @click="authTab = 'login'; authError = ''"
+                class="text-xs font-semibold text-[#786558] hover:text-[#3E2B1E] cursor-pointer"
+              >
+                Volver a Iniciar Sesión
+              </button>
+            </div>
+          </form>
+
+          <!-- Paso 2: Verificar Código OTP y Definir Nueva Contraseña -->
+          <form v-else @submit.prevent="handleResetPassword" class="space-y-3.5">
+            <div class="text-center space-y-1 pb-1">
+              <h3 class="text-sm font-extrabold text-[#3E2B1E]">Verificar Identidad</h3>
+              <p class="text-xs text-[#786558]">
+                Código enviado a <strong class="text-[#3E2B1E] font-mono">{{ recoveryEmail }}</strong>
+              </p>
+            </div>
+
+            <!-- Banner Dev Code para pruebas rápidas -->
+            <div v-if="recoveryDevCode" class="p-2.5 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900 flex items-center justify-between">
+              <span>Código generado: <strong class="font-mono text-sm tracking-widest">{{ recoveryDevCode }}</strong></span>
+              <button
+                type="button"
+                @click="recoveryCode = recoveryDevCode"
+                class="text-[10px] font-bold underline cursor-pointer text-amber-800"
+              >
+                Autocompletar
+              </button>
+            </div>
+
+            <div class="space-y-1">
+              <label class="block text-xs font-bold text-[#3E2B1E]">Código de Seguridad (6 dígitos)</label>
+              <input
+                v-model="recoveryCode"
+                type="text"
+                required
+                maxlength="6"
+                placeholder="123456"
+                class="w-full text-center text-lg font-black tracking-widest font-mono py-2 rounded-xl border border-[#E3DAD2] focus:outline-none focus:border-[#5D4432] bg-[#F9F7F5] text-[#3E2B1E]"
+              />
+            </div>
+
+            <div class="space-y-1">
+              <label class="block text-xs font-bold text-[#3E2B1E]">Nueva Contraseña (mínimo 6 caracteres)</label>
+              <input
+                v-model="newPassword"
+                type="password"
+                required
+                minlength="6"
+                placeholder="••••••••"
+                class="w-full bg-[#F9F7F5] border border-[#E3DAD2] focus:border-[#5D4432] focus:ring-1 focus:ring-[#5D4432] rounded-xl px-3.5 py-2.5 text-xs text-[#3E2B1E] placeholder-[#A6978C] outline-none transition"
+              />
+            </div>
+
+            <div class="space-y-1">
+              <label class="block text-xs font-bold text-[#3E2B1E]">Confirmar Nueva Contraseña</label>
+              <input
+                v-model="confirmPassword"
+                type="password"
+                required
+                minlength="6"
+                placeholder="••••••••"
+                class="w-full bg-[#F9F7F5] border border-[#E3DAD2] focus:border-[#5D4432] focus:ring-1 focus:ring-[#5D4432] rounded-xl px-3.5 py-2.5 text-xs text-[#3E2B1E] placeholder-[#A6978C] outline-none transition"
+              />
+            </div>
+
+            <button
+              type="submit"
+              :disabled="isSubmitting"
+              class="w-full bg-[#5D4432] hover:bg-[#473325] disabled:opacity-50 text-white font-bold text-xs py-3 rounded-xl transition cursor-pointer shadow-sm active:scale-95 flex items-center justify-center gap-2"
+            >
+              <svg v-if="isSubmitting" class="w-4 h-4 animate-spin text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10" stroke-opacity="0.25"/><path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"/>
+              </svg>
+              <span>{{ isSubmitting ? 'Actualizando...' : 'Restablecer Contraseña' }}</span>
+            </button>
+
+            <div class="flex items-center justify-between text-xs pt-1">
+              <button
+                type="button"
+                @click="recoveryStep = 1; authError = ''"
+                class="text-[#786558] hover:text-[#3E2B1E] font-semibold cursor-pointer"
+              >
+                ← Cambiar correo
+              </button>
+              <button
+                type="button"
+                @click="handleRequestOtp"
+                class="text-[#8C4B13] hover:underline font-bold cursor-pointer"
+              >
+                Reenviar código
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
 
       <div class="text-center">
@@ -414,9 +561,10 @@ const loadingAuth = ref(true);
 const showAuthModal = ref(false);
 const currentUser = ref<CustomerProfile | null>(null);
 
-const authTab = ref<'login' | 'register'>('login');
+const authTab = ref<'login' | 'register' | 'forgot'>('login');
 const isSubmitting = ref(false);
 const authError = ref('');
+const authSuccess = ref('');
 
 const loginEmail = ref('');
 const loginPassword = ref('');
@@ -425,6 +573,14 @@ const regFullName = ref('');
 const regEmail = ref('');
 const regPhone = ref('');
 const regPassword = ref('');
+
+// Recuperación de Contraseña (OTP)
+const recoveryStep = ref<1 | 2>(1);
+const recoveryEmail = ref('');
+const recoveryCode = ref('');
+const recoveryDevCode = ref('');
+const newPassword = ref('');
+const confirmPassword = ref('');
 
 const showQrModal = ref(false);
 const qrToken = ref('');
@@ -517,6 +673,70 @@ const handleLogin = async () => {
     window.dispatchEvent(new CustomEvent('confy-user-changed'));
   } catch (err: any) {
     authError.value = err.message || 'Error al iniciar sesión';
+  } finally {
+    isSubmitting.value = false;
+  }
+};
+
+const openForgotPassword = () => {
+  authTab.value = 'forgot';
+  recoveryStep.value = 1;
+  recoveryEmail.value = loginEmail.value.trim();
+  recoveryCode.value = '';
+  recoveryDevCode.value = '';
+  newPassword.value = '';
+  confirmPassword.value = '';
+  authError.value = '';
+  authSuccess.value = '';
+};
+
+const handleRequestOtp = async () => {
+  if (!recoveryEmail.value) {
+    authError.value = 'Ingresa tu correo electrónico registrado.';
+    return;
+  }
+  isSubmitting.value = true;
+  authError.value = '';
+  try {
+    const res = await api.forgotPassword(recoveryEmail.value.trim());
+    recoveryStep.value = 2;
+    recoveryDevCode.value = res.dev_code || '';
+    recoveryCode.value = res.dev_code || '';
+  } catch (err: any) {
+    authError.value = err.message || 'Error al solicitar el código';
+  } finally {
+    isSubmitting.value = false;
+  }
+};
+
+const handleResetPassword = async () => {
+  authError.value = '';
+  if (!recoveryCode.value || recoveryCode.value.trim().length !== 6) {
+    authError.value = 'Ingresa el código de 6 dígitos enviado a tu correo.';
+    return;
+  }
+  if (!newPassword.value || newPassword.value.length < 6) {
+    authError.value = 'La nueva contraseña debe tener al menos 6 caracteres.';
+    return;
+  }
+  if (newPassword.value !== confirmPassword.value) {
+    authError.value = 'Las contraseñas no coinciden.';
+    return;
+  }
+
+  isSubmitting.value = true;
+  try {
+    const res = await api.resetPassword({
+      email: recoveryEmail.value.trim(),
+      code: recoveryCode.value.trim(),
+      new_password: newPassword.value
+    });
+    authTab.value = 'login';
+    loginEmail.value = recoveryEmail.value.trim();
+    loginPassword.value = '';
+    authSuccess.value = res.message || '¡Contraseña restablecida con éxito! Ya puedes ingresar con tu nueva clave.';
+  } catch (err: any) {
+    authError.value = err.message || 'Error al restablecer la contraseña';
   } finally {
     isSubmitting.value = false;
   }
