@@ -11,7 +11,7 @@ Repositorio oficial de la **Capa de Presentación y Aplicaciones Cliente** de **
 | Aplicación | Ruta Workspace | Puerto Local | Audiencia y Propósito |
 | :--- | :--- | :---: | :--- |
 | **App Web de Clientes (`customer-web`)** | [`apps/customer-web`](./apps/customer-web) | `3010` | Aplicación pública para clientes de la cafetería: Login/Registro con Habeas Data (Ley 1581), recuperación de clave con código OTP, tarjeta digital interactiva de 8 sellos en tiempo real, generación de QR efímero y Carnet QR permanente estilo Starbucks, vitrina de productos, sedes y **reimpresión de Facturas Electrónicas DIAN (PDF / XML UBL 2.1)**. |
-| **Terminal Caja POS y Backoffice (`admin-web`)** | [`apps/admin-web`](./apps/admin-web) | `3020` | Aplicación corporativa para Cajeros y Administradores: Escáner QR por cámara (`@zxing/library`) e ingreso manual, acreditación de sellos y emisión automática de **Factura Electrónica DIAN con CUFE SHA-384**, canje asistido de premios en barra, Dashboard de KPIs, anulación con **Nota Crédito DIAN**, gestión de clientes y ajustes manuales de sellos, CRUD de sedes/productos/banner y laboratorio de **Ciberseguridad + Importador SQL**. |
+| **Terminal Caja POS y Backoffice (`admin-web`)** | [`apps/admin-web`](./apps/admin-web) | `3020` | Aplicación corporativa para Cajeros y Administradores: Escáner QR por cámara (`@zxing/library`) e ingreso manual, acreditación de sellos y emisión automática de **Factura Electrónica DIAN con CUFE SHA-384**, canje asistido de premios en barra, Dashboard de KPIs, anulación con **Nota Crédito DIAN**, gestión de clientes y ajustes manuales de sellos, CRUD de sedes/productos/banner y configuración de resolución DIAN. |
 | **App Móvil Híbrida (`customer-mobile`)** | [`apps/customer-mobile`](./apps/customer-mobile) | `3030` | Aplicación móvil nativa/híbrida construida con **Ionic Framework + Vue 3 + Capacitor 6** lista para empaquetado Android (`.apk` / `.aab`) e iOS. |
 
 ---
@@ -42,9 +42,9 @@ TicketSystem/
 │   │   │   │   └── DianInvoiceModal.vue# Tirilla POS 80mm, QR DIAN, CUFE, descarga XML/JSON
 │   │   │   ├── views/
 │   │   │   │   ├── CashierView.vue     # Terminal POS de caja + editor de banner con vista previa
-│   │   │   │   └── DashboardView.vue   # Backoffice: KPIs, Productos, Sedes, Clientes, DIAN y SQL
+│   │   │   │   └── DashboardView.vue   # Backoffice: KPIs, Productos, Sedes, Clientes y DIAN
 │   │   │   ├── api.ts                  # Cliente HTTP administrativo y POS
-│   │   │   └── debugConsole.ts         # SDK de auditoría WAF y consultas SQL en consola JS
+│   │   │   └── debugConsole.ts         # SDK de diagnóstico en consola JS
 │   │   └── vite.config.ts
 │   │
 │   └── customer-mobile/                # App Móvil Ionic + Capacitor 6 (Android / iOS)

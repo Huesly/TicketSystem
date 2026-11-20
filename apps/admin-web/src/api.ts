@@ -498,22 +498,6 @@ export const adminApi = {
     return res.json();
   },
 
-  async runSqlImport(sql_script: string, dry_run = false): Promise<any> {
-    const res = await fetch(`${API_BASE}/admin/sql-import`, {
-      method: 'POST',
-      headers: {
-        ...getAuthHeaders(),
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ sql_script, dry_run })
-    });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      throw new Error(data.detail || 'Error al ejecutar lote SQL');
-    }
-    return data;
-  },
-
   async getInvoice(purchaseId: string, reprint = true): Promise<any> {
     const res = await fetch(`${API_BASE}/admin/invoices/${purchaseId}?reprint=${reprint}`, {
       headers: getAuthHeaders()

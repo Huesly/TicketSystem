@@ -81,21 +81,6 @@
           </svg>
           <span>Facturación DIAN &amp; Reglas</span>
         </button>
-
-        <button 
-          type="button"
-          @click="openSecurityTab"
-          class="px-3 sm:px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 border shrink-0"
-          :class="activeTab === 'security' 
-            ? 'bg-white text-stone-950 font-bold border-stone-400 shadow-2xs' 
-            : 'bg-transparent text-stone-600 hover:text-stone-900 border-transparent hover:border-stone-300 hover:bg-stone-200/60'"
-        >
-          <!-- SVG: Shield -->
-          <svg class="w-3.5 h-3.5 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
-          </svg>
-          <span>Seguridad &amp; SQL</span>
-        </button>
       </div>
     </div>
 
@@ -520,185 +505,6 @@
     </div>
 
     <!-- ===================================================================== -->
-    <!-- TAB 4: CIBERSEGURIDAD, WAF ANTI-SQLI/DDOS, CONSOLA JS E IMPORTADOR SQL -->
-    <!-- ===================================================================== -->
-    <div v-else-if="activeTab === 'security'" class="space-y-5">
-      <!-- Estado de Escudos Activos -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-white p-4 rounded-2xl border border-stone-300 shadow-sm space-y-1.5">
-          <div class="flex items-center justify-between">
-            <span class="text-[11px] font-bold uppercase tracking-wider text-stone-500">Escudo WAF SQLi / XSS</span>
-            <span class="text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-300 px-2 py-0.5 rounded-full">Activo</span>
-          </div>
-          <p class="text-sm font-extrabold text-stone-950">{{ securityStatus?.shield || 'ConfyTickets-WAF-v1' }}</p>
-          <p class="text-[11px] text-stone-500">Inspección de Query/Body + ORM Parametrizado</p>
-        </div>
-
-        <div class="bg-white p-4 rounded-2xl border border-stone-300 shadow-sm space-y-1.5">
-          <div class="flex items-center justify-between">
-            <span class="text-[11px] font-bold uppercase tracking-wider text-stone-500">Contención Anti-DDoS</span>
-            <span 
-              class="text-[10px] font-bold px-2 py-0.5 rounded-full border"
-              :class="securityStatus?.redis_rate_limiter_online ? 'bg-emerald-50 text-emerald-800 border-emerald-300' : 'bg-amber-50 text-amber-800 border-amber-300'"
-            >
-              {{ securityStatus?.redis_rate_limiter_online ? 'Redis Online' : 'Fail-Safe' }}
-            </span>
-          </div>
-          <p class="text-sm font-extrabold font-mono text-stone-950">
-            {{ securityStatus?.limits?.global_requests_per_minute || 120 }} req/min · Login: {{ securityStatus?.limits?.auth_requests_per_minute || 15 }}/min
-          </p>
-          <p class="text-[11px] text-stone-500">IP detectada: <strong class="font-mono text-stone-800">{{ securityStatus?.client_ip || '...' }}</strong></p>
-        </div>
-
-        <div class="bg-white p-4 rounded-2xl border border-stone-300 shadow-sm space-y-1.5">
-          <div class="flex items-center justify-between">
-            <span class="text-[11px] font-bold uppercase tracking-wider text-stone-500">Habeas Data (Ley 1581)</span>
-            <span class="text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-300 px-2 py-0.5 rounded-full">Protegido</span>
-          </div>
-          <p class="text-sm font-extrabold font-mono text-stone-950">
-            {{ securityStatus?.protections?.recorded_consents_count ?? 0 }} consentimientos
-          </p>
-          <p class="text-[11px] text-stone-500">Evidencia de IP, User-Agent y versión legal</p>
-        </div>
-
-        <div class="bg-white p-4 rounded-2xl border border-stone-300 shadow-sm space-y-1.5">
-          <div class="flex items-center justify-between">
-            <span class="text-[11px] font-bold uppercase tracking-wider text-stone-500">Cabeceras &amp; Cifrado</span>
-            <span class="text-[10px] font-bold bg-stone-100 text-stone-800 border border-stone-300 px-2 py-0.5 rounded-full">Bcrypt + JWT</span>
-          </div>
-          <p class="text-xs font-bold text-stone-900">CSP · HSTS · X-Frame-Options · nosniff</p>
-          <p class="text-[11px] text-stone-500">Bloqueo tras 5 intentos fallidos de login</p>
-        </div>
-      </div>
-
-      <!-- Simulador de Pruebas de Ciberseguridad y Consola JS -->
-      <div class="bg-white rounded-2xl border border-stone-300 shadow-sm p-5 space-y-4">
-        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-stone-200 pb-3">
-          <div>
-            <h2 class="font-extrabold text-sm text-stone-950">Laboratorio de Pruebas en Vivo &amp; Consola JS (<code class="font-mono text-xs bg-stone-100 px-1.5 py-0.5 rounded">window.__confyDebug</code>)</h2>
-            <p class="text-xs text-stone-500">Verifica el bloqueo de inyecciones SQL, contención de ráfagas DDoS o abre la consola F12 del navegador.</p>
-          </div>
-          <div class="flex flex-wrap gap-2">
-            <button
-              type="button"
-              @click="triggerSqliTest"
-              class="bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs px-3 py-1.5 rounded-xl transition cursor-pointer"
-            >
-              Simular Ataque SQL Injection
-            </button>
-            <button
-              type="button"
-              @click="triggerRateLimitTest"
-              class="bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs px-3 py-1.5 rounded-xl transition cursor-pointer"
-            >
-              Probar Ráfaga Anti-DDoS (5x)
-            </button>
-          </div>
-        </div>
-
-        <div v-if="securityTestOutput" class="bg-stone-950 text-emerald-400 font-mono text-xs p-3.5 rounded-xl overflow-x-auto whitespace-pre-wrap">
-{{ securityTestOutput }}
-        </div>
-
-        <div class="bg-stone-50 border border-stone-200 rounded-xl p-3 text-xs text-stone-700 space-y-1">
-          <p class="font-bold text-stone-900">Comandos disponibles en la Consola JS del Navegador (F12 &rarr; Console):</p>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-1.5 font-mono text-[11px] text-stone-800 pt-1">
-            <div>• <code>__confyDebug.help()</code> &mdash; Ver guía de comandos</div>
-            <div>• <code>await __confyDebug.securityAudit()</code> &mdash; Auditar cabeceras y WAF</div>
-            <div>• <code>await __confyDebug.testSqlInjection()</code> &mdash; Probar payload SQLi</div>
-            <div>• <code>await __confyDebug.runSql("SELECT * FROM stores;")</code> &mdash; Consulta SQL</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Importador y Ejecutor Transaccional de Inputs SQL -->
-      <div class="bg-white rounded-2xl border border-stone-300 shadow-sm p-5 space-y-4">
-        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-stone-200 pb-3">
-          <div>
-            <h2 class="font-extrabold text-sm text-stone-950">Importador Seguro de Inputs SQL (Transaccional con Rollback Automático)</h2>
-            <p class="text-xs text-stone-500">Ejecuta consultas o importa lotes <code class="font-mono">.sql</code>. Comandos destructivos (<code class="font-mono">DROP</code>, <code class="font-mono">TRUNCATE</code> maestro) están bloqueados.</p>
-          </div>
-          <div class="flex items-center gap-2">
-            <label class="bg-stone-100 hover:bg-stone-200 text-stone-800 border border-stone-300 font-bold text-xs px-3 py-1.5 rounded-xl transition cursor-pointer">
-              <span>📂 Cargar archivo .sql</span>
-              <input type="file" accept=".sql,.txt" class="hidden" @change="handleSqlFileUpload" />
-            </label>
-            <button
-              type="button"
-              @click="sqlScriptInput = 'SELECT id, full_name, email, status, created_at FROM profiles ORDER BY created_at DESC LIMIT 10;'"
-              class="text-xs font-semibold text-stone-700 hover:text-stone-950 bg-stone-50 border border-stone-300 px-2.5 py-1.5 rounded-xl cursor-pointer"
-            >
-              Ejemplo: Ver Usuarios
-            </button>
-            <button
-              type="button"
-              @click="sqlScriptInput = 'SELECT user_id, purpose, policy_version, status, granted_at FROM consents ORDER BY granted_at DESC LIMIT 10;'"
-              class="text-xs font-semibold text-stone-700 hover:text-stone-950 bg-stone-50 border border-stone-300 px-2.5 py-1.5 rounded-xl cursor-pointer"
-            >
-              Ejemplo: Habeas Data
-            </button>
-          </div>
-        </div>
-
-        <textarea
-          v-model="sqlScriptInput"
-          rows="5"
-          placeholder="-- Escribe o pega aquí tus sentencias SQL (SELECT, INSERT, UPDATE)...&#10;SELECT code, name, city, status FROM stores;"
-          class="w-full font-mono text-xs p-3.5 rounded-xl border border-stone-300 bg-stone-950 text-stone-100 focus:outline-none"
-        ></textarea>
-
-        <div class="flex flex-wrap items-center justify-between gap-3">
-          <label class="flex items-center gap-2 text-xs font-semibold text-stone-700 cursor-pointer">
-            <input v-model="sqlDryRun" type="checkbox" class="w-4 h-4 rounded text-stone-900" />
-            <span>Modo Simulación (<strong>Dry-Run</strong>: valida y ejecuta pero hace <code>ROLLBACK</code> sin guardar cambios)</span>
-          </label>
-
-          <button
-            type="button"
-            :disabled="runningSql || !sqlScriptInput.trim()"
-            @click="executeSqlBatch"
-            class="bg-stone-900 hover:bg-stone-800 disabled:opacity-50 text-white font-bold text-xs px-4 py-2 rounded-xl transition cursor-pointer"
-          >
-            {{ runningSql ? 'Procesando SQL...' : (sqlDryRun ? 'Simular Lote SQL (Dry-Run)' : 'Ejecutar e Importar SQL') }}
-          </button>
-        </div>
-
-        <div v-if="sqlError" class="p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs font-semibold">
-          {{ sqlError }}
-        </div>
-
-        <div v-if="sqlResult" class="space-y-3 pt-2">
-          <div class="p-3 bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-xl text-xs flex items-center justify-between">
-            <span class="font-bold">{{ sqlResult.message }}</span>
-            <span class="font-mono">Sentencias: {{ sqlResult.statements_executed }} · Filas afectadas: {{ sqlResult.total_rows_affected }}</span>
-          </div>
-
-          <div v-for="item in sqlResult.details" :key="item.index" class="border border-stone-200 rounded-xl overflow-hidden">
-            <div class="bg-stone-100 px-3 py-1.5 text-xs font-mono flex items-center justify-between">
-              <span><strong>#{{ item.index }} [{{ item.command }}]</strong> {{ item.statement_preview }}</span>
-              <span v-if="item.rows_returned !== undefined" class="text-stone-600">{{ item.rows_returned }} filas</span>
-              <span v-else class="text-stone-600">{{ item.rows_affected }} afectadas</span>
-            </div>
-            <div v-if="item.sample_rows && item.sample_rows.length > 0" class="overflow-x-auto">
-              <table class="w-full text-left text-[11px] font-mono border-collapse">
-                <thead>
-                  <tr class="bg-stone-50 border-b border-stone-200 text-stone-600">
-                    <th v-for="col in Object.keys(item.sample_rows[0])" :key="col" class="py-1.5 px-2.5">{{ col }}</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-stone-200">
-                  <tr v-for="(row, rIdx) in item.sample_rows" :key="rIdx" class="hover:bg-stone-50">
-                    <td v-for="col in Object.keys(row)" :key="col" class="py-1.5 px-2.5 text-stone-800">{{ row[col] }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ===================================================================== -->
     <!-- TAB 5: DIRECTORIO DE CLIENTES, DOCUMENTOS DIAN Y AJUSTE DE SELLOS -->
     <!-- ===================================================================== -->
     <div v-else-if="activeTab === 'customers'" class="space-y-4">
@@ -1003,7 +809,7 @@ import {
 } from '../api';
 import DianInvoiceModal from '../components/DianInvoiceModal.vue';
 
-const activeTab = ref<'audit' | 'products' | 'stores' | 'customers' | 'dian' | 'security'>('audit');
+const activeTab = ref<'audit' | 'products' | 'stores' | 'customers' | 'dian'>('audit');
 const selectedStore = ref('');
 
 const summary = ref<DashboardSummary>({
@@ -1169,65 +975,6 @@ const saveStore = async () => {
     alert(err.message || 'Error al guardar sede');
   } finally {
     savingStore.value = false;
-  }
-};
-
-// Ciberseguridad & Importador SQL
-const securityStatus = ref<any>(null);
-const securityTestOutput = ref('');
-const sqlScriptInput = ref('SELECT code, name, city, status FROM stores ORDER BY name ASC;');
-const sqlDryRun = ref(false);
-const runningSql = ref(false);
-const sqlError = ref('');
-const sqlResult = ref<any>(null);
-
-const openSecurityTab = async () => {
-  activeTab.value = 'security';
-  try {
-    securityStatus.value = await adminApi.getSecurityStatus();
-  } catch (err) {
-    console.error('Error cargando estado de seguridad:', err);
-  }
-};
-
-const triggerSqliTest = async () => {
-  const dbg = (window as any).__confyDebug;
-  if (dbg && dbg.testSqlInjection) {
-    const res = await dbg.testSqlInjection();
-    securityTestOutput.value = `[PRUEBA WAF SQL INJECTION]\nPayload enviado: email="attacker@test.com' OR '1'='1' --"\nRespuesta HTTP: ${res.status}\nDetalle: ${JSON.stringify(res.response, null, 2)}`;
-  }
-};
-
-const triggerRateLimitTest = async () => {
-  const dbg = (window as any).__confyDebug;
-  if (dbg && dbg.testRateLimit) {
-    const res = await dbg.testRateLimit(5);
-    securityTestOutput.value = `[PRUEBA ANTI-DDOS RATE LIMITING (5 PETICIONES)]\n${JSON.stringify(res, null, 2)}`;
-  }
-};
-
-const handleSqlFileUpload = (ev: Event) => {
-  const input = ev.target as HTMLInputElement;
-  const file = input.files?.[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    sqlScriptInput.value = String(reader.result || '');
-  };
-  reader.readAsText(file);
-};
-
-const executeSqlBatch = async () => {
-  sqlError.value = '';
-  sqlResult.value = null;
-  runningSql.value = true;
-  try {
-    sqlResult.value = await adminApi.runSqlImport(sqlScriptInput.value, sqlDryRun.value);
-    await Promise.all([loadDashboardAndTransactions(), loadStores(), loadProducts()]);
-  } catch (err: any) {
-    sqlError.value = err.message || 'Error ejecutando lote SQL';
-  } finally {
-    runningSql.value = false;
   }
 };
 

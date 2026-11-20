@@ -35,7 +35,6 @@ export function initConfyDebugConsole() {
         { comando: '__confyDebug.securityAudit()', descripcion: 'Audita en vivo WAF, Rate Limiting, cabeceras HTTP y Habeas Data' },
         { comando: '__confyDebug.testSqlInjection()', descripcion: 'Simula un ataque SQL Injection y verifica el bloqueo WAF (400)' },
         { comando: '__confyDebug.testRateLimit(5)', descripcion: 'Dispara ráfaga de peticiones para verificar contención Anti-DDoS' },
-        { comando: '__confyDebug.runSql(sql, dryRun)', descripcion: 'Ejecuta o simula inputs SQL desde consola JS (requiere Admin JWT)' },
         { comando: '__confyDebug.inspectSession()', descripcion: 'Muestra el usuario autenticado, roles y vigencia del token JWT' },
         { comando: '__confyDebug.clearSession()', descripcion: 'Cierra la sesión JWT actual en localStorage y recarga la pantalla' },
         { comando: '__confyDebug.apiGet("/admin/dashboard")', descripcion: 'Ejecuta un GET autenticado contra cualquier ruta de /api/v1' },
@@ -115,36 +114,6 @@ export function initConfyDebugConsole() {
       }
       console.table(results);
       return results;
-    },
-
-    async runSql(sqlScript: string, dryRun = false) {
-      const token = adminApi.getToken();
-      if (!token) {
-        console.error('[__confyDebug] Debes iniciar sesión como Administrador para ejecutar SQL.');
-        return null;
-      }
-      console.log(`%c🗄️ Ejecutando lote SQL (${dryRun ? 'DRY-RUN / SIMULACIÓN' : 'TRANSACCIÓN REAL'})...`, 'color:#a855f7;font-weight:bold;');
-      const res = await fetch(`${API_BASE}/admin/sql-import`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({ sql_script: sqlScript, dry_run: dryRun })
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        console.error('[Error SQL]', data);
-        return data;
-      }
-      console.log(`✅ ${data.message} (${data.statements_executed} sentencias, ${data.total_rows_affected} filas afectadas)`);
-      for (const item of data.details || []) {
-        if (item.sample_rows && item.sample_rows.length > 0) {
-          console.log(`Resultado Sentencia #${item.index} (${item.command}):`);
-          console.table(item.sample_rows);
-        }
-      }
-      return data;
     },
 
     async apiGet(path: string) {
