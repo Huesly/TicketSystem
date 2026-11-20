@@ -5,7 +5,7 @@
 from uuid import UUID
 from datetime import datetime, timezone
 from typing import List, Optional
-from fastapi import APIRouter, Depends, Header, HTTPException, Query, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Query, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 
@@ -19,10 +19,11 @@ from app.schemas.reward import CustomerRewardSchema
 from app.models.user import Profile
 from app.models.business import Store
 from app.models.loyalty import LoyaltyCard, StampMovement
-from app.models.purchase import Purchase, QrToken
+from app.models.purchase import Purchase, QrToken, ElectronicInvoice
 from app.models.reward import CustomerReward, RewardRedemption, RewardDefinition
 from app.models.content import Banner
 from app.services.qr_service import QrService
+from app.services.dian_invoice_service import DianInvoiceService
 
 router = APIRouter(prefix="/me", tags=["Cliente"])
 
@@ -37,6 +38,103 @@ async def get_my_profile(
     current_user: Profile = Depends(get_current_user)
 ):
     return current_user
+
+@router.patch("", response_model=UserProfileSchema, summary="Actualizar datos de perfil y documento DIAN del cliente")
+async def update_my_profile(
+    payload: UserUpdateSchema,
+    current_user: Profile = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    if payload.full_name is not None and payload.full_name.strip():
+        current_user.full_name = payload.full_name.strip()
+    if payload.phone is not None:
+        current_user.phone = payload.phone.strip() or None
+    if payload.document_type is not None and payload.document_type.strip():
+        current_user.document_type = payload.document_type.strip().upper()
+    if payload.document_number is not None and payload.document_number.strip():
+        current_user.document_number = payload.document_number.strip()
+
+    await db.commit()
+    await db.refresh(current_user)
+    return current_user
+
+@router.get("/purchases", summary="Historial de compras y facturas electrónicas DIAN del cliente")
+async def get_my_purchases(
+    user_id: UUID = Depends(get_current_user_id),
+    db: AsyncSession = Depends(get_db)
+):
+    stmt = (
+        select(Purchase, Store.name.label("store_name"))
+        .join(Store, Purchase.store_id == Store.id)
+        .where(Purchase.customer_id == user_id)
+        .order_by(Purchase.created_at.desc())
+        .limit(50)
+    )
+    rows = (await db.execute(stmt)).all()
+    items = []
+    for p, store_name in rows:
+        st_stmt = select(func.coalesce(func.sum(StampMovement.quantity), 0)).where(
+            StampMovement.purchase_id == p.id,
+            StampMovement.movement_type.in_(["EARN", "CARRY_IN"])
+        )
+        stamps = (await db.execute(st_stmt)).scalar_one()
+
+        inv_stmt = select(ElectronicInvoice).where(ElectronicInvoice.purchase_id == p.id)
+        inv = (await db.execute(inv_stmt)).scalar_one_or_none()
+
+        items.append({
+            "purchase_id": str(p.id),
+            "receipt_reference": p.receipt_reference,
+            "invoice_number": inv.invoice_number if inv else f"SETT-{str(p.id)[:4].upper()}",
+            "cufe": inv.cufe if inv else None,
+            "store_name": store_name,
+            "gross_amount": p.gross_amount,
+            "eligible_amount": p.eligible_amount,
+            "stamps_awarded": stamps,
+            "status": p.status,
+            "created_at": p.created_at.isoformat()
+        })
+    return items
+
+@router.get("/purchases/{purchase_id}/invoice", summary="Obtener y reimprimir Factura Electrónica DIAN del cliente")
+async def get_my_purchase_invoice(
+    purchase_id: UUID,
+    reprint: bool = Query(True),
+    user_id: UUID = Depends(get_current_user_id),
+    db: AsyncSession = Depends(get_db)
+):
+    purchase = await db.get(Purchase, purchase_id)
+    if not purchase or purchase.customer_id != user_id:
+        raise HTTPException(status_code=404, detail="Factura no encontrada para este cliente")
+
+    return await DianInvoiceService.ensure_invoice_for_purchase(
+        db=db,
+        purchase_id=purchase_id,
+        increment_reprint=reprint
+    )
+
+@router.get("/purchases/{purchase_id}/invoice-xml", summary="Descargar XML UBL 2.1 DIAN de una compra del cliente")
+async def download_my_purchase_invoice_xml(
+    purchase_id: UUID,
+    user_id: UUID = Depends(get_current_user_id),
+    db: AsyncSession = Depends(get_db)
+):
+    purchase = await db.get(Purchase, purchase_id)
+    if not purchase or purchase.customer_id != user_id:
+        raise HTTPException(status_code=404, detail="Factura no encontrada para este cliente")
+
+    inv_data = await DianInvoiceService.ensure_invoice_for_purchase(
+        db=db,
+        purchase_id=purchase_id,
+        increment_reprint=False
+    )
+    xml_content = DianInvoiceService.generate_ubl21_xml(inv_data)
+    filename = f"DIAN_{inv_data['invoice_number']}.xml"
+    return Response(
+        content=xml_content,
+        media_type="application/xml",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'}
+    )
 
 @router.get("/loyalty/cards", response_model=CustomerCardsResponse, summary="Consultar tarjeta activa e historial")
 async def get_my_cards(

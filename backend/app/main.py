@@ -5,6 +5,7 @@
 from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
+from app.core.security_middleware import CybersecurityMiddleware
 from app.api.v1.router import api_router
 
 app = FastAPI(
@@ -16,6 +17,9 @@ app = FastAPI(
     openapi_url="/openapi.json"
 )
 
+# Middleware integral de Ciberseguridad (Anti-DDoS Rate Limit, WAF SQLi/XSS, Cabeceras HTTP)
+app.add_middleware(CybersecurityMiddleware)
+
 # Configuración de CORS compatible con local, apps móviles y túneles ngrok
 app.add_middleware(
     CORSMiddleware,
@@ -23,6 +27,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["X-RateLimit-Limit", "X-RateLimit-Remaining", "X-Security-Shield", "Content-Security-Policy"]
 )
 
 # Montar enrutador v1

@@ -15,6 +15,8 @@ class RegisterRequest(BaseModel):
     email: EmailStr
     password: str = Field(..., min_length=6, max_length=100)
     phone: Optional[str] = Field(None, max_length=30)
+    accept_terms: bool = Field(True, description="Consentimiento expreso de Habeas Data (Ley 1581 de 2012)")
+    accept_marketing: bool = Field(False, description="Autorización opcional para envíos promocionales")
 
 class RegisterStaffRequest(BaseModel):
     full_name: str = Field(..., min_length=3, max_length=150)

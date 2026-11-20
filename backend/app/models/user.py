@@ -17,6 +17,8 @@ class Profile(Base):
     full_name: Mapped[str] = mapped_column(String(150), nullable=False)
     email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     phone: Mapped[Optional[str]] = mapped_column(String(30), nullable=True)
+    document_type: Mapped[Optional[str]] = mapped_column(String(20), default="CC", nullable=True)
+    document_number: Mapped[Optional[str]] = mapped_column(String(40), default="222222222222", nullable=True)
     hashed_password: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     status: Mapped[str] = mapped_column(String(20), default="active", nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, nullable=False)

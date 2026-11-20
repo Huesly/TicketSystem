@@ -10,6 +10,8 @@ export interface CustomerProfile {
   full_name: string;
   email: string;
   phone?: string | null;
+  document_type?: string | null;
+  document_number?: string | null;
   status: string;
   created_at: string;
 }
@@ -161,11 +163,18 @@ export const api = {
     return data;
   },
 
-  async register(full_name: string, email: string, password: string, phone?: string): Promise<AuthResponse> {
+  async register(
+    full_name: string,
+    email: string,
+    password: string,
+    phone?: string,
+    accept_terms = true,
+    accept_marketing = false
+  ): Promise<AuthResponse> {
     const res = await fetch(`${API_BASE}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ full_name, email, password, phone })
+      body: JSON.stringify({ full_name, email, password, phone, accept_terms, accept_marketing })
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
@@ -309,5 +318,57 @@ export const api = {
       throw new Error(err.detail || 'Error al actualizar la contraseña');
     }
     return res.json();
+  },
+
+  async updateProfile(payload: {
+    full_name?: string;
+    phone?: string;
+    document_type?: string;
+    document_number?: string;
+  }): Promise<CustomerProfile> {
+    const res = await fetch(`${API_BASE}/me`, {
+      method: 'PATCH',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || 'Error al actualizar perfil');
+    }
+    return res.json();
+  },
+
+  async getMyPurchases(): Promise<any[]> {
+    const res = await fetch(`${API_BASE}/me/purchases`, {
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) throw new Error('Error al consultar historial de facturas');
+    return res.json();
+  },
+
+  async getMyPurchaseInvoice(purchaseId: string): Promise<any> {
+    const res = await fetch(`${API_BASE}/me/purchases/${purchaseId}/invoice?reprint=true`, {
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || 'Error al generar representación de factura DIAN');
+    }
+    return res.json();
+  },
+
+  async downloadMyPurchaseInvoiceXml(purchaseId: string, invoiceNumber: string): Promise<void> {
+    const res = await fetch(`${API_BASE}/me/purchases/${purchaseId}/invoice-xml`, {
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) throw new Error('Error al descargar XML DIAN');
+    const xmlText = await res.text();
+    const blob = new Blob([xmlText], { type: 'application/xml' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `DIAN_${invoiceNumber}.xml`;
+    a.click();
+    URL.revokeObjectURL(url);
   }
 };

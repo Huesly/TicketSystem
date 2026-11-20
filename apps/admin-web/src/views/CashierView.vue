@@ -585,6 +585,32 @@
                   </div>
                 </div>
 
+                <!-- Medio de Pago y Documento DIAN del Adquirente -->
+                <div class="grid grid-cols-2 gap-3">
+                  <div class="space-y-1">
+                    <label class="text-xs font-semibold text-stone-800">Medio de Pago DIAN</label>
+                    <select
+                      v-model="paymentMethod"
+                      class="w-full text-xs font-semibold bg-stone-50 border border-stone-300 rounded-xl px-3 py-2.5 text-stone-900 focus:outline-none"
+                    >
+                      <option value="Efectivo">Efectivo</option>
+                      <option value="Tarjeta Débito / Crédito">Tarjeta Débito / Crédito</option>
+                      <option value="Nequi / Daviplata / Bre-B">Nequi / Daviplata / Bre-B</option>
+                      <option value="Transferencia Bancaria">Transferencia Bancaria</option>
+                    </select>
+                  </div>
+
+                  <div class="space-y-1">
+                    <label class="text-xs font-semibold text-stone-800">Cédula / NIT Cliente (DIAN)</label>
+                    <input
+                      v-model="customerDocNumber"
+                      type="text"
+                      placeholder="222222222222 (Opcional)"
+                      class="w-full text-xs font-mono bg-stone-50 border border-stone-300 rounded-xl px-3 py-2.5 text-stone-900 placeholder:text-stone-400 focus:outline-none"
+                    />
+                  </div>
+                </div>
+
                 <!-- Resumen de Sellos Calculados -->
                 <div class="bg-stone-50 rounded-xl p-3.5 border border-stone-200 flex items-center justify-between">
                   <div>
@@ -644,12 +670,27 @@
                 <div v-if="successPurchase.rewards_issued.length > 0" class="p-2.5 bg-amber-100 rounded-xl text-stone-950 font-bold border border-amber-300 mt-1">
                   ¡El cliente completó los 8 sellos! Se activó una nueva cortesía.
                 </div>
+                <div class="pt-2 flex gap-2">
+                  <button
+                    type="button"
+                    @click="openPosInvoice(successPurchase.purchase_id)"
+                    class="w-full bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs py-2 px-3 rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    <span>🖨️ Imprimir Factura Electrónica DIAN / XML UBL 2.1</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </template>
+
+    <DianInvoiceModal
+      :invoice="posActiveInvoice"
+      @close="posActiveInvoice = null"
+      @download-xml="downloadPosXml"
+    />
   </div>
 </template>
 
@@ -663,6 +704,7 @@ import {
   type RedemptionResponse,
   type MemberLookupResponse
 } from '../api';
+import DianInvoiceModal from '../components/DianInvoiceModal.vue';
 
 const LOCAL_STORAGE_STORE_KEY = 'confy_pos_active_store_id';
 
@@ -682,6 +724,25 @@ const customProductNote = ref('');
 const invoiceRef = ref('');
 const grossAmount = ref<number | null>(null);
 const discountAmount = ref<number | null>(null);
+const paymentMethod = ref('Efectivo');
+const customerDocNumber = ref('');
+const posActiveInvoice = ref<any | null>(null);
+
+const openPosInvoice = async (purchaseId: string) => {
+  try {
+    posActiveInvoice.value = await adminApi.getInvoice(purchaseId, true);
+  } catch (err: any) {
+    alert(err.message || 'Error al cargar Factura Electrónica DIAN');
+  }
+};
+
+const downloadPosXml = async (purchaseId: string, invoiceNumber: string) => {
+  try {
+    await adminApi.downloadInvoiceXml(purchaseId, invoiceNumber);
+  } catch (err: any) {
+    alert(err.message || 'Error al descargar XML DIAN');
+  }
+};
 
 const isSubmittingPurchase = ref(false);
 const isSubmittingRedemption = ref(false);
@@ -905,7 +966,9 @@ const submitPurchase = async () => {
       receipt_reference: invoiceRef.value.trim(),
       gross_amount: grossAmount.value || 0,
       discount_amount: discountAmount.value || 0,
-      currency: 'COP'
+      currency: 'COP',
+      payment_method: paymentMethod.value,
+      customer_doc_number: customerDocNumber.value.trim() || undefined
     });
 
     successPurchase.value = res;

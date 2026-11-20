@@ -178,6 +178,32 @@
             />
           </div>
 
+          <!-- Casillas de Habeas Data (Ley 1581 de 2012) -->
+          <div class="space-y-2 bg-[#F9F7F5] p-3 rounded-xl border border-[#E3DAD2]">
+            <label class="flex items-start gap-2 cursor-pointer">
+              <input
+                v-model="regAcceptTerms"
+                type="checkbox"
+                required
+                class="mt-0.5 w-3.5 h-3.5 rounded text-[#5D4432] border-[#C9B9AC] focus:ring-[#5D4432]"
+              />
+              <span class="text-[10px] text-[#3E2B1E] leading-tight">
+                <strong>Autorización Habeas Data (Obligatorio):</strong> Acepto la Política de Tratamiento de Datos Personales conforme a la <strong>Ley 1581 de 2012</strong> para gestionar mi tarjeta de fidelización.
+              </span>
+            </label>
+
+            <label class="flex items-start gap-2 cursor-pointer">
+              <input
+                v-model="regAcceptMarketing"
+                type="checkbox"
+                class="mt-0.5 w-3.5 h-3.5 rounded text-[#5D4432] border-[#C9B9AC] focus:ring-[#5D4432]"
+              />
+              <span class="text-[10px] text-[#786558] leading-tight">
+                Deseo recibir notificaciones de promociones, cosechas de temporada y beneficios exclusivos (Opcional).
+              </span>
+            </label>
+          </div>
+
           <p class="text-[10px] text-[#786558] leading-tight">
             Al registrarte se creará automáticamente tu tarjeta digital en el Ciclo 1 con 8 sellos.
           </p>
@@ -573,6 +599,8 @@ const regFullName = ref('');
 const regEmail = ref('');
 const regPhone = ref('');
 const regPassword = ref('');
+const regAcceptTerms = ref(true);
+const regAcceptMarketing = ref(false);
 
 // Recuperación de Contraseña (OTP)
 const recoveryStep = ref<1 | 2>(1);
@@ -748,13 +776,24 @@ const handleRegister = async () => {
     authError.value = 'Por favor completa todos los campos obligatorios.';
     return;
   }
+  if (!regAcceptTerms.value) {
+    authError.value = 'Debes aceptar la Política de Tratamiento de Datos Personales (Ley 1581 de 2012).';
+    return;
+  }
   if (regPassword.value.length < 6) {
     authError.value = 'La contraseña debe tener mínimo 6 caracteres.';
     return;
   }
   isSubmitting.value = true;
   try {
-    const res = await api.register(regFullName.value, regEmail.value, regPassword.value, regPhone.value || undefined);
+    const res = await api.register(
+      regFullName.value,
+      regEmail.value,
+      regPassword.value,
+      regPhone.value || undefined,
+      regAcceptTerms.value,
+      regAcceptMarketing.value
+    );
     currentUser.value = res.user;
     regPassword.value = '';
     window.dispatchEvent(new CustomEvent('confy-user-changed'));

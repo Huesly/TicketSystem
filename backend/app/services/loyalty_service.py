@@ -26,6 +26,10 @@ from app.schemas.purchase import (
     IssuedRewardInfo
 )
 from app.services.qr_service import QrService
+from app.services.dian_invoice_service import DianInvoiceService
+from app.models.purchase import ElectronicInvoice
+import hashlib
+import uuid as uuid_pkg
 
 class LoyaltyService:
     @staticmethod
@@ -364,10 +368,23 @@ class LoyaltyService:
 
         await db.commit()
 
+        # Generar Factura Electrónica DIAN automáticamente (CUFE SHA-384 + UBL 2.1)
+        inv_data = await DianInvoiceService.ensure_invoice_for_purchase(
+            db=db,
+            purchase_id=purchase.id,
+            payment_method=payload.payment_method or "Efectivo",
+            customer_doc_type=payload.customer_doc_type,
+            customer_doc_number=payload.customer_doc_number,
+            item_description=payload.item_description,
+            increment_reprint=False
+        )
+
         return PurchaseResponse(
             purchase_id=purchase.id,
             status=purchase.status,
             receipt_reference=purchase.receipt_reference,
+            invoice_number=inv_data.get("invoice_number"),
+            cufe=inv_data.get("cufe"),
             eligible_amount=eligible_amount,
             stamps_awarded=stamps_to_award,
             allocation=allocations,
@@ -375,6 +392,212 @@ class LoyaltyService:
             customer_name=customer_name,
             created_at=now
         )
+
+    @classmethod
+    async def cancel_purchase(
+        cls,
+        db: AsyncSession,
+        purchase_id: UUID,
+        actor_id: UUID,
+        reason: str
+    ) -> dict:
+        """
+        Anula una compra registrada, emite Nota Crédito Electrónica DIAN (CUDE SHA-384),
+        descuenta los sellos otorgados (REVERSAL) y revoca premios no redimidos originados por la compra.
+        """
+        now = datetime.now(timezone.utc)
+        purchase = await db.get(Purchase, purchase_id)
+        if not purchase:
+            raise HTTPException(status_code=404, detail="Compra no encontrada")
+
+        if purchase.status == "cancelled":
+            raise HTTPException(status_code=400, detail="Esta compra ya fue anulada previamente")
+
+        purchase.status = "cancelled"
+        purchase.cancelled_at = now
+
+        # Buscar movimientos de sellos originados por esta compra
+        mov_stmt = select(StampMovement).where(
+            StampMovement.purchase_id == purchase.id,
+            StampMovement.movement_type.in_(["EARN", "CARRY_IN"])
+        )
+        movements = (await db.execute(mov_stmt)).scalars().all()
+
+        reversed_stamps = 0
+        revoked_rewards = 0
+
+        for mov in movements:
+            db.add(StampMovement(
+                card_id=mov.card_id,
+                purchase_id=purchase.id,
+                quantity=mov.quantity,
+                movement_type="REVERSAL",
+                reverses_movement_id=mov.id,
+                source_store_id=purchase.store_id,
+                created_by=actor_id,
+                reason=f"Anulación Factura #{purchase.receipt_reference}: {reason.strip()}",
+                created_at=now
+            ))
+            reversed_stamps += mov.quantity
+
+            # Si la tarjeta se había completado y tiene un premio AVAILABLE, revocarlo y reabrir la tarjeta
+            card = await db.get(LoyaltyCard, mov.card_id)
+            if card and card.status == "completed":
+                rw_stmt = select(CustomerReward).where(
+                    CustomerReward.card_id == card.id,
+                    CustomerReward.status == "AVAILABLE"
+                )
+                avail_reward = (await db.execute(rw_stmt)).scalar_one_or_none()
+                if avail_reward:
+                    avail_reward.status = "CANCELLED"
+                    revoked_rewards += 1
+                    # Verificar si el cliente ya tiene otra tarjeta accumulating; si sí, cerramos la vacía nueva
+                    other_stmt = select(LoyaltyCard).where(
+                        LoyaltyCard.customer_id == purchase.customer_id,
+                        LoyaltyCard.status == "accumulating",
+                        LoyaltyCard.id != card.id
+                    )
+                    other_card = (await db.execute(other_stmt)).scalar_one_or_none()
+                    if other_card:
+                        other_card.status = "cancelled"
+                        other_card.closed_at = now
+                    card.status = "accumulating"
+                    card.completed_at = None
+
+        # Emitir Nota Crédito Electrónica DIAN (CUDE SHA-384)
+        inv_stmt = select(ElectronicInvoice).where(ElectronicInvoice.purchase_id == purchase.id)
+        invoice = (await db.execute(inv_stmt)).scalar_one_or_none()
+        nc_number = f"NC-{purchase.receipt_reference}"
+        cude = hashlib.sha384(f"{nc_number}|{purchase.id}|{now.isoformat()}|{reason}".encode("utf-8")).hexdigest()
+        if invoice:
+            nc_number = f"NC-{invoice.invoice_number}"
+            invoice.dian_status = "CREDIT_NOTE_ISSUED"
+            invoice.credit_note_number = nc_number
+            invoice.credit_note_cude = cude
+            invoice.cancellation_reason = reason.strip()
+
+        await db.commit()
+
+        return {
+            "purchase_id": str(purchase.id),
+            "status": "cancelled",
+            "receipt_reference": purchase.receipt_reference,
+            "reversed_stamps": reversed_stamps,
+            "revoked_rewards": revoked_rewards,
+            "credit_note_number": nc_number,
+            "credit_note_cude": cude,
+            "message": f"Factura anulada con éxito. Se descontaron {reversed_stamps} sellos y se emitió la Nota Crédito DIAN {nc_number}."
+        }
+
+    @classmethod
+    async def adjust_customer_stamps(
+        cls,
+        db: AsyncSession,
+        customer_id: UUID,
+        actor_id: UUID,
+        delta_stamps: int,
+        reason: str
+    ) -> dict:
+        """
+        Ajusta manualmente los sellos de un cliente (+ acredita, - descuenta)
+        con motivo obligatorio de auditoría.
+        """
+        if delta_stamps == 0:
+            raise HTTPException(status_code=400, detail="La cantidad de sellos a ajustar no puede ser 0")
+
+        now = datetime.now(timezone.utc)
+        customer = await db.get(Profile, customer_id)
+        if not customer:
+            raise HTTPException(status_code=404, detail="Cliente no encontrado")
+
+        card_stmt = (
+            select(LoyaltyCard)
+            .where(LoyaltyCard.customer_id == customer_id, LoyaltyCard.status == "accumulating")
+            .order_by(LoyaltyCard.cycle_number.desc())
+            .limit(1)
+            .with_for_update()
+        )
+        card = (await db.execute(card_stmt)).scalar_one_or_none()
+        if not card:
+            prog_stmt = (
+                select(LoyaltyProgram, LoyaltyProgramVersion)
+                .join(LoyaltyProgramVersion, LoyaltyProgram.id == LoyaltyProgramVersion.program_id)
+                .where(LoyaltyProgram.status == "active")
+                .order_by(LoyaltyProgramVersion.version_number.desc())
+                .limit(1)
+            )
+            prog_res = (await db.execute(prog_stmt)).first()
+            if not prog_res:
+                raise HTTPException(status_code=500, detail="No hay programa activo")
+            program, version = prog_res
+            card = LoyaltyCard(
+                id=uuid_pkg.uuid4(),
+                customer_id=customer_id,
+                program_id=program.id,
+                program_version_id=version.id,
+                cycle_number=1,
+                stamps_required_snapshot=version.stamps_required,
+                status="accumulating",
+                opened_at=now
+            )
+            db.add(card)
+            await db.flush()
+
+        mov_type = "ADJUSTMENT" if delta_stamps > 0 else "REVERSAL"
+        qty = abs(delta_stamps)
+
+        db.add(StampMovement(
+            card_id=card.id,
+            quantity=qty,
+            movement_type=mov_type,
+            created_by=actor_id,
+            reason=f"Ajuste manual Admin: {reason.strip()}",
+            created_at=now
+        ))
+        await db.flush()
+
+        # Recalcular saldo de la tarjeta
+        pos_stmt = select(func.coalesce(func.sum(StampMovement.quantity), 0)).where(
+            StampMovement.card_id == card.id,
+            StampMovement.movement_type.in_(["EARN", "CARRY_IN", "ADJUSTMENT"])
+        )
+        neg_stmt = select(func.coalesce(func.sum(StampMovement.quantity), 0)).where(
+            StampMovement.card_id == card.id,
+            StampMovement.movement_type.in_(["REVERSAL", "EXPIRATION", "CARRY_OUT"])
+        )
+        pos_val = (await db.execute(pos_stmt)).scalar_one()
+        neg_val = (await db.execute(neg_stmt)).scalar_one()
+        net = max(0, pos_val - neg_val)
+        target = card.stamps_required_snapshot or 8
+
+        reward_issued = False
+        if net >= target:
+            card.status = "completed"
+            card.completed_at = now
+            prog = await db.get(LoyaltyProgram, card.program_id)
+            if prog:
+                await cls._issue_reward_for_card(db, customer_id, card.id, prog.business_id, 30)
+                reward_issued = True
+            new_card = LoyaltyCard(
+                id=uuid_pkg.uuid4(),
+                customer_id=customer_id,
+                program_id=card.program_id,
+                program_version_id=card.program_version_id,
+                cycle_number=card.cycle_number + 1,
+                stamps_required_snapshot=target,
+                status="accumulating",
+                opened_at=now
+            )
+            db.add(new_card)
+
+        await db.commit()
+        return {
+            "customer_id": str(customer_id),
+            "delta_stamps": delta_stamps,
+            "new_balance": min(target, net),
+            "reward_issued": reward_issued,
+            "message": f"Ajuste aplicado ({'+' if delta_stamps > 0 else ''}{delta_stamps} sellos)."
+        }
 
     @classmethod
     async def _issue_reward_for_card(

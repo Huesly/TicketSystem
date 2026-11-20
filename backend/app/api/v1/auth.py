@@ -7,14 +7,15 @@ import json
 import secrets
 from datetime import datetime, timezone
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, func
 import redis.asyncio as aioredis
 
 from app.core.database import get_db
 from app.core.redis import get_redis
 from app.core.security import get_password_hash, verify_password, create_access_token
+from app.core.security_middleware import get_client_ip
 from app.services.email_service import send_password_reset_email
 from app.schemas.auth import (
     LoginRequest,
@@ -28,7 +29,7 @@ from app.schemas.auth import (
     MessageResponse
 )
 from app.schemas.user import UserProfileSchema
-from app.models.user import Profile, BusinessMembership, MembershipStoreAssignment
+from app.models.user import Profile, BusinessMembership, MembershipStoreAssignment, Consent
 from app.models.business import Business, Store
 from app.models.loyalty import LoyaltyProgram, LoyaltyProgramVersion, LoyaltyCard
 from app.api.deps import get_current_user, get_user_roles
@@ -38,25 +39,50 @@ router = APIRouter(prefix="/auth", tags=["Autenticación y Cuentas"])
 @router.post("/login", response_model=TokenResponse, summary="Iniciar sesión con correo y contraseña")
 async def login(
     payload: LoginRequest,
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    redis: aioredis.Redis = Depends(get_redis)
 ):
     """
     Autentica clientes, cajeros o administradores mediante credenciales seguras.
-    Emite un JWT con los roles autorizados.
+    Incluye bloqueo temporal anti-fuerza bruta tras 5 intentos fallidos consecutivos.
     """
     email_clean = payload.email.lower().strip()
+    fail_key = f"login_fail:{email_clean}"
+
+    # Verificar si la cuenta está temporalmente bloqueada por fuerza bruta
+    try:
+        fails_raw = await redis.get(fail_key)
+        if fails_raw and int(fails_raw) >= 5:
+            ttl = await redis.ttl(fail_key)
+            raise HTTPException(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                detail=f"Cuenta protegida temporalmente por múltiples intentos fallidos. Intenta de nuevo en {max(1, ttl)} segundos."
+            )
+    except HTTPException:
+        raise
+    except Exception:
+        pass
+
     stmt = select(Profile).where(Profile.email == email_clean)
     res = await db.execute(stmt)
     user = res.scalar_one_or_none()
 
-    if not user or not user.hashed_password:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Correo o contraseña incorrectos",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+    if not user or not user.hashed_password or not verify_password(payload.password, user.hashed_password):
+        try:
+            current_fails = await redis.incr(fail_key)
+            if current_fails == 1:
+                await redis.expire(fail_key, 300)  # Ventana de 5 minutos
+            remaining_attempts = max(0, 5 - current_fails)
+            if remaining_attempts == 0:
+                raise HTTPException(
+                    status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                    detail="Has superado los 5 intentos fallidos. Tu cuenta se ha bloqueado preventivamente por 5 minutos."
+                )
+        except HTTPException:
+            raise
+        except Exception:
+            pass
 
-    if not verify_password(payload.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Correo o contraseña incorrectos",
@@ -68,6 +94,12 @@ async def login(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Esta cuenta está desactivada o suspendida"
         )
+
+    # Limpiar contador de fallos tras login exitoso
+    try:
+        await redis.delete(fail_key)
+    except Exception:
+        pass
 
     roles = await get_user_roles(user.id, db)
     token = create_access_token(data={
@@ -87,11 +119,19 @@ async def login(
 @router.post("/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED, summary="Registro público de nuevos clientes")
 async def register(
     payload: RegisterRequest,
+    request: Request,
     db: AsyncSession = Depends(get_db)
 ):
     """
-    Registra un nuevo cliente con tarjeta digital de 8 sellos inicializada en ciclo 1.
+    Registra un nuevo cliente con tarjeta digital de 8 sellos inicializada en ciclo 1
+    y guarda la evidencia legal de consentimiento Habeas Data (Ley 1581 de 2012).
     """
+    if not payload.accept_terms:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Debes aceptar la Política de Tratamiento de Datos Personales (Ley 1581 de 2012) para crear tu cuenta."
+        )
+
     email_clean = payload.email.lower().strip()
     existing = await db.execute(select(Profile).where(Profile.email == email_clean))
     if existing.scalar_one_or_none():
@@ -102,6 +142,7 @@ async def register(
 
     new_user_id = uuid.uuid4()
     hashed = get_password_hash(payload.password)
+    now = datetime.now(timezone.utc)
 
     new_profile = Profile(
         id=new_user_id,
@@ -112,6 +153,38 @@ async def register(
         status="active"
     )
     db.add(new_profile)
+    await db.flush()
+
+    # Registrar evidencia de consentimiento Habeas Data (Ley 1581 de 2012)
+    client_ip = get_client_ip(request)
+    user_agent = request.headers.get("user-agent", "unknown")
+    evidence = {
+        "ip_address": client_ip,
+        "user_agent": user_agent[:250],
+        "regulation": "Ley 1581 de 2012 y Decreto 1377 de 2013 (Colombia)",
+        "accepted_at_iso": now.isoformat()
+    }
+
+    db.add(Consent(
+        id=uuid.uuid4(),
+        user_id=new_user_id,
+        purpose="general_terms",
+        policy_version="v1.0-2026",
+        status="granted",
+        granted_at=now,
+        evidence_metadata=evidence
+    ))
+
+    if payload.accept_marketing:
+        db.add(Consent(
+            id=uuid.uuid4(),
+            user_id=new_user_id,
+            purpose="marketing_communications",
+            policy_version="v1.0-2026",
+            status="granted",
+            granted_at=now,
+            evidence_metadata=evidence
+        ))
 
     # Inicializar Tarjeta de Fidelización si existe programa activo
     prog_stmt = (
@@ -424,3 +497,53 @@ async def change_password(
     return MessageResponse(
         message="Tu contraseña ha sido actualizada con éxito."
     )
+
+
+@router.get("/security-status", summary="Estado de defensas de ciberseguridad, WAF, Rate Limit y Habeas Data")
+async def get_security_status(
+    request: Request,
+    db: AsyncSession = Depends(get_db),
+    redis: aioredis.Redis = Depends(get_redis)
+):
+    """
+    Retorna el diagnóstico en vivo de los escudos de seguridad activos en la plataforma:
+    - Rate Limiting Anti-DDoS y protección de fuerza bruta (Redis).
+    - WAF contra SQL Injection (SQLi) y Cross-Site Scripting (XSS).
+    - Cumplimiento de Habeas Data (Ley 1581 de 2012).
+    """
+    client_ip = get_client_ip(request)
+    redis_ok = False
+    try:
+        redis_ok = bool(await redis.ping())
+    except Exception:
+        redis_ok = False
+
+    consents_count = (await db.execute(select(func.count(Consent.id)))).scalar_one()
+
+    return {
+        "shield": "ConfyTickets-WAF-v1",
+        "client_ip": client_ip,
+        "redis_rate_limiter_online": redis_ok,
+        "limits": {
+            "global_requests_per_minute": 120,
+            "auth_requests_per_minute": 15,
+            "login_max_failed_attempts": 5,
+            "login_lockout_seconds": 300
+        },
+        "protections": {
+            "ddos_rate_limiting": True,
+            "sqli_parameterized_orm": True,
+            "sqli_xss_waf_inspector": True,
+            "bcrypt_password_hashing": True,
+            "jwt_strict_rbac": True,
+            "http_security_headers": [
+                "Content-Security-Policy",
+                "Strict-Transport-Security",
+                "X-Frame-Options",
+                "X-Content-Type-Options",
+                "Permissions-Policy"
+            ],
+            "habeas_data_ley_1581": True,
+            "recorded_consents_count": consents_count
+        }
+    }

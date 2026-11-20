@@ -10,8 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 
 from app.core.database import get_db
-from app.api.deps import security_scheme, HTTPAuthorizationCredentials
-from app.core.security import decode_access_token
+from app.api.deps import get_current_cashier_or_admin
 from app.schemas.purchase import (
     PurchaseCreateRequest,
     PurchaseResponse,
@@ -54,19 +53,6 @@ class RedeemMemberRewardRequest(BaseModel):
     reward_id: Optional[UUID] = None
     product_name_note: str = Field(default="Bebida de Cortesía", description="Producto elegido por el cliente en barra")
 
-# Extrae cajero autenticado desde JWT Bearer con fallback seguro
-async def get_current_cashier_id(
-    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security_scheme)
-) -> UUID:
-    if credentials and credentials.credentials:
-        payload = decode_access_token(credentials.credentials)
-        if payload and "sub" in payload:
-            try:
-                return UUID(payload["sub"])
-            except Exception:
-                pass
-    return UUID("11111111-1111-1111-1111-111111111111")
-
 @router.post(
     "/purchases",
     response_model=PurchaseResponse,
@@ -76,7 +62,7 @@ async def get_current_cashier_id(
 async def create_purchase(
     payload: PurchaseCreateRequest,
     idempotency_key: Optional[UUID] = Header(None, alias="Idempotency-Key"),
-    cashier_id: UUID = Depends(get_current_cashier_id),
+    current_cashier: Profile = Depends(get_current_cashier_or_admin),
     db: AsyncSession = Depends(get_db)
 ):
     """
@@ -86,7 +72,7 @@ async def create_purchase(
     """
     return await LoyaltyService.process_purchase(
         db=db,
-        cashier_id=cashier_id,
+        cashier_id=current_cashier.id,
         payload=payload,
         idempotency_key=idempotency_key
     )
@@ -100,12 +86,13 @@ async def create_purchase(
 async def redeem_reward(
     payload: RedemptionCreateRequest,
     idempotency_key: Optional[UUID] = Header(None, alias="Idempotency-Key"),
-    cashier_id: UUID = Depends(get_current_cashier_id),
+    current_cashier: Profile = Depends(get_current_cashier_or_admin),
     db: AsyncSession = Depends(get_db)
 ):
     """
     Escanea el QR de redención del cliente y marca la recompensa como canjeada.
     """
+    cashier_id = current_cashier.id
     now = datetime.now(timezone.utc)
     # Validar y consumir QR de redención
     qr = await QrService.consume_token(
@@ -185,6 +172,7 @@ async def redeem_reward(
 )
 async def lookup_member(
     payload: MemberLookupRequest,
+    current_cashier: Profile = Depends(get_current_cashier_or_admin),
     db: AsyncSession = Depends(get_db)
 ):
     token = payload.member_token.strip()
@@ -309,9 +297,10 @@ async def lookup_member(
 )
 async def redeem_member_reward(
     payload: RedeemMemberRewardRequest,
-    cashier_id: UUID = Depends(get_current_cashier_id),
+    current_cashier: Profile = Depends(get_current_cashier_or_admin),
     db: AsyncSession = Depends(get_db)
 ):
+    cashier_id = current_cashier.id
     now = datetime.now(timezone.utc)
     customer = await db.get(Profile, payload.customer_id)
     if not customer:

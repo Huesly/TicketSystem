@@ -80,6 +80,76 @@
           </div>
         </div>
 
+        <!-- Datos de Facturación Electrónica DIAN del Cliente -->
+        <div class="bg-white rounded-2xl p-4 border border-[#E3DAD2] shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-[#786558]">Datos de Facturación DIAN</h4>
+            <span class="text-[10px] font-mono text-[#8C4B13] bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">
+              {{ currentUser.document_type || 'CC' }}: {{ currentUser.document_number || '222222222222' }}
+            </span>
+          </div>
+          <form @submit.prevent="saveFiscalData" class="grid grid-cols-3 gap-2 text-xs">
+            <select v-model="docTypeInput" class="bg-[#F9F7F5] border border-[#E3DAD2] rounded-xl px-2.5 py-2 font-bold text-[#3E2B1E]">
+              <option value="CC">CC</option>
+              <option value="NIT">NIT</option>
+              <option value="CE">CE</option>
+              <option value="PAS">Pasaporte</option>
+            </select>
+            <input
+              v-model="docNumberInput"
+              type="text"
+              placeholder="Cédula o NIT"
+              class="bg-[#F9F7F5] border border-[#E3DAD2] rounded-xl px-3 py-2 font-mono text-[#3E2B1E]"
+            />
+            <button
+              type="submit"
+              :disabled="savingDoc"
+              class="bg-[#5D4432] hover:bg-[#473325] text-white font-bold rounded-xl px-3 py-2 cursor-pointer"
+            >
+              {{ savingDoc ? '...' : 'Guardar' }}
+            </button>
+          </form>
+          <p v-if="docSavedMsg" class="text-[11px] font-bold text-emerald-700">{{ docSavedMsg }}</p>
+        </div>
+
+        <!-- Historial de Facturas Electrónicas DIAN y Reimpresión -->
+        <div class="bg-white rounded-2xl p-4 border border-[#E3DAD2] shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-[#786558]">Mis Facturas Electrónicas DIAN</h4>
+            <span class="text-[10px] font-mono text-[#786558]">{{ purchasesList.length }} compras</span>
+          </div>
+
+          <div v-if="purchasesList.length === 0" class="text-xs text-[#786558] py-3 text-center">
+            Aún no registras facturas en tu cuenta.
+          </div>
+
+          <div v-else class="space-y-2 max-h-64 overflow-y-auto pr-1">
+            <div
+              v-for="p in purchasesList"
+              :key="p.purchase_id"
+              class="p-3 bg-[#F9F7F5] rounded-xl border border-[#E3DAD2] flex items-center justify-between gap-2 text-xs"
+            >
+              <div class="min-w-0">
+                <div class="font-bold text-[#3E2B1E] flex items-center gap-1.5">
+                  <span>{{ p.invoice_number }}</span>
+                  <span class="text-[10px] font-mono text-[#786558]">(#{{ p.receipt_reference }})</span>
+                </div>
+                <div class="text-[10px] text-[#786558]">
+                  {{ p.store_name }} · {{ new Date(p.created_at).toLocaleDateString('es-CO') }} ·
+                  <strong class="text-[#3E2B1E]">${{ (p.eligible_amount || 0).toLocaleString('es-CO') }} COP</strong>
+                </div>
+              </div>
+              <button
+                type="button"
+                @click="openCustomerInvoice(p.purchase_id)"
+                class="bg-[#3E2B1E] hover:bg-[#5D4432] text-white font-bold text-[11px] px-2.5 py-1.5 rounded-lg shrink-0 cursor-pointer"
+              >
+                🖨️ Reimprimir
+              </button>
+            </div>
+          </div>
+        </div>
+
         <!-- Opciones y Políticas del Programa -->
         <div class="bg-white rounded-2xl p-4 border border-[#E3DAD2] shadow-sm space-y-3">
           <h4 class="text-xs font-bold uppercase tracking-wider text-[#786558]">Información del Programa</h4>
@@ -294,6 +364,12 @@
         </form>
       </div>
     </div>
+
+    <DianInvoiceModal
+      :invoice="customerActiveInvoice"
+      @close="customerActiveInvoice = null"
+      @download-xml="downloadCustomerXml"
+    />
   </div>
 </template>
 
@@ -301,6 +377,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { api, type CustomerProfile } from '../api';
+import DianInvoiceModal from '../components/DianInvoiceModal.vue';
 
 const router = useRouter();
 const loading = ref(true);
@@ -367,6 +444,47 @@ const loyaltyStats = ref({
   rewardsClaimed: 0
 });
 
+// Datos tributarios DIAN y Reimpresión de Facturas del Cliente
+const docTypeInput = ref('CC');
+const docNumberInput = ref('222222222222');
+const savingDoc = ref(false);
+const docSavedMsg = ref('');
+const purchasesList = ref<any[]>([]);
+const customerActiveInvoice = ref<any | null>(null);
+
+const saveFiscalData = async () => {
+  savingDoc.value = true;
+  docSavedMsg.value = '';
+  try {
+    const updated = await api.updateProfile({
+      document_type: docTypeInput.value,
+      document_number: docNumberInput.value.trim() || '222222222222'
+    });
+    currentUser.value = updated;
+    docSavedMsg.value = '✅ Documento para Factura Electrónica DIAN actualizado';
+  } catch (err: any) {
+    alert(err.message || 'Error al guardar documento');
+  } finally {
+    savingDoc.value = false;
+  }
+};
+
+const openCustomerInvoice = async (purchaseId: string) => {
+  try {
+    customerActiveInvoice.value = await api.getMyPurchaseInvoice(purchaseId);
+  } catch (err: any) {
+    alert(err.message || 'Error al abrir la Factura Electrónica DIAN');
+  }
+};
+
+const downloadCustomerXml = async (purchaseId: string, invoiceNumber: string) => {
+  try {
+    await api.downloadMyPurchaseInvoiceXml(purchaseId, invoiceNumber);
+  } catch (err: any) {
+    alert(err.message || 'Error al descargar XML DIAN');
+  }
+};
+
 const userInitials = computed(() => {
   if (!currentUser.value?.full_name) return 'TD';
   const parts = currentUser.value.full_name.trim().split(' ');
@@ -389,11 +507,16 @@ const loadUserData = async () => {
     currentUser.value = profile;
 
     if (profile) {
-      const [cards, rewards] = await Promise.all([
+      docTypeInput.value = profile.document_type || 'CC';
+      docNumberInput.value = profile.document_number || '222222222222';
+
+      const [cards, rewards, purchases] = await Promise.all([
         api.getLoyaltyCards().catch(() => null),
-        api.getRewards().catch(() => null)
+        api.getRewards().catch(() => null),
+        api.getMyPurchases().catch(() => [])
       ]);
 
+      purchasesList.value = purchases || [];
       loyaltyStats.value = {
         activeStamps: cards?.active_card?.stamps_count || 0,
         completedCycles: cards?.past_cycles?.length || 0,

@@ -71,12 +71,16 @@ export interface PurchasePayload {
   gross_amount: number;
   discount_amount: number;
   currency: string;
+  payment_method?: string;
+  customer_doc_number?: string;
 }
 
 export interface PurchaseResponse {
   purchase_id: string;
   status: string;
   receipt_reference: string;
+  invoice_number?: string;
+  cufe?: string;
   eligible_amount: number;
   stamps_awarded: number;
   customer_name?: string;
@@ -482,6 +486,166 @@ export const adminApi = {
       const err = await res.json().catch(() => ({}));
       const msg = err.detail?.[0]?.msg || err.detail?.message || err.detail || 'Fallo al guardar banner';
       throw new Error(msg);
+    }
+    return res.json();
+  },
+
+  async getSecurityStatus(): Promise<any> {
+    const res = await fetch(`${API_BASE}/auth/security-status`, {
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) throw new Error('Error consultando estado de ciberseguridad');
+    return res.json();
+  },
+
+  async runSqlImport(sql_script: string, dry_run = false): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/sql-import`, {
+      method: 'POST',
+      headers: {
+        ...getAuthHeaders(),
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ sql_script, dry_run })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.detail || 'Error al ejecutar lote SQL');
+    }
+    return data;
+  },
+
+  async getInvoice(purchaseId: string, reprint = true): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/invoices/${purchaseId}?reprint=${reprint}`, {
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || 'Error al obtener Factura Electrónica DIAN');
+    }
+    return res.json();
+  },
+
+  async downloadInvoiceXml(purchaseId: string, invoiceNumber: string): Promise<void> {
+    const res = await fetch(`${API_BASE}/admin/invoices/${purchaseId}/xml`, {
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) throw new Error('Error al descargar archivo XML UBL 2.1 DIAN');
+    const xmlText = await res.text();
+    const blob = new Blob([xmlText], { type: 'application/xml' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `DIAN_${invoiceNumber}.xml`;
+    a.click();
+    URL.revokeObjectURL(url);
+  },
+
+  async getDianSettings(): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/dian-settings`, {
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) throw new Error('Error al cargar configuración DIAN');
+    return res.json();
+  },
+
+  async updateDianSettings(payload: any): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/dian-settings`, {
+      method: 'PUT',
+      headers: {
+        ...getAuthHeaders(),
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || 'Error al guardar configuración DIAN');
+    }
+    return res.json();
+  },
+
+  async cancelPurchase(purchaseId: string, reason: string): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/purchases/${purchaseId}/cancel`, {
+      method: 'POST',
+      headers: {
+        ...getAuthHeaders(),
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ reason })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.detail || 'Error al anular la factura');
+    }
+    return data;
+  },
+
+  async getCustomers(search?: string): Promise<any[]> {
+    const url = search
+      ? `${API_BASE}/admin/customers?search=${encodeURIComponent(search)}`
+      : `${API_BASE}/admin/customers`;
+    const res = await fetch(url, { headers: getAuthHeaders() });
+    if (!res.ok) throw new Error('Error al consultar directorio de clientes');
+    return res.json();
+  },
+
+  async updateCustomer(customerId: string, payload: { status?: string; document_type?: string; document_number?: string }): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/customers/${customerId}`, {
+      method: 'PATCH',
+      headers: {
+        ...getAuthHeaders(),
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || 'Error al actualizar cliente');
+    }
+    return res.json();
+  },
+
+  async adjustCustomerStamps(customerId: string, delta_stamps: number, reason: string): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/customers/${customerId}/adjust-stamps`, {
+      method: 'POST',
+      headers: {
+        ...getAuthHeaders(),
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ delta_stamps, reason })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.detail || 'Error al ajustar sellos del cliente');
+    }
+    return data;
+  },
+
+  async getLoyaltyRules(): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/loyalty-rules`, {
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) throw new Error('Error al cargar reglas de fidelización');
+    return res.json();
+  },
+
+  async updateLoyaltyRules(payload: {
+    amount_per_stamp: number;
+    minimum_purchase: number;
+    stamps_required: number;
+    max_stamps_per_purchase: number;
+  }): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/loyalty-rules`, {
+      method: 'PUT',
+      headers: {
+        ...getAuthHeaders(),
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || 'Error al actualizar reglas del programa');
     }
     return res.json();
   }

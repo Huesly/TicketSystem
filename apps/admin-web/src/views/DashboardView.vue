@@ -53,6 +53,49 @@
           </svg>
           <span>Sedes ({{ stores.length }})</span>
         </button>
+
+        <button 
+          type="button"
+          @click="openCustomersTab"
+          class="px-3 sm:px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 border shrink-0"
+          :class="activeTab === 'customers' 
+            ? 'bg-white text-stone-950 font-bold border-stone-400 shadow-2xs' 
+            : 'bg-transparent text-stone-600 hover:text-stone-900 border-transparent hover:border-stone-300 hover:bg-stone-200/60'"
+        >
+          <svg class="w-3.5 h-3.5 text-amber-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          <span>Clientes &amp; Sellos</span>
+        </button>
+
+        <button 
+          type="button"
+          @click="openDianTab"
+          class="px-3 sm:px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 border shrink-0"
+          :class="activeTab === 'dian' 
+            ? 'bg-white text-stone-950 font-bold border-stone-400 shadow-2xs' 
+            : 'bg-transparent text-stone-600 hover:text-stone-900 border-transparent hover:border-stone-300 hover:bg-stone-200/60'"
+        >
+          <svg class="w-3.5 h-3.5 text-blue-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+          </svg>
+          <span>Facturación DIAN &amp; Reglas</span>
+        </button>
+
+        <button 
+          type="button"
+          @click="openSecurityTab"
+          class="px-3 sm:px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 border shrink-0"
+          :class="activeTab === 'security' 
+            ? 'bg-white text-stone-950 font-bold border-stone-400 shadow-2xs' 
+            : 'bg-transparent text-stone-600 hover:text-stone-900 border-transparent hover:border-stone-300 hover:bg-stone-200/60'"
+        >
+          <!-- SVG: Shield -->
+          <svg class="w-3.5 h-3.5 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
+          </svg>
+          <span>Seguridad &amp; SQL</span>
+        </button>
       </div>
     </div>
 
@@ -76,17 +119,27 @@
           </select>
         </div>
 
-        <button 
-          type="button"
-          @click="loadDashboardAndTransactions" 
-          class="bg-stone-900 hover:bg-stone-800 text-white font-semibold text-xs px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 cursor-pointer"
-        >
-          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
-            <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/>
-          </svg>
-          <span>Actualizar Datos</span>
-        </button>
+        <div class="flex items-center gap-2">
+          <button 
+            type="button"
+            @click="exportTransactionsCsv" 
+            class="bg-emerald-700 hover:bg-emerald-800 text-white font-semibold text-xs px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 cursor-pointer"
+          >
+            <span>📥 Exportar CSV DIAN</span>
+          </button>
+
+          <button 
+            type="button"
+            @click="loadDashboardAndTransactions" 
+            class="bg-stone-900 hover:bg-stone-800 text-white font-semibold text-xs px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 cursor-pointer"
+          >
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
+              <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/>
+            </svg>
+            <span>Actualizar Datos</span>
+          </button>
+        </div>
       </div>
 
       <!-- Tarjetas Líquidas de KPIs -->
@@ -175,6 +228,7 @@
                 <th class="py-2.5 px-3">Cliente</th>
                 <th class="py-2.5 px-3 text-right">Monto / Beneficio</th>
                 <th class="py-2.5 px-3 text-center">Estado</th>
+                <th class="py-2.5 px-3 text-right">Factura DIAN / Acciones</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-stone-200 text-stone-700">
@@ -208,9 +262,34 @@
                   </template>
                 </td>
                 <td class="py-3 px-3 text-center">
-                  <span class="text-[10px] font-bold text-emerald-800 bg-emerald-100/60 px-2 py-0.5 rounded-full">
-                    Confirmado
+                  <span 
+                    class="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                    :class="tx.status === 'cancelled' ? 'text-red-800 bg-red-100' : 'text-emerald-800 bg-emerald-100/60'"
+                  >
+                    {{ tx.status === 'cancelled' ? 'Anulada (NC)' : 'Confirmado' }}
                   </span>
+                </td>
+                <td class="py-3 px-3 text-right">
+                  <div v-if="tx.type === 'PURCHASE'" class="flex items-center justify-end gap-1.5">
+                    <button
+                      type="button"
+                      @click="openInvoiceModal(tx.id)"
+                      class="text-[11px] font-bold bg-stone-900 hover:bg-stone-800 text-white px-2.5 py-1 rounded-lg transition cursor-pointer"
+                      title="Ver / Reimprimir Factura Electrónica DIAN y descargar XML UBL 2.1"
+                    >
+                      🖨️ Factura DIAN
+                    </button>
+                    <button
+                      v-if="tx.status !== 'cancelled'"
+                      type="button"
+                      @click="promptCancelPurchase(tx)"
+                      class="text-[11px] font-bold bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 px-2 py-1 rounded-lg transition cursor-pointer"
+                      title="Anular factura, emitir Nota Crédito DIAN y revertir sellos"
+                    >
+                      Anular
+                    </button>
+                  </div>
+                  <span v-else class="text-[10px] text-stone-400">Canje POS</span>
                 </td>
               </tr>
             </tbody>
@@ -439,6 +518,477 @@
         </div>
       </div>
     </div>
+
+    <!-- ===================================================================== -->
+    <!-- TAB 4: CIBERSEGURIDAD, WAF ANTI-SQLI/DDOS, CONSOLA JS E IMPORTADOR SQL -->
+    <!-- ===================================================================== -->
+    <div v-else-if="activeTab === 'security'" class="space-y-5">
+      <!-- Estado de Escudos Activos -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white p-4 rounded-2xl border border-stone-300 shadow-sm space-y-1.5">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-stone-500">Escudo WAF SQLi / XSS</span>
+            <span class="text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-300 px-2 py-0.5 rounded-full">Activo</span>
+          </div>
+          <p class="text-sm font-extrabold text-stone-950">{{ securityStatus?.shield || 'ConfyTickets-WAF-v1' }}</p>
+          <p class="text-[11px] text-stone-500">Inspección de Query/Body + ORM Parametrizado</p>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl border border-stone-300 shadow-sm space-y-1.5">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-stone-500">Contención Anti-DDoS</span>
+            <span 
+              class="text-[10px] font-bold px-2 py-0.5 rounded-full border"
+              :class="securityStatus?.redis_rate_limiter_online ? 'bg-emerald-50 text-emerald-800 border-emerald-300' : 'bg-amber-50 text-amber-800 border-amber-300'"
+            >
+              {{ securityStatus?.redis_rate_limiter_online ? 'Redis Online' : 'Fail-Safe' }}
+            </span>
+          </div>
+          <p class="text-sm font-extrabold font-mono text-stone-950">
+            {{ securityStatus?.limits?.global_requests_per_minute || 120 }} req/min · Login: {{ securityStatus?.limits?.auth_requests_per_minute || 15 }}/min
+          </p>
+          <p class="text-[11px] text-stone-500">IP detectada: <strong class="font-mono text-stone-800">{{ securityStatus?.client_ip || '...' }}</strong></p>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl border border-stone-300 shadow-sm space-y-1.5">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-stone-500">Habeas Data (Ley 1581)</span>
+            <span class="text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-300 px-2 py-0.5 rounded-full">Protegido</span>
+          </div>
+          <p class="text-sm font-extrabold font-mono text-stone-950">
+            {{ securityStatus?.protections?.recorded_consents_count ?? 0 }} consentimientos
+          </p>
+          <p class="text-[11px] text-stone-500">Evidencia de IP, User-Agent y versión legal</p>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl border border-stone-300 shadow-sm space-y-1.5">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-stone-500">Cabeceras &amp; Cifrado</span>
+            <span class="text-[10px] font-bold bg-stone-100 text-stone-800 border border-stone-300 px-2 py-0.5 rounded-full">Bcrypt + JWT</span>
+          </div>
+          <p class="text-xs font-bold text-stone-900">CSP · HSTS · X-Frame-Options · nosniff</p>
+          <p class="text-[11px] text-stone-500">Bloqueo tras 5 intentos fallidos de login</p>
+        </div>
+      </div>
+
+      <!-- Simulador de Pruebas de Ciberseguridad y Consola JS -->
+      <div class="bg-white rounded-2xl border border-stone-300 shadow-sm p-5 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-stone-200 pb-3">
+          <div>
+            <h2 class="font-extrabold text-sm text-stone-950">Laboratorio de Pruebas en Vivo &amp; Consola JS (<code class="font-mono text-xs bg-stone-100 px-1.5 py-0.5 rounded">window.__confyDebug</code>)</h2>
+            <p class="text-xs text-stone-500">Verifica el bloqueo de inyecciones SQL, contención de ráfagas DDoS o abre la consola F12 del navegador.</p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button
+              type="button"
+              @click="triggerSqliTest"
+              class="bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs px-3 py-1.5 rounded-xl transition cursor-pointer"
+            >
+              Simular Ataque SQL Injection
+            </button>
+            <button
+              type="button"
+              @click="triggerRateLimitTest"
+              class="bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs px-3 py-1.5 rounded-xl transition cursor-pointer"
+            >
+              Probar Ráfaga Anti-DDoS (5x)
+            </button>
+          </div>
+        </div>
+
+        <div v-if="securityTestOutput" class="bg-stone-950 text-emerald-400 font-mono text-xs p-3.5 rounded-xl overflow-x-auto whitespace-pre-wrap">
+{{ securityTestOutput }}
+        </div>
+
+        <div class="bg-stone-50 border border-stone-200 rounded-xl p-3 text-xs text-stone-700 space-y-1">
+          <p class="font-bold text-stone-900">Comandos disponibles en la Consola JS del Navegador (F12 &rarr; Console):</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-1.5 font-mono text-[11px] text-stone-800 pt-1">
+            <div>• <code>__confyDebug.help()</code> &mdash; Ver guía de comandos</div>
+            <div>• <code>await __confyDebug.securityAudit()</code> &mdash; Auditar cabeceras y WAF</div>
+            <div>• <code>await __confyDebug.testSqlInjection()</code> &mdash; Probar payload SQLi</div>
+            <div>• <code>await __confyDebug.runSql("SELECT * FROM stores;")</code> &mdash; Consulta SQL</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Importador y Ejecutor Transaccional de Inputs SQL -->
+      <div class="bg-white rounded-2xl border border-stone-300 shadow-sm p-5 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-stone-200 pb-3">
+          <div>
+            <h2 class="font-extrabold text-sm text-stone-950">Importador Seguro de Inputs SQL (Transaccional con Rollback Automático)</h2>
+            <p class="text-xs text-stone-500">Ejecuta consultas o importa lotes <code class="font-mono">.sql</code>. Comandos destructivos (<code class="font-mono">DROP</code>, <code class="font-mono">TRUNCATE</code> maestro) están bloqueados.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="bg-stone-100 hover:bg-stone-200 text-stone-800 border border-stone-300 font-bold text-xs px-3 py-1.5 rounded-xl transition cursor-pointer">
+              <span>📂 Cargar archivo .sql</span>
+              <input type="file" accept=".sql,.txt" class="hidden" @change="handleSqlFileUpload" />
+            </label>
+            <button
+              type="button"
+              @click="sqlScriptInput = 'SELECT id, full_name, email, status, created_at FROM profiles ORDER BY created_at DESC LIMIT 10;'"
+              class="text-xs font-semibold text-stone-700 hover:text-stone-950 bg-stone-50 border border-stone-300 px-2.5 py-1.5 rounded-xl cursor-pointer"
+            >
+              Ejemplo: Ver Usuarios
+            </button>
+            <button
+              type="button"
+              @click="sqlScriptInput = 'SELECT user_id, purpose, policy_version, status, granted_at FROM consents ORDER BY granted_at DESC LIMIT 10;'"
+              class="text-xs font-semibold text-stone-700 hover:text-stone-950 bg-stone-50 border border-stone-300 px-2.5 py-1.5 rounded-xl cursor-pointer"
+            >
+              Ejemplo: Habeas Data
+            </button>
+          </div>
+        </div>
+
+        <textarea
+          v-model="sqlScriptInput"
+          rows="5"
+          placeholder="-- Escribe o pega aquí tus sentencias SQL (SELECT, INSERT, UPDATE)...&#10;SELECT code, name, city, status FROM stores;"
+          class="w-full font-mono text-xs p-3.5 rounded-xl border border-stone-300 bg-stone-950 text-stone-100 focus:outline-none"
+        ></textarea>
+
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <label class="flex items-center gap-2 text-xs font-semibold text-stone-700 cursor-pointer">
+            <input v-model="sqlDryRun" type="checkbox" class="w-4 h-4 rounded text-stone-900" />
+            <span>Modo Simulación (<strong>Dry-Run</strong>: valida y ejecuta pero hace <code>ROLLBACK</code> sin guardar cambios)</span>
+          </label>
+
+          <button
+            type="button"
+            :disabled="runningSql || !sqlScriptInput.trim()"
+            @click="executeSqlBatch"
+            class="bg-stone-900 hover:bg-stone-800 disabled:opacity-50 text-white font-bold text-xs px-4 py-2 rounded-xl transition cursor-pointer"
+          >
+            {{ runningSql ? 'Procesando SQL...' : (sqlDryRun ? 'Simular Lote SQL (Dry-Run)' : 'Ejecutar e Importar SQL') }}
+          </button>
+        </div>
+
+        <div v-if="sqlError" class="p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs font-semibold">
+          {{ sqlError }}
+        </div>
+
+        <div v-if="sqlResult" class="space-y-3 pt-2">
+          <div class="p-3 bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-xl text-xs flex items-center justify-between">
+            <span class="font-bold">{{ sqlResult.message }}</span>
+            <span class="font-mono">Sentencias: {{ sqlResult.statements_executed }} · Filas afectadas: {{ sqlResult.total_rows_affected }}</span>
+          </div>
+
+          <div v-for="item in sqlResult.details" :key="item.index" class="border border-stone-200 rounded-xl overflow-hidden">
+            <div class="bg-stone-100 px-3 py-1.5 text-xs font-mono flex items-center justify-between">
+              <span><strong>#{{ item.index }} [{{ item.command }}]</strong> {{ item.statement_preview }}</span>
+              <span v-if="item.rows_returned !== undefined" class="text-stone-600">{{ item.rows_returned }} filas</span>
+              <span v-else class="text-stone-600">{{ item.rows_affected }} afectadas</span>
+            </div>
+            <div v-if="item.sample_rows && item.sample_rows.length > 0" class="overflow-x-auto">
+              <table class="w-full text-left text-[11px] font-mono border-collapse">
+                <thead>
+                  <tr class="bg-stone-50 border-b border-stone-200 text-stone-600">
+                    <th v-for="col in Object.keys(item.sample_rows[0])" :key="col" class="py-1.5 px-2.5">{{ col }}</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-stone-200">
+                  <tr v-for="(row, rIdx) in item.sample_rows" :key="rIdx" class="hover:bg-stone-50">
+                    <td v-for="col in Object.keys(row)" :key="col" class="py-1.5 px-2.5 text-stone-800">{{ row[col] }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- TAB 5: DIRECTORIO DE CLIENTES, DOCUMENTOS DIAN Y AJUSTE DE SELLOS -->
+    <!-- ===================================================================== -->
+    <div v-else-if="activeTab === 'customers'" class="space-y-4">
+      <div class="bg-white p-4 rounded-2xl border border-stone-300 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 class="font-extrabold text-sm text-stone-950">Directorio de Clientes y Ajustes Auditados</h2>
+          <p class="text-xs text-stone-500">Consulta el progreso de 8 sellos, actualiza NIT/Cédula para facturación DIAN o ajusta sellos manualmente.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <input
+            v-model="customerSearch"
+            @keyup.enter="loadCustomers"
+            type="text"
+            placeholder="Buscar nombre, correo o NIT/CC..."
+            class="text-xs px-3 py-1.5 rounded-xl border border-stone-300 bg-stone-50 focus:outline-none w-56"
+          />
+          <button
+            type="button"
+            @click="loadCustomers"
+            class="bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs px-3.5 py-1.5 rounded-xl cursor-pointer"
+          >
+            Buscar
+          </button>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-stone-300 shadow-sm overflow-hidden p-4">
+        <div v-if="loadingCustomers" class="py-8 text-center text-xs text-stone-400 font-semibold animate-pulse">
+          Consultando directorio de clientes...
+        </div>
+        <div v-else-if="customersList.length === 0" class="py-8 text-center text-xs text-stone-500">
+          No se encontraron clientes con el criterio de búsqueda.
+        </div>
+        <div v-else class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="border-b border-stone-200 text-stone-500 font-semibold uppercase tracking-wider bg-stone-50">
+                <th class="py-2.5 px-3">Cliente</th>
+                <th class="py-2.5 px-3">Doc. Tributario DIAN</th>
+                <th class="py-2.5 px-3 text-center">Ciclo / Sellos</th>
+                <th class="py-2.5 px-3 text-right">Compras / Facturado</th>
+                <th class="py-2.5 px-3 text-center">Estado</th>
+                <th class="py-2.5 px-3 text-right">Acciones Administrativas</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-stone-200 text-stone-700">
+              <tr v-for="c in customersList" :key="c.id" class="hover:bg-stone-50/80">
+                <td class="py-3 px-3">
+                  <div class="font-bold text-stone-900">{{ c.full_name }}</div>
+                  <div class="text-[10px] font-mono text-stone-500">{{ c.email }} · {{ c.phone || 'Sin tel.' }}</div>
+                </td>
+                <td class="py-3 px-3 font-mono text-[11px]">
+                  <span class="font-bold text-stone-800">{{ c.document_type }}:</span> {{ c.document_number }}
+                </td>
+                <td class="py-3 px-3 text-center">
+                  <span class="font-mono font-bold text-amber-900 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full">
+                    Ciclo {{ c.cycle_number }} · {{ c.stamps_count }}/{{ c.stamps_required }} ☕
+                  </span>
+                  <div v-if="c.available_rewards > 0" class="text-[10px] font-bold text-emerald-700 mt-0.5">
+                    🎁 {{ c.available_rewards }} premio(s) disponible(s)
+                  </div>
+                </td>
+                <td class="py-3 px-3 text-right font-mono">
+                  <div class="font-bold text-stone-900">${{ (c.total_spent_cop || 0).toLocaleString('es-CO') }}</div>
+                  <div class="text-[10px] text-stone-500">{{ c.purchases_count }} compras</div>
+                </td>
+                <td class="py-3 px-3 text-center">
+                  <span
+                    class="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                    :class="c.status === 'active' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-red-50 text-red-700 border border-red-200'"
+                  >
+                    {{ c.status === 'active' ? 'Activo' : 'Suspendido' }}
+                  </span>
+                </td>
+                <td class="py-3 px-3 text-right">
+                  <div class="flex items-center justify-end gap-1.5">
+                    <button
+                      type="button"
+                      @click="openAdjustStampsModal(c)"
+                      class="text-[11px] font-bold bg-amber-600 hover:bg-amber-700 text-white px-2.5 py-1 rounded-lg transition cursor-pointer"
+                    >
+                      ± Sellos
+                    </button>
+                    <button
+                      type="button"
+                      @click="promptCustomerDoc(c)"
+                      class="text-[11px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-800 border border-stone-300 px-2 py-1 rounded-lg transition cursor-pointer"
+                    >
+                      NIT/CC
+                    </button>
+                    <button
+                      type="button"
+                      @click="toggleCustomerStatus(c)"
+                      class="text-[11px] font-semibold px-2 py-1 rounded-lg border transition cursor-pointer"
+                      :class="c.status === 'active' ? 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100' : 'bg-emerald-50 text-emerald-800 border-emerald-200 hover:bg-emerald-100'"
+                    >
+                      {{ c.status === 'active' ? 'Suspender' : 'Activar' }}
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- TAB 6: RESOLUCIÓN DE FACTURACIÓN DIAN & REGLAS DEL PROGRAMA -->
+    <!-- ===================================================================== -->
+    <div v-else-if="activeTab === 'dian'" class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      <!-- Formulario de Parámetros Tributarios y Resolución DIAN -->
+      <div class="lg:col-span-2 bg-white rounded-2xl border border-stone-300 shadow-sm p-5 space-y-4">
+        <div class="border-b border-stone-200 pb-3 flex items-center justify-between">
+          <div>
+            <h2 class="font-extrabold text-sm text-stone-950">Parámetros Tributarios &amp; Resolución de Facturación Electrónica DIAN</h2>
+            <p class="text-xs text-stone-500">Estos datos encabezan la representación gráfica POS, el cálculo del CUFE (SHA-384) y el XML UBL 2.1.</p>
+          </div>
+          <span class="text-[10px] font-mono font-bold bg-blue-50 text-blue-800 border border-blue-200 px-2.5 py-1 rounded-full">
+            Anexo Técnico 1.9 DIAN
+          </span>
+        </div>
+
+        <form @submit.prevent="saveDianConfig" class="space-y-3.5 text-xs">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="sm:col-span-2">
+              <label class="block font-bold text-stone-700 mb-1">Razón Social del Emisor (DIAN)</label>
+              <input v-model="dianForm.razon_social" type="text" required class="w-full px-3 py-2 rounded-lg border border-stone-300 bg-stone-50" />
+            </div>
+            <div>
+              <label class="block font-bold text-stone-700 mb-1">Nombre Comercial</label>
+              <input v-model="dianForm.nombre_comercial" type="text" required class="w-full px-3 py-2 rounded-lg border border-stone-300 bg-stone-50" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div>
+              <label class="block font-bold text-stone-700 mb-1">NIT (Sin DV)</label>
+              <input v-model="dianForm.nit_emisor" type="text" required class="w-full font-mono px-3 py-2 rounded-lg border border-stone-300 bg-stone-50" />
+            </div>
+            <div>
+              <label class="block font-bold text-stone-700 mb-1">Dígito Verif. (DV)</label>
+              <input v-model="dianForm.dv_emisor" type="text" required maxlength="2" class="w-full font-mono px-3 py-2 rounded-lg border border-stone-300 bg-stone-50" />
+            </div>
+            <div>
+              <label class="block font-bold text-stone-700 mb-1">Actividad CIIU</label>
+              <input v-model="dianForm.actividad_ciiu" type="text" required class="w-full font-mono px-3 py-2 rounded-lg border border-stone-300 bg-stone-50" />
+            </div>
+            <div>
+              <label class="block font-bold text-stone-700 mb-1">Impoconsumo (%)</label>
+              <input v-model.number="dianForm.tarifa_impoconsumo_pct" type="number" min="0" max="30" required class="w-full font-mono px-3 py-2 rounded-lg border border-stone-300 bg-stone-50" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block font-bold text-stone-700 mb-1">Régimen Tributario</label>
+              <input v-model="dianForm.regimen_fiscal" type="text" required class="w-full px-3 py-2 rounded-lg border border-stone-300 bg-stone-50" />
+            </div>
+            <div>
+              <label class="block font-bold text-stone-700 mb-1">Ambiente DIAN</label>
+              <select v-model="dianForm.ambiente" class="w-full px-3 py-2 rounded-lg border border-stone-300 bg-stone-50 font-semibold">
+                <option value="2">2 — Habilitación / Pruebas DIAN</option>
+                <option value="1">1 — Producción Oficial DIAN</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+            <div class="col-span-2">
+              <label class="block font-bold text-stone-700 mb-1">No. Resolución DIAN</label>
+              <input v-model="dianForm.resolucion_numero" type="text" required class="w-full font-mono px-3 py-2 rounded-lg border border-stone-300 bg-stone-50" />
+            </div>
+            <div>
+              <label class="block font-bold text-stone-700 mb-1">Fecha Resolución</label>
+              <input v-model="dianForm.resolucion_fecha" type="text" required placeholder="2026-01-15" class="w-full font-mono px-3 py-2 rounded-lg border border-stone-300 bg-stone-50" />
+            </div>
+            <div>
+              <label class="block font-bold text-stone-700 mb-1">Prefijo</label>
+              <input v-model="dianForm.prefijo" type="text" required class="w-full font-mono px-3 py-2 rounded-lg border border-stone-300 bg-stone-50" />
+            </div>
+            <div>
+              <label class="block font-bold text-stone-700 mb-1">Rango Hasta</label>
+              <input v-model.number="dianForm.rango_hasta" type="number" required class="w-full font-mono px-3 py-2 rounded-lg border border-stone-300 bg-stone-50" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-bold text-stone-700 mb-1">Clave Técnica DIAN (Para firma de CUFE SHA-384)</label>
+            <input v-model="dianForm.clave_tecnica" type="text" required class="w-full font-mono text-[11px] px-3 py-2 rounded-lg border border-stone-300 bg-stone-50" />
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block font-bold text-stone-700 mb-1">Dirección Fiscal</label>
+              <input v-model="dianForm.direccion_emisor" type="text" required class="w-full px-3 py-2 rounded-lg border border-stone-300 bg-stone-50" />
+            </div>
+            <div>
+              <label class="block font-bold text-stone-700 mb-1">Municipio</label>
+              <input v-model="dianForm.municipio_emisor" type="text" required class="w-full px-3 py-2 rounded-lg border border-stone-300 bg-stone-50" />
+            </div>
+            <div>
+              <label class="block font-bold text-stone-700 mb-1">Correo Facturación</label>
+              <input v-model="dianForm.correo_emisor" type="email" required class="w-full px-3 py-2 rounded-lg border border-stone-300 bg-stone-50" />
+            </div>
+          </div>
+
+          <div class="pt-2 flex items-center justify-between">
+            <span v-if="dianSavedMsg" class="text-emerald-700 font-bold">{{ dianSavedMsg }}</span>
+            <span v-else></span>
+            <button type="submit" :disabled="savingDian" class="bg-stone-900 hover:bg-stone-800 text-white font-bold px-4 py-2.5 rounded-xl cursor-pointer">
+              {{ savingDian ? 'Guardando...' : 'Guardar Configuración DIAN' }}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Reglas Matemáticas del Programa de Fidelización -->
+      <div class="bg-white rounded-2xl border border-stone-300 shadow-sm p-5 space-y-4">
+        <div class="border-b border-stone-200 pb-3">
+          <h2 class="font-extrabold text-sm text-stone-950">Reglas del Programa de Sellos</h2>
+          <p class="text-xs text-stone-500">Configura el valor por sello en COP y la meta de cada tarjeta.</p>
+        </div>
+
+        <form @submit.prevent="saveLoyaltyRules" class="space-y-3.5 text-xs">
+          <div>
+            <label class="block font-bold text-stone-700 mb-1">Valor por cada Sello (COP)</label>
+            <input v-model.number="rulesForm.amount_per_stamp" type="number" min="1000" step="500" required class="w-full font-mono px-3 py-2 rounded-lg border border-stone-300 bg-stone-50" />
+            <p class="text-[10px] text-stone-500 mt-0.5">Fórmula: <code>floor(monto_elegible / {{ rulesForm.amount_per_stamp }})</code></p>
+          </div>
+
+          <div>
+            <label class="block font-bold text-stone-700 mb-1">Compra Mínima Elegible (COP)</label>
+            <input v-model.number="rulesForm.minimum_purchase" type="number" min="0" step="500" required class="w-full font-mono px-3 py-2 rounded-lg border border-stone-300 bg-stone-50" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block font-bold text-stone-700 mb-1">Meta de Sellos</label>
+              <input v-model.number="rulesForm.stamps_required" type="number" min="3" max="20" required class="w-full font-mono px-3 py-2 rounded-lg border border-stone-300 bg-stone-50" />
+            </div>
+            <div>
+              <label class="block font-bold text-stone-700 mb-1">Máx. por Compra</label>
+              <input v-model.number="rulesForm.max_stamps_per_purchase" type="number" min="1" max="20" required class="w-full font-mono px-3 py-2 rounded-lg border border-stone-300 bg-stone-50" />
+            </div>
+          </div>
+
+          <div class="pt-2 space-y-2">
+            <button type="submit" :disabled="savingRules" class="w-full bg-amber-700 hover:bg-amber-800 text-white font-bold py-2.5 rounded-xl cursor-pointer">
+              {{ savingRules ? 'Actualizando...' : 'Actualizar Reglas de Sellos' }}
+            </button>
+            <div v-if="rulesSavedMsg" class="text-center text-emerald-700 font-bold">{{ rulesSavedMsg }}</div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL DE FACTURA ELECTRÓNICA DIAN / REIMPRESIÓN POS -->
+    <DianInvoiceModal
+      :invoice="activeInvoice"
+      @close="activeInvoice = null"
+      @download-xml="handleDownloadXml"
+    />
+
+    <!-- MODAL DE AJUSTE MANUAL DE SELLOS -->
+    <div v-if="adjustingCustomer" class="fixed inset-0 bg-stone-950/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+      <div class="bg-white rounded-2xl border border-stone-300 p-5 w-full max-w-sm shadow-xl space-y-4">
+        <div class="flex items-center justify-between border-b border-stone-200 pb-2.5">
+          <h3 class="font-extrabold text-sm text-stone-950">Ajuste Manual Auditado de Sellos</h3>
+          <button @click="adjustingCustomer = null" class="text-stone-400 hover:text-stone-700 cursor-pointer">✕</button>
+        </div>
+        <div class="text-xs text-stone-600">
+          Cliente: <strong class="text-stone-900">{{ adjustingCustomer.full_name }}</strong> (Actual: {{ adjustingCustomer.stamps_count }}/{{ adjustingCustomer.stamps_required }} sellos)
+        </div>
+        <form @submit.prevent="submitAdjustStamps" class="space-y-3 text-xs">
+          <div>
+            <label class="block font-bold text-stone-700 mb-1">Cantidad de Sellos (+ sumar / - descontar)</label>
+            <input v-model.number="adjustDelta" type="number" min="-8" max="8" required class="w-full font-mono px-3 py-2 rounded-lg border border-stone-300 bg-stone-50" />
+          </div>
+          <div>
+            <label class="block font-bold text-stone-700 mb-1">Motivo de Auditoría (Obligatorio)</label>
+            <textarea v-model="adjustReason" rows="2" required minlength="4" placeholder="Ej. Cortesía por reposición de pedido..." class="w-full px-3 py-2 rounded-lg border border-stone-300 bg-stone-50"></textarea>
+          </div>
+          <div class="flex gap-2 pt-1">
+            <button type="button" @click="adjustingCustomer = null" class="flex-1 bg-stone-100 text-stone-700 font-bold py-2 rounded-lg">Cancelar</button>
+            <button type="submit" class="flex-1 bg-stone-900 text-white font-bold py-2 rounded-lg cursor-pointer">Aplicar Ajuste</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -451,8 +1001,9 @@ import {
   type AuditTransactionItem,
   type ProductAdminItem 
 } from '../api';
+import DianInvoiceModal from '../components/DianInvoiceModal.vue';
 
-const activeTab = ref<'audit' | 'products' | 'stores'>('audit');
+const activeTab = ref<'audit' | 'products' | 'stores' | 'customers' | 'dian' | 'security'>('audit');
 const selectedStore = ref('');
 
 const summary = ref<DashboardSummary>({
@@ -618,6 +1169,263 @@ const saveStore = async () => {
     alert(err.message || 'Error al guardar sede');
   } finally {
     savingStore.value = false;
+  }
+};
+
+// Ciberseguridad & Importador SQL
+const securityStatus = ref<any>(null);
+const securityTestOutput = ref('');
+const sqlScriptInput = ref('SELECT code, name, city, status FROM stores ORDER BY name ASC;');
+const sqlDryRun = ref(false);
+const runningSql = ref(false);
+const sqlError = ref('');
+const sqlResult = ref<any>(null);
+
+const openSecurityTab = async () => {
+  activeTab.value = 'security';
+  try {
+    securityStatus.value = await adminApi.getSecurityStatus();
+  } catch (err) {
+    console.error('Error cargando estado de seguridad:', err);
+  }
+};
+
+const triggerSqliTest = async () => {
+  const dbg = (window as any).__confyDebug;
+  if (dbg && dbg.testSqlInjection) {
+    const res = await dbg.testSqlInjection();
+    securityTestOutput.value = `[PRUEBA WAF SQL INJECTION]\nPayload enviado: email="attacker@test.com' OR '1'='1' --"\nRespuesta HTTP: ${res.status}\nDetalle: ${JSON.stringify(res.response, null, 2)}`;
+  }
+};
+
+const triggerRateLimitTest = async () => {
+  const dbg = (window as any).__confyDebug;
+  if (dbg && dbg.testRateLimit) {
+    const res = await dbg.testRateLimit(5);
+    securityTestOutput.value = `[PRUEBA ANTI-DDOS RATE LIMITING (5 PETICIONES)]\n${JSON.stringify(res, null, 2)}`;
+  }
+};
+
+const handleSqlFileUpload = (ev: Event) => {
+  const input = ev.target as HTMLInputElement;
+  const file = input.files?.[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    sqlScriptInput.value = String(reader.result || '');
+  };
+  reader.readAsText(file);
+};
+
+const executeSqlBatch = async () => {
+  sqlError.value = '';
+  sqlResult.value = null;
+  runningSql.value = true;
+  try {
+    sqlResult.value = await adminApi.runSqlImport(sqlScriptInput.value, sqlDryRun.value);
+    await Promise.all([loadDashboardAndTransactions(), loadStores(), loadProducts()]);
+  } catch (err: any) {
+    sqlError.value = err.message || 'Error ejecutando lote SQL';
+  } finally {
+    runningSql.value = false;
+  }
+};
+
+// Facturación Electrónica DIAN, Reimpresión, Anulación y Clientes
+const activeInvoice = ref<any | null>(null);
+const customersList = ref<any[]>([]);
+const loadingCustomers = ref(false);
+const customerSearch = ref('');
+const adjustingCustomer = ref<any | null>(null);
+const adjustDelta = ref(1);
+const adjustReason = ref('');
+
+const dianForm = ref<any>({
+  nit_emisor: '901452890',
+  dv_emisor: '3',
+  razon_social: 'CONFYTICKETS CAFÉ DE ESPECIALIDAD S.A.S.',
+  nombre_comercial: 'ConfyTickets Specialty Coffee',
+  regimen_fiscal: 'Responsable del Impuesto Nacional al Consumo (INC 8%)',
+  actividad_ciiu: '5613',
+  resolucion_numero: '18764065891234',
+  resolucion_fecha: '2026-01-15',
+  prefijo: 'SETT',
+  rango_desde: 1,
+  rango_hasta: 50000,
+  clave_tecnica: 'fc8eac422eba16e22ffd8c6f94b3f40a6e38162c',
+  ambiente: '2',
+  tarifa_impoconsumo_pct: 8,
+  direccion_emisor: 'Carrera 35 # 48-12 Cabecera del Llano',
+  municipio_emisor: 'Bucaramanga',
+  telefono_emisor: '+57 607 6438890',
+  correo_emisor: 'facturacion@confytickets.co'
+});
+const savingDian = ref(false);
+const dianSavedMsg = ref('');
+
+const rulesForm = ref({
+  amount_per_stamp: 10000,
+  minimum_purchase: 0,
+  stamps_required: 8,
+  max_stamps_per_purchase: 8
+});
+const savingRules = ref(false);
+const rulesSavedMsg = ref('');
+
+const openInvoiceModal = async (purchaseId: string) => {
+  try {
+    activeInvoice.value = await adminApi.getInvoice(purchaseId, true);
+  } catch (err: any) {
+    alert(err.message || 'Error al cargar la Factura Electrónica DIAN');
+  }
+};
+
+const handleDownloadXml = async (purchaseId: string, invoiceNumber: string) => {
+  try {
+    await adminApi.downloadInvoiceXml(purchaseId, invoiceNumber);
+  } catch (err: any) {
+    alert(err.message || 'Error al descargar XML UBL 2.1 DIAN');
+  }
+};
+
+const promptCancelPurchase = async (tx: AuditTransactionItem) => {
+  const reason = prompt(`Motivo obligatorio para ANULAR ${tx.reference} y emitir Nota Crédito DIAN (se revertirán los sellos acreditados):`);
+  if (!reason || reason.trim().length < 4) return;
+  try {
+    const res = await adminApi.cancelPurchase(tx.id, reason.trim());
+    alert(res.message);
+    await loadDashboardAndTransactions();
+  } catch (err: any) {
+    alert(err.message || 'Error al anular compra');
+  }
+};
+
+const exportTransactionsCsv = () => {
+  if (!transactions.value.length) {
+    alert('No hay transacciones para exportar.');
+    return;
+  }
+  const headers = ['ID', 'Fecha_ISO', 'Tipo', 'Referencia_Factura', 'Sede', 'Cliente', 'Correo_Cliente', 'Monto_COP', 'Sellos', 'Premio', 'Estado'];
+  const rows = transactions.value.map(t => [
+    t.id,
+    t.created_at,
+    t.type,
+    `"${(t.reference || '').replace(/"/g, '""')}"`,
+    `"${(t.store_name || '').replace(/"/g, '""')}"`,
+    `"${(t.customer_name || '').replace(/"/g, '""')}"`,
+    t.customer_email,
+    t.amount_cop ?? 0,
+    t.stamps_awarded ?? 0,
+    `"${(t.reward_name || '').replace(/"/g, '""')}"`,
+    t.status
+  ]);
+  const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Reporte_Facturacion_ConfyTickets_${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
+const loadCustomers = async () => {
+  loadingCustomers.value = true;
+  try {
+    customersList.value = await adminApi.getCustomers(customerSearch.value || undefined);
+  } catch (err) {
+    console.error('Error cargando clientes:', err);
+  } finally {
+    loadingCustomers.value = false;
+  }
+};
+
+const openCustomersTab = async () => {
+  activeTab.value = 'customers';
+  await loadCustomers();
+};
+
+const openAdjustStampsModal = (c: any) => {
+  adjustingCustomer.value = c;
+  adjustDelta.value = 1;
+  adjustReason.value = '';
+};
+
+const submitAdjustStamps = async () => {
+  if (!adjustingCustomer.value) return;
+  try {
+    const res = await adminApi.adjustCustomerStamps(adjustingCustomer.value.id, adjustDelta.value, adjustReason.value);
+    alert(res.message);
+    adjustingCustomer.value = null;
+    await Promise.all([loadCustomers(), loadDashboardAndTransactions()]);
+  } catch (err: any) {
+    alert(err.message || 'Error al ajustar sellos');
+  }
+};
+
+const promptCustomerDoc = async (c: any) => {
+  const docType = prompt('Tipo de documento para Facturación DIAN (CC, NIT, CE, PAS):', c.document_type || 'CC');
+  if (!docType) return;
+  const docNum = prompt(`Número de ${docType.toUpperCase()} del cliente ${c.full_name}:`, c.document_number || '222222222222');
+  if (!docNum) return;
+  try {
+    await adminApi.updateCustomer(c.id, { document_type: docType, document_number: docNum });
+    await loadCustomers();
+  } catch (err: any) {
+    alert(err.message || 'Error al actualizar documento');
+  }
+};
+
+const toggleCustomerStatus = async (c: any) => {
+  const nextStatus = c.status === 'active' ? 'suspended' : 'active';
+  if (!confirm(`¿Cambiar estado de ${c.full_name} a '${nextStatus}'?`)) return;
+  try {
+    await adminApi.updateCustomer(c.id, { status: nextStatus });
+    await loadCustomers();
+  } catch (err: any) {
+    alert(err.message || 'Error al cambiar estado del cliente');
+  }
+};
+
+const openDianTab = async () => {
+  activeTab.value = 'dian';
+  dianSavedMsg.value = '';
+  rulesSavedMsg.value = '';
+  try {
+    const [dSet, lRules] = await Promise.all([
+      adminApi.getDianSettings(),
+      adminApi.getLoyaltyRules()
+    ]);
+    if (dSet) dianForm.value = { ...dianForm.value, ...dSet };
+    if (lRules) rulesForm.value = { ...rulesForm.value, ...lRules };
+  } catch (err) {
+    console.error('Error cargando configuración DIAN y reglas:', err);
+  }
+};
+
+const saveDianConfig = async () => {
+  savingDian.value = true;
+  dianSavedMsg.value = '';
+  try {
+    await adminApi.updateDianSettings(dianForm.value);
+    dianSavedMsg.value = '✅ Configuración DIAN guardada';
+  } catch (err: any) {
+    alert(err.message || 'Error al guardar configuración DIAN');
+  } finally {
+    savingDian.value = false;
+  }
+};
+
+const saveLoyaltyRules = async () => {
+  savingRules.value = true;
+  rulesSavedMsg.value = '';
+  try {
+    await adminApi.updateLoyaltyRules(rulesForm.value);
+    rulesSavedMsg.value = '✅ Reglas actualizadas en vivo';
+  } catch (err: any) {
+    alert(err.message || 'Error al actualizar reglas');
+  } finally {
+    savingRules.value = false;
   }
 };
 

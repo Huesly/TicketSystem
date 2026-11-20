@@ -14,8 +14,12 @@ class PurchaseCreateRequest(BaseModel):
     gross_amount: int = Field(..., ge=0, description="Importe total pagado en COP")
     discount_amount: int = Field(default=0, ge=0, description="Descuentos aplicados")
     currency: str = Field(default="COP", min_length=3, max_length=3)
+    payment_method: str = Field(default="Efectivo", max_length=40, description="Medio de pago DIAN")
+    customer_doc_type: Optional[str] = Field(default=None, max_length=20, description="Tipo de documento del cliente (CC, NIT, CE)")
+    customer_doc_number: Optional[str] = Field(default=None, max_length=40, description="Número de documento o NIT para facturación DIAN")
+    item_description: Optional[str] = Field(default=None, max_length=250, description="Concepto o detalle de productos facturados")
 
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="ignore")
 
 
 class PurchaseAllocation(BaseModel):
@@ -34,6 +38,8 @@ class PurchaseResponse(BaseModel):
     purchase_id: UUID
     status: str
     receipt_reference: str
+    invoice_number: Optional[str] = None
+    cufe: Optional[str] = None
     eligible_amount: int
     stamps_awarded: int
     allocation: List[PurchaseAllocation]
