@@ -89,3 +89,9 @@ desktop.ini
 *.db
 pgdata/
 redisdata/
+
+# Repositorio Independiente de Backend (ver Huesly/TicketSystemBack)
+backend/
+database/
+workers/
+docker-compose.yml
